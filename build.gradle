@@ -2,10 +2,11 @@ buildscript {
     ext {
         hilt_version = '2.45'
         room_version = '2.5.1'
-        coroutines_version = '1.6.41'
+        coroutines_version = '1.6.4'
         retrofit_version = '2.9.0'
     }
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
     }
@@ -19,6 +20,7 @@ plugins {
     id 'com.android.library' version '7.2.2' apply false
     id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
     id "org.jetbrains.kotlin.kapt" version "1.8.21"
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1' apply false
 }
 
 task clean(type: Delete) {
