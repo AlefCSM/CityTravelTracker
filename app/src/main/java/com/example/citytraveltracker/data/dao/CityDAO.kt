@@ -2,27 +2,27 @@ package com.example.citytraveltracker.data.dao
 
 import androidx.room.*
 import com.example.citytraveltracker.data.City
-import com.example.citytraveltracker.data.Connexion
+import com.example.citytraveltracker.data.Connection
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CityDAO {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertCity(city: City)
+    suspend fun insertCity(city: City): Long
 
-    @Delete()
+    @Delete
     suspend fun deleteCity(city: City)
 
     @Query("SELECT * FROM cities")
     fun observeAllCities(): Flow<List<City>>
 
     @Insert(onConflict = OnConflictStrategy.NONE)
-    suspend fun insertConnexionList(connexions: List<Connexion>)
+    suspend fun insertConnectionsList(connections: List<Connection>)
 
     @Delete
-    suspend fun deleteConnexion(connexion: Connexion)
+    suspend fun deleteConnection(connection: Connection)
 
     @Transaction
-    @Query("Select * from connexions where cityId = :cityId")
-    fun observeCityConnexionsByCityId(cityId: Int):Flow<List<Connexion>>
+    @Query("Select * from connections where cityId = :cityId")
+    fun observeCityConnectionsByCityId(cityId: Long): Flow<List<Connection>>
 }

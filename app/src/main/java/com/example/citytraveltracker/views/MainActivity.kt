@@ -93,13 +93,4 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
-
-
-    private fun showCard() {
-        val dialog = Dialog(this)
-
-        dialog.setContentView(R.layout.fragment_search_address)
-        dialog.show()
-    }
 }

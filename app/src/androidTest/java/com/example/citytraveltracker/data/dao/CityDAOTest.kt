@@ -7,7 +7,7 @@ import androidx.test.filters.SmallTest
 import app.cash.turbine.test
 import com.example.citytraveltracker.data.CTTDatabase
 import com.example.citytraveltracker.data.City
-import com.example.citytraveltracker.data.Connexion
+import com.example.citytraveltracker.data.Connection
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -39,83 +39,114 @@ class CityDAOTest {
     }
 
     @Test
-    fun insertCity() = runBlocking {
-        val city = City(1, "joinville", "123")
+    fun insertCity() {
+        runBlocking {
+            val city = City(345, "joinville", "123")
 
-        dao.insertCity(city)
+            dao.insertCity(city)
 
-        dao.observeAllCities().test {
-            val allCities = awaitItem()
-            assertThat(allCities).contains(city)
-        }
-    }
-    @Test
-    fun insertCityWithNullId() = runBlocking {
-        val city = City( name="joinville", placeId =  "123")
-
-        dao.insertCity(city)
-
-        dao.observeAllCities().test {
-            val allCities = awaitItem()
-            assertThat(allCities.size).isEqualTo(1)
-        }
-    }
-
-
-    @Test
-    fun insertCitiesWithSameIdShouldThrowError() = runBlocking {
-        val city = City(1, "joinville", "123")
-        val city2 = City(1, "joinville", "123")
-
-        dao.insertCity(city)
-
-        try{
-            dao.insertCity(city2)
-        }catch (e:Exception){
-            assertThat(e.javaClass.canonicalName).isEqualTo("android.database.sqlite.SQLiteConstraintException")
+            dao.observeAllCities().test {
+                val allCities = awaitItem()
+                assertThat(allCities).contains(city)
+            }
         }
     }
 
     @Test
-    fun deleteCity() = runBlocking {
-        val city = City(1, "joinville", "123")
+    fun insertCityWithNullId() {
+        runBlocking {
+            val city = City(name = "joinville", placeId = "123")
 
-        dao.insertCity(city)
-        dao.deleteCity(city)
+            dao.insertCity(city)
 
-        dao.observeAllCities().test {
-            val allCities = awaitItem()
+            dao.observeAllCities().test {
+                val allCities = awaitItem()
+                assertThat(allCities.size).isEqualTo(1)
+            }
+        }
+    }
 
-            assertThat(allCities).doesNotContain(city)
+
+    @Test
+    fun insertCitiesWithSameIdShouldThrowError() {
+        runBlocking {
+            val city = City(1, "joinville", "123")
+            val city2 = City(1, "joinville", "123")
+
+            dao.insertCity(city)
+
+            try {
+                dao.insertCity(city2)
+            } catch (e: Exception) {
+                assertThat(e.javaClass.canonicalName).isEqualTo("android.database.sqlite.SQLiteConstraintException")
+            }
         }
     }
 
     @Test
-    fun insertConnexion() = runBlocking {
-        val city = City(1, "joinville", "123")
-        val connexion = Connexion(1,"florianopolis","243")
+    fun deleteCity() {
+        runBlocking {
+            val city = City(1, "joinville", "123")
 
-        dao.insertCity(city)
-        dao.insertConnexionList(listOf(connexion))
+            dao.insertCity(city)
+            dao.deleteCity(city)
 
-        dao.observeCityConnexionsByCityId(1).test {
-            val connexionList = awaitItem()
-            assertThat(connexionList[0]).isEqualTo(connexion)
+            dao.observeAllCities().test {
+                val allCities = awaitItem()
+
+                assertThat(allCities).doesNotContain(city)
+            }
         }
     }
 
     @Test
-    fun insert2Connexions() = runBlocking {
-        val city = City(1, "joinville", "123")
-        val connexion = Connexion(1,"florianopolis","243")
-        val connexion2 = Connexion(1,"itajai","443")
+    fun insertConnection() {
+        runBlocking {
+            val city = City(1, "joinville", "123")
+            val connection = Connection(1, 1, "florianopolis", "243")
 
-        dao.insertCity(city)
-        dao.insertConnexionList(listOf(connexion,connexion2) )
+            dao.insertCity(city)
+            dao.insertConnectionsList(listOf(connection))
 
-        dao.observeCityConnexionsByCityId(1).test {
-            val connexionList = awaitItem()
-            assertThat(connexionList.size).isEqualTo(2)
+            dao.observeCityConnectionsByCityId(1).test {
+                val connectionList = awaitItem()
+                assertThat(connectionList[0]).isEqualTo(connection)
+            }
+        }
+    }
+
+    @Test
+    fun insert2Connections() {
+        runBlocking {
+            val city = City(1, "joinville", "123")
+            val connection = Connection(1, 1, "florianopolis", "243")
+            val connection2 = Connection(2, 1, "itajai", "443")
+
+            dao.insertCity(city)
+            dao.insertConnectionsList(listOf(connection, connection2))
+
+            dao.observeCityConnectionsByCityId(1).test {
+                val connectionList = awaitItem()
+                assertThat(connectionList.size).isEqualTo(2)
+            }
+        }
+    }
+
+    @Test
+    fun deleteCityShouldRemoveConnections() {
+        runBlocking {
+            val city = City(1, "joinville", "123")
+            val connection = Connection(1, 1, "florianopolis", "243")
+            val connection2 = Connection(2, 1, "itajai", "443")
+
+            dao.insertCity(city)
+            dao.insertConnectionsList(listOf(connection, connection2))
+            dao.deleteCity(city)
+
+            dao.observeCityConnectionsByCityId(1).test {
+                val connectionList = awaitItem()
+                assertThat(connectionList.size).isEqualTo(0)
+            }
         }
     }
 }

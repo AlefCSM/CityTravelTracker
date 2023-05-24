@@ -3,14 +3,14 @@ package com.example.citytraveltracker.data.dao
 import androidx.room.*
 
 @Dao
-interface ConnexionDAO {
+interface ConnectionDAO {
 
 //    @Insert(onConflict = OnConflictStrategy.NONE)
-//    suspend fun insertConnexion(connexion: Connexion)
+//    suspend fun insertConnection(connection: Connection)
 
 //    @Delete
-//    suspend fun deleteConnexion(connexion: Connexion)
+//    suspend fun deleteConnection(connection: Connection)
 
-//    @Query("Select * FROM connexions where cityId = :cityId")
-//    fun observeAllConnexions(cityId: Int): Flow<Array<Connexion>>
+//    @Query("Select * FROM connections where cityId = :cityId")
+//    fun observeAllConnections(cityId: Int): Flow<Array<Connection>>
 }
