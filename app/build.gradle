@@ -10,13 +10,13 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.citytraveltracker"
+        applicationId "com.alefmoreira.citytraveltracker"
         minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "com.example.citytraveltracker.HiltTestRunner"
+        testInstrumentationRunner "com.alefmoreira.citytraveltracker.HiltTestRunner"
     }
 
     buildTypes {
@@ -93,6 +93,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation 'com.google.truth:truth:1.1.3'
     androidTestImplementation 'androidx.arch.core:core-testing:2.2.0'
+    debugImplementation "androidx.fragment:fragment-testing:1.5.7"
 }
 
 kapt {
