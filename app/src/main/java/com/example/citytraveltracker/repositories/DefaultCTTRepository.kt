@@ -1,8 +1,6 @@
 package com.example.citytraveltracker.repositories
 
-import com.example.citytraveltracker.data.City
 import com.example.citytraveltracker.data.dao.CityDAO
-import com.example.citytraveltracker.model.Destination
 import com.example.citytraveltracker.model.Route
 import com.example.citytraveltracker.other.Resource
 import com.example.citytraveltracker.remote.DistanceMatrixAPI
@@ -16,9 +14,9 @@ class DefaultCTTRepository @Inject constructor(
     private val cityDAO: CityDAO,
     private val distanceMatrixAPI: DistanceMatrixAPI
 ) : CTTRepository {
-    override suspend fun insertDestination(destination: Destination) {
-        val cityId = cityDAO.insertCity(destination.city)
-        val connectionsList = destination.connections
+    override suspend fun insertRoute(route: Route) {
+        val cityId = cityDAO.insertCity(route.city)
+        val connectionsList = route.connections
 
         if (connectionsList.isNotEmpty()) {
             connectionsList.forEach { it.cityId = cityId }
@@ -26,20 +24,20 @@ class DefaultCTTRepository @Inject constructor(
         }
     }
 
-    override suspend fun deleteDestination(destination: Destination) {
-        cityDAO.deleteCity(destination.city)
+    override suspend fun deleteRoute(route: Route) {
+        cityDAO.deleteCity(route.city)
     }
 
-    override fun observeAllDestinations(): Flow<List<Destination>> {
+    override fun observeAllRoutes(): Flow<List<Route>> {
         return flow {
-            val destinationList = mutableListOf<Destination>()
+            val routeList = mutableListOf<Route>()
             cityDAO.observeAllCities().collectLatest { citiesList ->
                 citiesList.forEach { city ->
                     cityDAO.observeCityConnectionsByCityId(city.id!!)
                         .collectLatest { connectionsList ->
-                            Destination(city, connectionsList)
-                            destinationList.add(Destination(city, connectionsList))
-                            emit(destinationList)
+                            Route(city, connectionsList.toMutableList())
+                            routeList.add(Route(city, connectionsList.toMutableList()))
+                            emit(routeList)
                         }
                 }
             }

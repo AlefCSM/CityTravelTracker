@@ -1,6 +1,5 @@
 package com.example.citytraveltracker.repositories
 
-import com.example.citytraveltracker.model.Destination
 import com.example.citytraveltracker.model.Route
 import com.example.citytraveltracker.other.Resource
 import com.example.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
@@ -10,8 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeCTTRepository : CTTRepository {
 
-    private val destinations = mutableListOf<Destination>()
-    private val observableDestinations = MutableStateFlow<List<Destination>>(destinations)
+    private val routes = mutableListOf<Route>()
+    private val observableDestinations = MutableStateFlow<List<Route>>(routes)
     private var shouldReturnNetworkError = false
 
     fun setShouldReturnNetworkError(value: Boolean) {
@@ -19,20 +18,20 @@ class FakeCTTRepository : CTTRepository {
     }
 
     private fun refreshFlows() {
-        observableDestinations.value = destinations
+        observableDestinations.value = routes
     }
 
-    override suspend fun insertDestination(destination: Destination) {
-        destinations.add(destination)
+    override suspend fun insertRoute(route: Route) {
+        routes.add(route)
         refreshFlows()
     }
 
-    override suspend fun deleteDestination(destination: Destination) {
-        destinations.remove(destination)
+    override suspend fun deleteRoute(route: Route) {
+        routes.remove(route)
         refreshFlows()
     }
 
-    override fun observeAllDestinations(): Flow<List<Destination>> {
+    override fun observeAllRoutes(): Flow<List<Route>> {
         return observableDestinations
     }
 

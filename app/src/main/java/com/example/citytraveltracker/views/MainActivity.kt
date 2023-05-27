@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
                     val place = Autocomplete.getPlaceFromIntent(data)
                     println("***** PLACE ID ${place.id} - PLACE NAME ${place.name}")
                 }
+            }else{
+                println("********$result")
             }
         }
 

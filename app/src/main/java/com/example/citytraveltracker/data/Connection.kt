@@ -16,7 +16,7 @@ import androidx.room.ForeignKey.Companion.CASCADE
 )
 data class Connection(
     @PrimaryKey(autoGenerate = true)
-    var id: Long,
+    var id: Long? = null,
     @ColumnInfo(index = true)
     var cityId: Long,
     var name: String,

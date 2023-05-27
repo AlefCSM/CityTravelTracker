@@ -1,6 +1,5 @@
 package com.example.citytraveltracker.repositories
 
-import com.example.citytraveltracker.model.Destination
 import com.example.citytraveltracker.model.Route
 import com.example.citytraveltracker.other.Resource
 import com.example.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
@@ -8,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface CTTRepository {
 
-    suspend fun insertDestination(destination: Destination)
+    suspend fun insertRoute(route: Route)
 
-    suspend fun deleteDestination(destination: Destination)
+    suspend fun deleteRoute(route: Route)
 
-    fun observeAllDestinations(): Flow<List<Destination>>
+    fun observeAllRoutes(): Flow<List<Route>>
 
     suspend fun getDistanceMatrix(origins:List<Route>,destinations:List<Route>): Resource<DistanceMatrixResponse>
 }
