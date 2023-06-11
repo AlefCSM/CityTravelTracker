@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.alefmoreira.citytraveltracker.views.fragments.HomeFragment"
+        android:label="HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_routeFragment"
+            app:destination="@id/routeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/routeFragment"
+        android:name="com.alefmoreira.citytraveltracker.views.fragments.RouteFragment"
+        android:label="RouteFragment">
+        <action
+            android:id="@+id/action_routeFragment_to_searchRouteFragment"
+            app:destination="@id/searchRouteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchRouteFragment"
+        android:name="com.alefmoreira.citytraveltracker.views.fragments.SearchRouteFragment"
+        android:label="fragment_search_route"
+        tools:layout="@layout/fragment_search_route" />
+</navigation>

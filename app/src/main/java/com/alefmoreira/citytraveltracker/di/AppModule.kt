@@ -11,6 +11,8 @@ import com.alefmoreira.citytraveltracker.other.Constants.DATABASE_NAME
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import com.alefmoreira.citytraveltracker.repositories.DefaultCTTRepository
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,4 +59,9 @@ object AppModule {
     fun provideDispatcher(): DispatcherProvider {
         return DefaultDispatchers()
     }
+
+    @Singleton
+    @Provides
+    fun providePlacesClient(@ApplicationContext context: Context): PlacesClient =
+        Places.createClient(context)
 }

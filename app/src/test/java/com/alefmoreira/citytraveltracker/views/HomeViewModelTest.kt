@@ -13,18 +13,18 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class CTTViewModelTest {
+class HomeViewModelTest {
 
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private lateinit var viewModel: CTTViewModel
+    private lateinit var viewModel: HomeViewModel
     private lateinit var testDispatcher: TestDispatchers
 
     @Before
     fun setup() {
         testDispatcher = TestDispatchers()
-        viewModel = CTTViewModel(FakeCTTRepository(), testDispatcher)
+        viewModel = HomeViewModel(FakeCTTRepository(), testDispatcher)
     }
 
     @Test

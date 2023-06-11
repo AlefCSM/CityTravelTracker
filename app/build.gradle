@@ -4,6 +4,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -38,8 +39,6 @@ android {
 }
 
 dependencies {
-
-
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
@@ -57,6 +56,11 @@ dependencies {
     testImplementation 'app.cash.turbine:turbine:0.7.0'
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     androidTestImplementation 'app.cash.turbine:turbine:0.7.0'
+
+    //Navigation
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
@@ -85,6 +89,10 @@ dependencies {
     testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
 
+    // Moockito
+    testImplementation "org.mockito:mockito-android:3.2.4"
+    androidTestImplementation "org.mockito:mockito-android:3.2.4"
+
     testImplementation 'junit:junit:4.13.2'
 //    testImplementation 'org.hamcrest.hamcrest-all:1.3'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
@@ -94,6 +102,7 @@ dependencies {
     androidTestImplementation 'com.google.truth:truth:1.1.3'
     androidTestImplementation 'androidx.arch.core:core-testing:2.2.0'
     debugImplementation "androidx.fragment:fragment-testing:1.5.7"
+    debugImplementation "androidx.test:monitor:1.6.1"
 }
 
 kapt {
