@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="12dp"
+        android:layout_height="19dp"
+        android:src="@drawable/map_cursor" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_place_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="São José do Rio Preto"
+
+            android:textSize="@dimen/regular_text"
+            app:fontFamily="@font/roboto" />
+
+        <TextView
+            android:id="@+id/txt_place_country"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SP, Brasil"
+            android:textSize="@dimen/small_text"
+            app:fontFamily="@font/roboto_semi_bold" />
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -6,10 +6,26 @@
     tools:context=".views.fragments.SearchRouteFragment">
 
 
-    <TextView
-        android:id="@+id/txt_hello"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="60dp" />
+
+        <EditText
+            android:id="@+id/txt_place"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="Qual cidade?" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/prediction_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

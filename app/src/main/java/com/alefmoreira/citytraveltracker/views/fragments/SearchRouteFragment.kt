@@ -31,7 +31,7 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchRouteBinding.bind(view)
 
-        val txtHello = binding.txtHello
+        val txtHello = binding.txtPlace
 
         val token = AutocompleteSessionToken.newInstance()
 

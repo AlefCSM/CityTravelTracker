@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/font/roboto.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/font/roboto_condensed_bold.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/adapter_place.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/adapter_place_prediction.xml" value="1.0" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_route.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_search_address.xml" value="0.1" />
