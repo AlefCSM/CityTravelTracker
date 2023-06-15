@@ -25,5 +25,10 @@
         android:id="@+id/searchRouteFragment"
         android:name="com.alefmoreira.citytraveltracker.views.fragments.SearchRouteFragment"
         android:label="fragment_search_route"
-        tools:layout="@layout/fragment_search_route" />
+        tools:layout="@layout/fragment_search_route">
+        <argument
+            android:name="isDestination"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </fragment>
 </navigation>

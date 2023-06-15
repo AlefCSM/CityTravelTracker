@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">CityTravelTracker</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="witch_city">Qual cidade?</string>
+    <string name="map_icon">map icon</string>
+    <string name="city_name">São José do Rio Preto</string>
+    <string name="city_detail">SP, Brasil</string>
 </resources>

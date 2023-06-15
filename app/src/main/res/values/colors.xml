@@ -22,4 +22,5 @@
     <color name="background">#FFD3E5EB</color>
     <color name="border">#FF9E9E9E</color>
     <color name="danger">#FFDF8888</color>
+    <color name="divider">#336C6C6C</color>
 </resources>

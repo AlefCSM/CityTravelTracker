@@ -11,11 +11,16 @@ import javax.inject.Inject
 
 
 class PlacePredictionAdapter @Inject constructor(
-    private val predictionsD: List<AutocompletePrediction>
+    private val predictionsD: List<AutocompletePrediction>,
+    private val onItemClick: ((AutocompletePrediction) -> Unit)? = null
 ) : RecyclerView.Adapter<PlacePredictionAdapter.PlacePredictionViewHolder>() {
-    class PlacePredictionViewHolder(binding: AdapterPlacePredictionBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
+    class PlacePredictionViewHolder(private val binding: AdapterPlacePredictionBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(prediction: AutocompletePrediction) {
+            binding.txtPlaceName.text = prediction.getPrimaryText(null).toString()
+            binding.txtPlaceCountry.text = prediction.getSecondaryText(null).toString()
+        }
+    }
 
     private val diffCallback = object : DiffUtil.ItemCallback<String>() {
         override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
@@ -34,7 +39,6 @@ class PlacePredictionAdapter @Inject constructor(
         set(value) = differ.submitList(value)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlacePredictionViewHolder {
-
         val binding = AdapterPlacePredictionBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -46,8 +50,9 @@ class PlacePredictionAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: PlacePredictionViewHolder, position: Int) {
         val prediction = predictionsD[position]
-        holder.itemView.apply {
-
+        holder.bind(prediction)
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(prediction)
         }
     }
 

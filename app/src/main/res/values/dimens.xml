@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--    TEXT SIZES-->
     <dimen name="small_text">12sp</dimen>
     <dimen name="regular_text">16sp</dimen>
     <dimen name="big_text">20sp</dimen>
     <dimen name="extra_big_text">32sp</dimen>
+
+    <!--    DISPLAY SIZES-->
+    <dimen name="fragment_horizontal_padding">16dp</dimen>
+    <dimen name="search_fragment_padding_top">16dp</dimen>
+    <dimen name="no_drawable_start_padding">-18dp</dimen>
+    <dimen name="no_drawable_end_padding">-14dp</dimen>
+
 </resources>

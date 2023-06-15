@@ -26,7 +26,12 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         val apiKey = MAPS_API_KEY
         context?.let { Places.initialize(it, apiKey) }
         btnSearchRoute.setOnClickListener {
-            findNavController().navigate(RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment())
+            val isDestination = true
+            findNavController().navigate(
+                RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment(
+                    isDestination
+                )
+            )
         }
 
         val callback = object : OnBackPressedCallback(true) {

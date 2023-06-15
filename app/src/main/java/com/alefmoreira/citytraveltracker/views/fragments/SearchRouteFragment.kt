@@ -1,70 +1,110 @@
 package com.alefmoreira.citytraveltracker.views.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alefmoreira.citytraveltracker.R
+import com.alefmoreira.citytraveltracker.adapters.PlacePredictionAdapter
 import com.alefmoreira.citytraveltracker.databinding.FragmentSearchRouteBinding
+import com.alefmoreira.citytraveltracker.util.components.PredictionDividerItemDecoration
 import com.alefmoreira.citytraveltracker.views.HomeViewModel
-import com.google.android.gms.common.api.ApiException
+import com.alefmoreira.citytraveltracker.views.SearchRouteViewModel
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
-import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
 
     private lateinit var binding: FragmentSearchRouteBinding
-    private val viewModel: HomeViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val searchRouteViewModel: SearchRouteViewModel by activityViewModels()
+    private val token = AutocompleteSessionToken.newInstance()
+    private val arguments: SearchRouteFragmentArgs by navArgs()
 
-    @Inject
-    lateinit var placesClient: PlacesClient
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchRouteBinding.bind(view)
 
-        val txtHello = binding.txtPlace
+        val txtSearch = binding.txtSearch
 
-        val token = AutocompleteSessionToken.newInstance()
 
-        context?.let {
-            txtHello.setOnClickListener {
-                val request =
-                    FindAutocompletePredictionsRequest.builder()
-                        .setSessionToken(token)
-                        .setQuery("paris")
-                        .build()
+        txtSearch.setEndIconOnClickListener {
+            txtSearch.editText?.setText("")
+        }
+        txtSearch.setStartIconOnClickListener {
+            homeViewModel.clearRoutes()
+            findNavController().popBackStack()
+        }
+        txtSearch.isHintAnimationEnabled = false
+        txtSearch.editText?.addTextChangedListener {
+            val text = it.toString()
 
-                placesClient.findAutocompletePredictions(request)
-                    .addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
-                        for (prediction in response.autocompletePredictions) {
-                            Log.i("****", "$prediction")
-                            Log.i("****", prediction.placeId)
-                            Log.i("****", prediction.getPrimaryText(null).toString())
-                        }
-                    }.addOnFailureListener { exception: Exception? ->
-                        if (exception is ApiException) {
-                            Log.e("****", "Place not found: " + exception.statusCode)
-                            Log.e("****", "Place not found: " + exception.message)
-                        }
+            if (text.length > 2) {
+                debounce(text)
+            }
+            if (text.isEmpty()) {
+                searchRouteViewModel.clearPredictions()
+            }
+        }
+
+        val predictionRecyclerView = binding.predictionRecyclerview
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                searchRouteViewModel.predictions.collectLatest {
+                    predictionRecyclerView.apply {
+                        adapter = PlacePredictionAdapter(it, onItemClick = {
+                            if (arguments.isDestination) {
+                                homeViewModel.setDestination(
+                                    name = it.getPrimaryText(null).toString(),
+                                    placeId = it.placeId
+                                )
+                            } else {
+                                homeViewModel.setOrigin(
+                                    name = it.getPrimaryText(null).toString(),
+                                    placeId = it.placeId
+                                )
+                            }
+                            findNavController().popBackStack()
+                        })
+                        layoutManager =
+                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+                        addItemDecoration(
+                            PredictionDividerItemDecoration(
+                                context,
+                                R.drawable.prediction_line_divider
+                            )
+                        )
+
                     }
+                }
             }
         }
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                viewModel.clearRoutes()
+                homeViewModel.clearRoutes()
                 findNavController().popBackStack()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(callback)
+    }
+
+    private fun debounce(text: String) {
+        searchRouteViewModel.findPredictions(text, token)
     }
 }
