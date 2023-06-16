@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.adapters.PlacePredictionAdapter
 import com.alefmoreira.citytraveltracker.databinding.FragmentSearchRouteBinding
+import com.alefmoreira.citytraveltracker.other.Constants.MINIMUM_SEARCH_LENGTH
 import com.alefmoreira.citytraveltracker.util.components.PredictionDividerItemDecoration
 import com.alefmoreira.citytraveltracker.views.HomeViewModel
 import com.alefmoreira.citytraveltracker.views.SearchRouteViewModel
@@ -36,10 +37,10 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding = FragmentSearchRouteBinding.bind(view)
 
         val txtSearch = binding.txtSearch
-
 
         txtSearch.setEndIconOnClickListener {
             txtSearch.editText?.setText("")
@@ -52,11 +53,12 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         txtSearch.editText?.addTextChangedListener {
             val text = it.toString()
 
-            if (text.length > 2) {
-                debounce(text)
-            }
             if (text.isEmpty()) {
                 searchRouteViewModel.clearPredictions()
+                return@addTextChangedListener
+            }
+            if (text.length > MINIMUM_SEARCH_LENGTH) {
+                searchRouteViewModel.debounce(text, token)
             }
         }
 
@@ -78,8 +80,12 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
                                     placeId = it.placeId
                                 )
                             }
+
+                            txtSearch.editText?.setText("")
                             findNavController().popBackStack()
-                        })
+                        },
+                            typedText = searchRouteViewModel.query
+                        )
                         layoutManager =
                             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
@@ -102,9 +108,5 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(callback)
-    }
-
-    private fun debounce(text: String) {
-        searchRouteViewModel.findPredictions(text, token)
     }
 }
