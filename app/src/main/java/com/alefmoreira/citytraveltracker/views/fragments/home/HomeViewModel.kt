@@ -1,4 +1,4 @@
-package com.alefmoreira.citytraveltracker.views
+package com.alefmoreira.citytraveltracker.views.fragments.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
