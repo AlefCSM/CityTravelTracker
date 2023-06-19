@@ -1,4 +1,4 @@
-package com.alefmoreira.citytraveltracker.views.fragments
+package com.alefmoreira.citytraveltracker.views.fragments.route
 
 import android.os.Bundle
 import android.view.View
@@ -9,7 +9,8 @@ import androidx.navigation.fragment.findNavController
 import com.alefmoreira.citytraveltracker.BuildConfig.MAPS_API_KEY
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.databinding.FragmentRouteBinding
-import com.alefmoreira.citytraveltracker.views.HomeViewModel
+import com.alefmoreira.citytraveltracker.util.CitySelectionType
+import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
 import com.google.android.libraries.places.api.Places
 
 class RouteFragment : Fragment(R.layout.fragment_route) {
@@ -26,10 +27,10 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         val apiKey = MAPS_API_KEY
         context?.let { Places.initialize(it, apiKey) }
         btnSearchRoute.setOnClickListener {
-            val isDestination = true
+            val citySelectionType = CitySelectionType.ORIGIN
             findNavController().navigate(
                 RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment(
-                    isDestination
+                    citySelectionType
                 )
             )
         }

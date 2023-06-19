@@ -5,4 +5,6 @@
     <string name="map_icon">map icon</string>
     <string name="city_name">São José do Rio Preto</string>
     <string name="city_detail">SP, Brasil</string>
+    <string name="city_not_found_title">Não encontramos essa cidade</string>
+    <string name="city_not_found_description">Verifique o nome da cidade e tente novamente.</string>
 </resources>

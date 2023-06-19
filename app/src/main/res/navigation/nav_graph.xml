@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.alefmoreira.citytraveltracker.views.fragments.HomeFragment"
+        android:name="com.alefmoreira.citytraveltracker.views.fragments.home.HomeFragment"
         android:label="HomeFragment">
         <action
             android:id="@+id/action_homeFragment_to_routeFragment"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/routeFragment"
-        android:name="com.alefmoreira.citytraveltracker.views.fragments.RouteFragment"
+        android:name="com.alefmoreira.citytraveltracker.views.fragments.route.RouteFragment"
         android:label="RouteFragment">
         <action
             android:id="@+id/action_routeFragment_to_searchRouteFragment"
@@ -23,12 +23,12 @@
     </fragment>
     <fragment
         android:id="@+id/searchRouteFragment"
-        android:name="com.alefmoreira.citytraveltracker.views.fragments.SearchRouteFragment"
+        android:name="com.alefmoreira.citytraveltracker.views.fragments.searchroute.SearchRouteFragment"
         android:label="fragment_search_route"
         tools:layout="@layout/fragment_search_route">
         <argument
-            android:name="isDestination"
-            app:argType="boolean"
-            android:defaultValue="true" />
+            android:name="citySelectionEnum"
+            app:argType="com.alefmoreira.citytraveltracker.util.CitySelectionType"
+            android:defaultValue="DESTINATION" />
     </fragment>
 </navigation>

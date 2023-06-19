@@ -1,8 +1,9 @@
-package com.alefmoreira.citytraveltracker.views
+package com.alefmoreira.citytraveltracker.views.fragments.searchroute
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alefmoreira.citytraveltracker.other.Constants.SEARCH_DEBOUNCE_TIME
+import com.alefmoreira.citytraveltracker.other.Resource
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -22,8 +23,10 @@ class SearchRouteViewModel @Inject constructor(
 ) : ViewModel() {
 
     var query = ""
-    private var _predictions = MutableStateFlow<List<AutocompletePrediction>>(emptyList())
-    val predictions: StateFlow<List<AutocompletePrediction>> = _predictions
+
+    private var _predictionStatus =
+        MutableStateFlow<Resource<List<AutocompletePrediction>>>(Resource.init())
+    val predictionStatus: StateFlow<Resource<List<AutocompletePrediction>>> = _predictionStatus
 
     private fun findPredictions(text: String, token: AutocompleteSessionToken) {
         query = text
@@ -35,14 +38,19 @@ class SearchRouteViewModel @Inject constructor(
 
         placesClient.findAutocompletePredictions(request)
             .addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
-                _predictions.value = response.autocompletePredictions
+                if (response.autocompletePredictions.isEmpty()) {
+                    _predictionStatus.value = Resource.error("Place not found!", emptyList())
+                } else {
+                    _predictionStatus.value = Resource.success(response.autocompletePredictions)
+                }
+
             }.addOnFailureListener {
-                _predictions.value = emptyList<AutocompletePrediction>().toMutableList()
+                _predictionStatus.value = Resource.error("Error", emptyList())
             }
     }
 
     fun clearPredictions() {
-        _predictions.value = emptyList()
+        _predictionStatus.value = Resource.init()
     }
 
     fun debounce(text: String, token: AutocompleteSessionToken) =
@@ -52,6 +60,7 @@ class SearchRouteViewModel @Inject constructor(
             if (text != query) {
                 return@launch
             }
+            _predictionStatus.value = Resource.loading(null)
             findPredictions(query, token)
         }
 }

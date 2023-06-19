@@ -5,6 +5,7 @@ import androidx.navigation.Navigation
 import androidx.test.espresso.Espresso
 import androidx.test.filters.MediumTest
 import com.alefmoreira.citytraveltracker.lauchFragmentInHiltContainer
+import com.alefmoreira.citytraveltracker.views.fragments.searchroute.SearchRouteFragment
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi

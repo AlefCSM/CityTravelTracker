@@ -2,7 +2,7 @@ package com.alefmoreira.citytraveltracker.other
 
 open class Event<out T>(private val content: T) {
 
-    var hasBeenHandled = false
+    private var hasBeenHandled = false
         private set // Allow external read but not write
 
     /**

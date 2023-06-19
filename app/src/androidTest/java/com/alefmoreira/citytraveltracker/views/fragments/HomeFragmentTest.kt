@@ -8,6 +8,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.MediumTest
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.lauchFragmentInHiltContainer
+import com.alefmoreira.citytraveltracker.views.fragments.home.HomeFragment
+import com.alefmoreira.citytraveltracker.views.fragments.home.HomeFragmentDirections
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
