@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/city_name"
-            android:textColor="@color/text_1"
+            android:textColor="@color/dark_3"
             android:textSize="@dimen/regular_text"
             app:fontFamily="@font/roboto" />
 
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/city_detail"
-            android:textColor="@color/text_2"
+            android:textColor="@color/dark_2"
             android:textSize="@dimen/small_text"
             app:fontFamily="@font/roboto_semi_bold" />
     </LinearLayout>

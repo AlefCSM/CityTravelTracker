@@ -2,26 +2,30 @@
 <resources>
 
     <style name="EditTextThemeOverlay" parent="ThemeOverlay.AppCompat">
-        <item name="colorAccent">@color/primary_2</item>
-        <item name="colorControlActivated">@color/text_1</item>
+        <item name="colorAccent">@color/secondary_2</item>
+        <item name="colorControlActivated">@color/dark_3</item>
     </style>
 
     <style name="TextFontRoboto">
         <item name="android:fontFamily">@font/roboto</item>
-        <item name="android:textColor">@color/text_1</item>
+        <item name="android:textColor">@color/dark_3</item>
     </style>
 
     <style name="TextFontRobotoSemiBold">
         <item name="android:fontFamily">@font/roboto_semi_bold</item>
-        <item name="android:textColor">@color/text_1</item>
+        <item name="android:textColor">@color/dark_3</item>
     </style>
 
     <style name="SmallText" parent="TextFontRoboto">
         <item name="android:textSize">@dimen/small_text</item>
     </style>
 
-    <style name="RegularText" parent="TextFontRoboto">
+    <style name="RegularTextPrimaryColor" parent="TextFontRoboto">
         <item name="android:textSize">@dimen/regular_text</item>
+    </style>
+
+    <style name="RegularTextSecondaryColor" parent="RegularTextPrimaryColor">
+        <item name="android:textColor">@color/dark_2</item>
     </style>
 
     <style name="BigText" parent="TextFontRobotoSemiBold">
@@ -32,10 +36,11 @@
         <item name="android:textSize">@dimen/extra_big_text</item>
     </style>
 
-    <style name="SearchEditTextStyle" parent="RegularText">
+    <style name="SearchEditTextStyle" parent="RegularTextPrimaryColor">
         <item name="android:hint">@string/witch_city</item>
         <item name="android:padding">0dp</item>
         <item name="android:textCursorDrawable">@drawable/cursor_color</item>
     </style>
+
 
 </resources>

@@ -1,12 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/route_fragment_padding_top"
+    android:background="@color/light_3"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/icon_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back" />
+
+    <LinearLayout
+        android:id="@+id/originLayout"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="@dimen/fragment_horizontal_padding"
+        android:layout_marginEnd="@dimen/fragment_horizontal_padding"
+        android:padding="16dp"
+        android:background="@drawable/ctt_edit_text_shape"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_origin" />
+
+        <TextView
+            style="@style/RegularTextSecondaryColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/where_are_you" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/destinationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="@dimen/fragment_horizontal_padding"
+        android:layout_marginEnd="@dimen/fragment_horizontal_padding"
+        android:padding="16dp"
+        android:background="@drawable/ctt_edit_text_shape"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_origin"
+            app:tint="@color/primary_2" />
+
+        <TextView
+            style="@style/RegularTextSecondaryColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/where_are_you" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_search_route"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:elevation="15dp"
+        android:layout_marginStart="@dimen/fragment_horizontal_padding"
+        android:layout_marginEnd="@dimen/fragment_horizontal_padding"
         android:text="prucurar cidade" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

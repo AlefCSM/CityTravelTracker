@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.adapters.PlacePredictionAdapter
 import com.alefmoreira.citytraveltracker.databinding.FragmentSearchRouteBinding
-import com.alefmoreira.citytraveltracker.other.Constants.MINIMUM_SEARCH_LENGTH
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.util.CitySelectionType
@@ -74,18 +73,8 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         }
         txtSearch.isHintAnimationEnabled = false
         txtSearch.editText?.addTextChangedListener {
-            val text = it.toString()
-
-            if (text.isEmpty()) {
-                searchRouteViewModel.clearPredictions()
-                return@addTextChangedListener
-            }
-            if (text.length > MINIMUM_SEARCH_LENGTH) {
-                searchRouteViewModel.debounce(text, token)
-            }
+            searchRouteViewModel.validateText(it.toString(), token)
         }
-
-
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

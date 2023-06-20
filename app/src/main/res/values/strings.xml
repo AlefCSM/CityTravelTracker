@@ -7,4 +7,5 @@
     <string name="city_detail">SP, Brasil</string>
     <string name="city_not_found_title">Não encontramos essa cidade</string>
     <string name="city_not_found_description">Verifique o nome da cidade e tente novamente.</string>
+    <string name="where_are_you">Onde você está?</string>
 </resources>

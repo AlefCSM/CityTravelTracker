@@ -2,6 +2,8 @@ package com.alefmoreira.citytraveltracker.views.fragments.searchroute
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
+import com.alefmoreira.citytraveltracker.other.Constants
 import com.alefmoreira.citytraveltracker.other.Constants.SEARCH_DEBOUNCE_TIME
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -10,7 +12,6 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchRouteViewModel @Inject constructor(
-    private val placesClient: PlacesClient
+    private val placesClient: PlacesClient,
+    private val dispatcher: DispatcherProvider
 ) : ViewModel() {
 
     var query = ""
@@ -49,12 +51,12 @@ class SearchRouteViewModel @Inject constructor(
             }
     }
 
-    fun clearPredictions() {
+    private fun clearPredictions() {
         _predictionStatus.value = Resource.init()
     }
 
-    fun debounce(text: String, token: AutocompleteSessionToken) =
-        viewModelScope.launch(Dispatchers.Main) {
+    private fun debounce(text: String, token: AutocompleteSessionToken) =
+        viewModelScope.launch(dispatcher.main) {
             query = text
             delay(SEARCH_DEBOUNCE_TIME)
             if (text != query) {
@@ -63,4 +65,14 @@ class SearchRouteViewModel @Inject constructor(
             _predictionStatus.value = Resource.loading(null)
             findPredictions(query, token)
         }
+
+    fun validateText(text: String, token: AutocompleteSessionToken) {
+        if (text.isEmpty()) {
+            clearPredictions()
+            return
+        }
+        if (text.length > Constants.MINIMUM_SEARCH_LENGTH) {
+            debounce(text, token)
+        }
+    }
 }

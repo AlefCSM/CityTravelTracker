@@ -1,10 +1,9 @@
-package com.alefmoreira.citytraveltracker.views
+package com.alefmoreira.citytraveltracker.views.fragments.home
 
 import com.alefmoreira.citytraveltracker.MainCoroutineRule
 import com.alefmoreira.citytraveltracker.coroutines.TestDispatchers
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.FakeCTTRepository
-import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle

@@ -28,7 +28,7 @@ class PlacePredictionAdapter @Inject constructor(
         fun bind(prediction: AutocompletePrediction, typedText: String) {
 
             val span = SpannableString(prediction.getPrimaryText(null).toString())
-            val color = ResourcesCompat.getColor(resources, R.color.text_2, null)
+            val color = ResourcesCompat.getColor(resources, R.color.dark_2, null)
             span.setSpan(
                 ForegroundColorSpan(color),
                 0,

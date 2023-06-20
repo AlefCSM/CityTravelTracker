@@ -12,5 +12,6 @@
     <dimen name="search_fragment_padding_top">16dp</dimen>
     <dimen name="no_drawable_start_padding">-18dp</dimen>
     <dimen name="no_drawable_end_padding">-14dp</dimen>
+    <dimen name="route_fragment_padding_top">24dp</dimen>
 
 </resources>

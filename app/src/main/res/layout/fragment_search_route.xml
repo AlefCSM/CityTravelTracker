@@ -16,15 +16,15 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:theme="@style/EditTextThemeOverlay"
-        app:boxBackgroundColor="@color/white"
-        app:boxStrokeColor="@color/text_2"
+        app:boxBackgroundColor="@color/light_1"
+        app:boxStrokeColor="@color/dark_2"
         app:endIconDrawable="@drawable/ic_erase"
         app:endIconMode="custom"
-        app:endIconTint="@color/text_2"
+        app:endIconTint="@color/dark_2"
         app:errorEnabled="false"
         app:hintEnabled="false"
         app:startIconDrawable="@drawable/ic_back"
-        app:startIconTint="@color/secondary_2">
+        app:startIconTint="@color/primary_2">
 
         <com.google.android.material.textfield.TextInputEditText
             style="@style/SearchEditTextStyle"
@@ -62,7 +62,7 @@
             android:text="@string/city_not_found_title" />
 
         <TextView
-            style="@style/RegularText"
+            style="@style/RegularTextPrimaryColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
