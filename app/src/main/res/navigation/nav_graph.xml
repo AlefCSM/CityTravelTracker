@@ -28,7 +28,12 @@
         tools:layout="@layout/fragment_search_route">
         <argument
             android:name="citySelectionEnum"
-            app:argType="com.alefmoreira.citytraveltracker.util.CitySelectionType"
+            app:argType="com.alefmoreira.citytraveltracker.util.CitySelectionTypeEnum"
             android:defaultValue="DESTINATION" />
+        <argument
+            android:name="selectedCity"
+            app:argType="string"
+            android:defaultValue='""' />
+
     </fragment>
 </navigation>

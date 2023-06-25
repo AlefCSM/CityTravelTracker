@@ -8,4 +8,8 @@
     <string name="city_not_found_title">Não encontramos essa cidade</string>
     <string name="city_not_found_description">Verifique o nome da cidade e tente novamente.</string>
     <string name="where_are_you">Onde você está?</string>
+    <string name="what_is_your_destiny">Qual é o seu destino?</string>
+    <string name="add_connections">add conexões</string>
+    <string name="my_connections">Minhas conexões</string>
+    <string name="save_trip">Salvar viagem</string>
 </resources>

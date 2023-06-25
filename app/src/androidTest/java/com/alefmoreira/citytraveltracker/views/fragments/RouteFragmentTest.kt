@@ -40,7 +40,7 @@ class RouteFragmentTest {
             Navigation.setViewNavController(requireView(), navController)
         }
 
-        onView(withId(R.id.btn_search_route)).perform(click())
+        onView(withId(R.id.btn_save_route)).perform(click())
 
         verify(navController).navigate(
             RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment()

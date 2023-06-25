@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--suppress AndroidUnknownAttribute, AndroidUnknownAttribute -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
@@ -47,7 +47,7 @@
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/light_1" />
+            <solid android:color="@color/light_2" />
             <corners android:radius="8dp" />
         </shape>
     </item>

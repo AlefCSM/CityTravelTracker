@@ -6,8 +6,8 @@ import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class DefaultCTTRepository @Inject constructor(
@@ -29,7 +29,7 @@ class DefaultCTTRepository @Inject constructor(
     }
 
     override fun observeAllRoutes(): Flow<List<Route>> {
-        return flow {
+        return channelFlow {
             val routeList = mutableListOf<Route>()
             cityDAO.observeAllCities().collectLatest { citiesList ->
                 citiesList.forEach { city ->
@@ -37,7 +37,7 @@ class DefaultCTTRepository @Inject constructor(
                         .collectLatest { connectionsList ->
                             Route(city, connectionsList.toMutableList())
                             routeList.add(Route(city, connectionsList.toMutableList()))
-                            emit(routeList)
+                            send(routeList)
                         }
                 }
             }

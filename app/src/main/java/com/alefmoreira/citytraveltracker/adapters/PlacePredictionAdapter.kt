@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.trimmedLength
 import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.databinding.AdapterPlacePredictionBinding
@@ -32,7 +33,7 @@ class PlacePredictionAdapter @Inject constructor(
             span.setSpan(
                 ForegroundColorSpan(color),
                 0,
-                typedText.length,
+                typedText.trimmedLength(),
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE
             )
 

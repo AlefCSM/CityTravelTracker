@@ -6,33 +6,69 @@
         <item name="colorControlActivated">@color/dark_3</item>
     </style>
 
-    <style name="TextFontRoboto">
-        <item name="android:fontFamily">@font/roboto</item>
-        <item name="android:textColor">@color/dark_3</item>
-    </style>
+    <!--    FONT REGULAR-->
 
-    <style name="TextFontRobotoSemiBold">
-        <item name="android:fontFamily">@font/roboto_semi_bold</item>
-        <item name="android:textColor">@color/dark_3</item>
+    <style name="TextFontRoboto" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="fontFamily">@font/roboto_regular</item>
     </style>
 
     <style name="SmallText" parent="TextFontRoboto">
         <item name="android:textSize">@dimen/small_text</item>
     </style>
 
-    <style name="RegularTextPrimaryColor" parent="TextFontRoboto">
-        <item name="android:textSize">@dimen/regular_text</item>
+    <style name="SmallTextPrimaryColor" parent="SmallText">
+        <item name="android:textColor">@color/dark_3</item>
     </style>
 
-    <style name="RegularTextSecondaryColor" parent="RegularTextPrimaryColor">
+    <style name="SmallTextSecondaryColor" parent="SmallText">
         <item name="android:textColor">@color/dark_2</item>
     </style>
 
-    <style name="BigText" parent="TextFontRobotoSemiBold">
+    <style name="RegularText" parent="TextFontRoboto">
+        <item name="android:textSize">@dimen/regular_text</item>
+    </style>
+
+    <style name="RegularTextPrimaryColor" parent="RegularText">
+        <item name="android:textColor">@color/dark_3</item>
+    </style>
+
+    <style name="RegularTextSecondaryColor" parent="RegularText">
+        <item name="android:textColor">@color/dark_2</item>
+    </style>
+
+    <!--    FONT BOLD-->
+
+    <style name="TextFontRobotoBold">
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+    </style>
+
+    <style name="SmallTextBold" parent="TextFontRobotoBold">
+        <item name="android:textSize">@dimen/small_text</item>
+    </style>
+
+    <style name="SmallTextPrimaryColorBold" parent="SmallTextBold">
+        <item name="android:textColor">@color/dark_3</item>
+    </style>
+
+    <style name="SmallTextSecondaryColorBold" parent="SmallTextBold">
+        <item name="android:textColor">@color/dark_2</item>
+    </style>
+
+    <style name="RegularTextBold" parent="TextFontRobotoBold">
+        <item name="android:textSize">@dimen/regular_text</item>
+    </style>
+
+    <style name="RegularTextPrimaryColorBold" parent="RegularTextBold">
+        <item name="android:textColor">@color/dark_3</item>
+    </style>
+
+    <style name="BigText" parent="TextFontRobotoBold">
         <item name="android:textSize">@dimen/big_text</item>
     </style>
 
-    <style name="ExtraBigText" parent="TextFontRobotoSemiBold">
+    <style name="ExtraBigText" parent="TextFontRobotoBold">
         <item name="android:textSize">@dimen/extra_big_text</item>
     </style>
 
@@ -42,5 +78,9 @@
         <item name="android:textCursorDrawable">@drawable/cursor_color</item>
     </style>
 
-
+    <style name="OrangeButton">
+        <!--        <item name="android:backgroundTint">@color/primary_3</item>-->
+        <item name="android:textColor">@color/light_1</item>
+        <item name="android:background">@drawable/shape_button</item>
+    </style>
 </resources>
