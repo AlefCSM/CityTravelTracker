@@ -12,4 +12,8 @@
     <string name="add_connections">add conexões</string>
     <string name="my_connections">Minhas conexões</string>
     <string name="save_trip">Salvar viagem</string>
+    <string name="exclude_city">Tem certeza que  deseja excluir a cidade Curitiba?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="exclude">Excluir</string>
+
 </resources>
