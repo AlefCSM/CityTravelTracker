@@ -79,8 +79,12 @@
     </style>
 
     <style name="OrangeButton">
-        <!--        <item name="android:backgroundTint">@color/primary_3</item>-->
         <item name="android:textColor">@color/light_1</item>
         <item name="android:background">@drawable/shape_button</item>
+    </style>
+
+    <style name="OrangeButtonOutline">
+        <item name="android:textColor">@color/primary_2</item>
+        <item name="android:background">@drawable/shape_button_outline</item>
     </style>
 </resources>
