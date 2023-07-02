@@ -1,4 +1,4 @@
-package com.alefmoreira.citytraveltracker.util.components
+package com.alefmoreira.citytraveltracker.util.components.dialogs
 
 import android.app.Dialog
 import android.content.Context
