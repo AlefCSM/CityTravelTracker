@@ -174,7 +174,7 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun isFirstRoute(): Boolean = _routes.value.peekContent().data?.isEmpty() ?: true
+    fun isFirstRoute(): Boolean = _routes.value.peekContent().data?.isEmpty() ?: false
     fun isOriginEmpty(): Boolean =
         currentOrigin.city.name.isEmpty() || currentOrigin.city.placeId.isEmpty()
 

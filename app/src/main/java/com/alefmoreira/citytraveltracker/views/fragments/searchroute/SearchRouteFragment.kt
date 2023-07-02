@@ -17,12 +17,12 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.R
-import com.alefmoreira.citytraveltracker.adapters.PlacePredictionAdapter
 import com.alefmoreira.citytraveltracker.databinding.FragmentSearchRouteBinding
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.util.CitySelectionTypeEnum
 import com.alefmoreira.citytraveltracker.util.components.PredictionDividerItemDecoration
+import com.alefmoreira.citytraveltracker.util.components.adapters.PlacePredictionAdapter
 import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
@@ -42,12 +42,12 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
 
     private lateinit var txtSearch: TextInputLayout
     private lateinit var predictionRecyclerView: RecyclerView
+    private lateinit var predictionRecyclerViewAdapter: PlacePredictionAdapter
     private lateinit var predictionNotFound: LinearLayoutCompat
     private lateinit var loadingDots: LinearLayoutCompat
     private lateinit var leftDot: ImageView
     private lateinit var middleDot: ImageView
     private lateinit var rightDot: ImageView
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,6 +62,8 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
             searchRouteViewModel.validateText(it.toString(), token)
         }
         txtSearch.editText?.setText(arguments.selectedCity)
+
+        predictionRecyclerViewAdapter = PlacePredictionAdapter()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -94,7 +96,6 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
             txtSearch.editText?.setText("")
         }
         txtSearch.setStartIconOnClickListener {
-
             findNavController().popBackStack()
         }
     }
@@ -102,8 +103,8 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
     private fun handleState(resource: Resource<List<AutocompletePrediction>>) {
         when (resource.status) {
             Status.SUCCESS -> {
-                resource.data?.let {
-                    renderList(it)
+                resource.data?.let { list ->
+                    resource.message?.let { message -> renderList(list, message) }
                 }
                 predictionRecyclerView.visibility = View.VISIBLE
                 predictionNotFound.visibility = View.GONE
@@ -128,22 +129,23 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         }
     }
 
-    private fun renderList(list: List<AutocompletePrediction>) {
+    private fun renderList(list: List<AutocompletePrediction>, text: String) {
+
+        predictionRecyclerViewAdapter.apply {
+            onItemClick = { prediction ->
+                addCity(prediction)
+
+                txtSearch.editText?.setText("")
+                findNavController().popBackStack()
+            }
+            predictions = list
+            typedText = text
+        }
+
         predictionRecyclerView.apply {
-
-            adapter = PlacePredictionAdapter(
-                list, onItemClick = { prediction ->
-                    addCity(prediction)
-
-                    txtSearch.editText?.setText("")
-                    findNavController().popBackStack()
-                },
-                typedText = searchRouteViewModel.query
-            )
-
+            adapter = predictionRecyclerViewAdapter
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
             addItemDecoration(
                 PredictionDividerItemDecoration(
                     context,
@@ -180,7 +182,8 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
             CitySelectionTypeEnum.CONNECTION -> {
                 routeViewModel.addConnection(
                     name = prediction.getPrimaryText(null).toString(),
-                    placeId = prediction.placeId
+                    placeId = prediction.placeId,
+                    position = arguments.connectionEditionPosition
                 )
             }
         }

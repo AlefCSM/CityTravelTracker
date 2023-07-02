@@ -6,6 +6,7 @@ import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.other.Constants
 import com.alefmoreira.citytraveltracker.other.Constants.SEARCH_DEBOUNCE_TIME
 import com.alefmoreira.citytraveltracker.other.Resource
+import com.alefmoreira.citytraveltracker.other.Status
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -31,11 +32,10 @@ class SearchRouteViewModel @Inject constructor(
     val predictionStatus: StateFlow<Resource<List<AutocompletePrediction>>> = _predictionStatus
 
     private fun findPredictions(text: String, token: AutocompleteSessionToken) {
-        query = text
         val request =
             FindAutocompletePredictionsRequest.builder()
                 .setSessionToken(token)
-                .setQuery(query)
+                .setQuery(text)
                 .build()
 
         placesClient.findAutocompletePredictions(request)
@@ -43,7 +43,8 @@ class SearchRouteViewModel @Inject constructor(
                 if (response.autocompletePredictions.isEmpty()) {
                     _predictionStatus.value = Resource.error("Place not found!", emptyList())
                 } else {
-                    _predictionStatus.value = Resource.success(response.autocompletePredictions)
+                    _predictionStatus.value =
+                        Resource(Status.SUCCESS, response.autocompletePredictions, text)
                 }
 
             }.addOnFailureListener {
@@ -56,7 +57,7 @@ class SearchRouteViewModel @Inject constructor(
     }
 
     private fun debounce(text: String, token: AutocompleteSessionToken) =
-        viewModelScope.launch(dispatcher.main) {
+        viewModelScope.launch(dispatcher.io) {
             query = text
             delay(SEARCH_DEBOUNCE_TIME)
             if (text != query) {

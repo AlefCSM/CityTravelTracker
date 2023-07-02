@@ -3,23 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/fragment_horizontal_padding"
-    android:background="@drawable/shape_route_middle_item"
+    android:background="@drawable/shape_route_last_item"
     android:gravity="center"
-    android:orientation="horizontal">
+    android:orientation="vertical">
+
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txt_connection_name"
         style="@style/SmallTextPrimaryColor"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/city_name" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/btn_remove_connection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:src="@drawable/ic_erase_connection" />
 </androidx.appcompat.widget.LinearLayoutCompat>
 

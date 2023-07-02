@@ -25,12 +25,21 @@ class AMConfirmationDialog(private val context: Context, private val type: Dialo
     var city: String = ""
 
     fun show() {
-
         binding = CardConfirmationBinding.inflate(LayoutInflater.from(context))
         dialog.setContentView(binding.root)
-        bind()
-        val res = context.resources
+        setup()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+    }
 
+    private fun setup() {
+        bind()
+        setupText()
+        setupClickListeners()
+    }
+
+    private fun setupText() {
+        val res = context.resources
         when (type) {
             DialogType.LEAVE -> {
                 val msg = String.format(res.getString(R.string.exit_city))
@@ -46,10 +55,6 @@ class AMConfirmationDialog(private val context: Context, private val type: Dialo
                 TODO()
             }
         }
-
-        setupClickListeners()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.show()
     }
 
     private fun setupClickListeners() {
@@ -75,6 +80,4 @@ class AMConfirmationDialog(private val context: Context, private val type: Dialo
             HtmlCompat.FROM_HTML_MODE_COMPACT
         ).removeSuffix("\n")
     }
-
-
 }

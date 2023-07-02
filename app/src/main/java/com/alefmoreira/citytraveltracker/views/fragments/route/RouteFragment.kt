@@ -17,16 +17,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.BuildConfig.MAPS_API_KEY
 import com.alefmoreira.citytraveltracker.R
-import com.alefmoreira.citytraveltracker.adapters.AddConnectionAdapter
 import com.alefmoreira.citytraveltracker.data.Connection
 import com.alefmoreira.citytraveltracker.databinding.FragmentRouteBinding
+import com.alefmoreira.citytraveltracker.other.Constants.ADD_CONNECTION_ICON_POSITION
+import com.alefmoreira.citytraveltracker.other.Constants.ADD_CONNECTION_TEXT_POSITION
+import com.alefmoreira.citytraveltracker.other.Constants.DEFAULT_CONNECTION_POSITION
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.util.CitySelectionTypeEnum
+import com.alefmoreira.citytraveltracker.util.DialogType
+import com.alefmoreira.citytraveltracker.util.components.AMAnimator
+import com.alefmoreira.citytraveltracker.util.components.adapters.AddConnectionAdapter
+import com.alefmoreira.citytraveltracker.util.components.dialogs.AMConfirmationDialog
+import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
 import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.launch
 
 class RouteFragment : Fragment(R.layout.fragment_route) {
     private val routeViewModel: RouteViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var binding: FragmentRouteBinding
     private lateinit var originLayout: LinearLayoutCompat
     private lateinit var destinationLayout: LinearLayoutCompat
@@ -37,7 +45,12 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     private lateinit var connectionRecyclerView: RecyclerView
     private lateinit var btnSaveRoute: Button
     private lateinit var iconBack: ImageView
+    private lateinit var connectionRecyclerViewAdapter: AddConnectionAdapter
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        routeViewModel.isFirstRoute.value = homeViewModel.isFirstRoute()
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,24 +59,36 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         btnSaveRoute = binding.btnSaveRoute
         bindViews(binding)
         setupClickListeners()
-        setupSubscriptions()
 
         val apiKey = MAPS_API_KEY
         context?.let { Places.initialize(it, apiKey) }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (routeViewModel.isFirstRoute()) {
+                if (routeViewModel.isFirstRoute.value) {
                     originLayout.visibility = View.VISIBLE
                 }
                 setup()
+                setupSubscriptions()
+
+                if (routeViewModel.currentDestination.connections.isNotEmpty()) {
+                    connectionLayout.visibility = View.VISIBLE
+                    renderList(routeViewModel.currentDestination.connections)
+                }
+
+                routeViewModel.destinationStatus.collect {
+                    it.data?.let { route ->
+                        if (route.connections.isEmpty()) {
+                            connectionLayout.visibility = View.GONE
+                        }
+                    }
+                }
             }
         }
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                routeViewModel.clearRoutes()
-                findNavController().popBackStack()
+                showLeaveMessage()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(callback)
@@ -96,8 +121,8 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
                 setTextColor(resources.getColor(R.color.dark_3, null))
             }
             btnAddConnections.apply {
-                val imageView = getChildAt(0) as ImageView
-                val textView = getChildAt(1) as TextView
+                val imageView = getChildAt(ADD_CONNECTION_ICON_POSITION) as ImageView
+                val textView = getChildAt(ADD_CONNECTION_TEXT_POSITION) as TextView
                 val secondaryColor = resources.getColor(R.color.secondary_3, null)
 
                 imageView.setColorFilter(secondaryColor)
@@ -107,9 +132,6 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         if (routeViewModel.isButtonEnabled()) {
             btnSaveRoute.isEnabled = true
         }
-
-        renderList(routeViewModel.currentDestination.connections)
-
     }
 
     private fun setupClickListeners() {
@@ -130,12 +152,11 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
             }
         }
         iconBack.setOnClickListener {
-            routeViewModel.clearRoutes()
-            findNavController().popBackStack()
+            showLeaveMessage()
         }
     }
 
-    private fun setupSubscriptions() {
+    private fun setupSubscriptions() =
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.routeStatus.collect {
                 if (it.status == Status.SUCCESS) {
@@ -143,26 +164,55 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
                 }
             }
         }
-    }
 
     private fun renderList(connectionList: List<Connection>) {
-        if (connectionList.isNotEmpty()) {
-            connectionLayout.visibility = View.VISIBLE
-            connectionRecyclerView.apply {
+        connectionRecyclerViewAdapter = AddConnectionAdapter()
+        connectionRecyclerView.apply {
+            adapter = connectionRecyclerViewAdapter
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            val animator = AMAnimator(context)
+            itemAnimator = animator
+        }
+//        val test = connectionRecyclerView.itemAnimator
+//        (test as SimpleItemAnimator).supportsChangeAnimations = false
 
-                adapter = AddConnectionAdapter(connectionList)
-                layoutManager =
-                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            }
+        connectionRecyclerViewAdapter.connections = connectionList
+        connectionRecyclerViewAdapter.onDeleteClick = {
+            routeViewModel.removeConnection(it)
+        }
+        connectionRecyclerViewAdapter.onItemClick = {
+            val position = routeViewModel.currentDestination.connections.indexOf(it)
+            navigate(
+                CitySelectionTypeEnum.CONNECTION,
+                "",
+                connectionEditionPosition = position
+            )
         }
     }
 
-    private fun navigate(routeType: CitySelectionTypeEnum, selectedCity: String) {
+    private fun navigate(
+        routeType: CitySelectionTypeEnum,
+        selectedCity: String,
+        connectionEditionPosition: Int = DEFAULT_CONNECTION_POSITION
+    ) {
         findNavController().navigate(
             RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment(
                 routeType,
-                selectedCity
+                selectedCity,
+                connectionEditionPosition
             )
         )
+    }
+
+    private fun showLeaveMessage() {
+        val dialog = AMConfirmationDialog(requireContext(), DialogType.LEAVE)
+        dialog.apply {
+            onConfirm = {
+                routeViewModel.clearRoutes()
+                findNavController().popBackStack()
+            }
+            this.show()
+        }
     }
 }

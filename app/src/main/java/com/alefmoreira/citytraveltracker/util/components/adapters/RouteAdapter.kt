@@ -1,27 +1,27 @@
-package com.alefmoreira.citytraveltracker.adapters
+package com.alefmoreira.citytraveltracker.util.components.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.alefmoreira.citytraveltracker.data.Connection
-import com.alefmoreira.citytraveltracker.databinding.AdapterFirstConnectionBinding
-import com.alefmoreira.citytraveltracker.databinding.AdapterLastConnectionBinding
-import com.alefmoreira.citytraveltracker.databinding.AdapterMiddleConnectionBinding
-import com.alefmoreira.citytraveltracker.databinding.AdapterSingleConnectionBinding
+import com.alefmoreira.citytraveltracker.databinding.AdapterFirstRouteBinding
+import com.alefmoreira.citytraveltracker.databinding.AdapterLastRouteBinding
+import com.alefmoreira.citytraveltracker.databinding.AdapterMiddleRouteBinding
+import com.alefmoreira.citytraveltracker.databinding.AdapterSingleRouteBinding
+import com.alefmoreira.citytraveltracker.model.Route
 import com.alefmoreira.citytraveltracker.util.AdapterLayoutEnum
 import javax.inject.Inject
 
 
-class AddConnectionAdapter @Inject constructor(
-    private val connections: List<Connection>,
-//    private val onItemClick: ((AutocompletePrediction) -> Unit)? = null,
+class RouteAdapter @Inject constructor(
+    private val routes: List<Route>,
+//    private val onItemClick: ((Connection) -> Unit)? = null,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
-        return if (connections.size > 1) {
-            when (connections[position]) {
-                connections.first() -> AdapterLayoutEnum.FIRST.ordinal
-                connections.last() -> AdapterLayoutEnum.LAST.ordinal
+        return if (routes.size > 1) {
+            when (routes[position]) {
+                routes.first() -> AdapterLayoutEnum.FIRST.ordinal
+                routes.last() -> AdapterLayoutEnum.LAST.ordinal
                 else -> AdapterLayoutEnum.MIDDLE.ordinal
             }
         } else {
@@ -30,38 +30,38 @@ class AddConnectionAdapter @Inject constructor(
     }
 
     class SingleItemViewHolder(
-        private val binding: AdapterSingleConnectionBinding,
+        private val binding: AdapterSingleRouteBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(connection: Connection) {
-            binding.txtConnectionName.text = connection.name
+        fun bind(route: Route) {
+            binding.txtConnectionName.text = route.city.name
         }
     }
 
     class FirstItemViewHolder(
-        private val binding: AdapterFirstConnectionBinding,
+        private val binding: AdapterFirstRouteBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(connection: Connection) {
-            binding.txtConnectionName.text = connection.name
+        fun bind(route: Route) {
+            binding.txtConnectionName.text = route.city.name
         }
     }
 
     class LastItemViewHolder(
-        private val binding: AdapterLastConnectionBinding,
+        private val binding: AdapterLastRouteBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(connection: Connection) {
-            binding.txtConnectionName.text = connection.name
+        fun bind(route: Route) {
+            binding.txtConnectionName.text = route.city.name
         }
     }
 
     class MiddleItemViewHolder(
-        private val binding: AdapterMiddleConnectionBinding,
+        private val binding: AdapterMiddleRouteBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(connection: Connection) {
-            binding.txtConnectionName.text = connection.name
+        fun bind(route: Route) {
+            binding.txtConnectionName.text = route.city.name
         }
     }
 
@@ -70,7 +70,7 @@ class AddConnectionAdapter @Inject constructor(
 
         return when (viewType) {
             AdapterLayoutEnum.SINGLE.ordinal -> {
-                val binding = AdapterSingleConnectionBinding.inflate(
+                val binding = AdapterSingleRouteBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -78,7 +78,7 @@ class AddConnectionAdapter @Inject constructor(
                 SingleItemViewHolder(binding)
             }
             AdapterLayoutEnum.FIRST.ordinal -> {
-                val binding = AdapterFirstConnectionBinding.inflate(
+                val binding = AdapterFirstRouteBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -86,7 +86,7 @@ class AddConnectionAdapter @Inject constructor(
                 FirstItemViewHolder(binding)
             }
             AdapterLayoutEnum.LAST.ordinal -> {
-                val binding = AdapterLastConnectionBinding.inflate(
+                val binding = AdapterLastRouteBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -94,7 +94,7 @@ class AddConnectionAdapter @Inject constructor(
                 LastItemViewHolder(binding)
             }
             else -> {
-                val binding = AdapterMiddleConnectionBinding.inflate(
+                val binding = AdapterMiddleRouteBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -106,16 +106,16 @@ class AddConnectionAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val connection = connections[position]
+        val route = routes[position]
 
-        if (connections.size > 1) {
-            when (connection) {
-                connections.first() -> (holder as FirstItemViewHolder).bind(connection)
-                connections.last() -> (holder as LastItemViewHolder).bind(connection)
-                else -> (holder as MiddleItemViewHolder).bind(connection)
+        if (routes.size > 1) {
+            when (route) {
+                routes.first() -> (holder as FirstItemViewHolder).bind(route)
+                routes.last() -> (holder as LastItemViewHolder).bind(route)
+                else -> (holder as MiddleItemViewHolder).bind(route)
             }
         } else {
-            (holder as SingleItemViewHolder).bind(connection)
+            (holder as SingleItemViewHolder).bind(route)
         }
 
 
@@ -125,6 +125,6 @@ class AddConnectionAdapter @Inject constructor(
     }
 
     override fun getItemCount(): Int {
-        return connections.size
+        return routes.size
     }
 }

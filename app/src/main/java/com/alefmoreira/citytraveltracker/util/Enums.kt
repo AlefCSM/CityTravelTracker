@@ -13,7 +13,6 @@ enum class AdapterLayoutEnum(i: Int) {
     LAST(3)
 }
 
-
 enum class DialogType {
     LEAVE,
     CONFIRMATION,

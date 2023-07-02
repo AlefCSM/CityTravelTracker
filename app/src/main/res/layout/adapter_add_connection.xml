@@ -3,8 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/fragment_horizontal_padding"
-    android:background="@drawable/shape_route_middle_item"
-    android:gravity="center"
     android:orientation="horizontal">
 
     <androidx.appcompat.widget.AppCompatTextView

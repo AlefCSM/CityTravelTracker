@@ -6,12 +6,14 @@ import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.data.City
 import com.alefmoreira.citytraveltracker.data.Connection
 import com.alefmoreira.citytraveltracker.model.Route
+import com.alefmoreira.citytraveltracker.other.Constants.DEFAULT_CONNECTION_POSITION
 import com.alefmoreira.citytraveltracker.other.Resource
-import com.alefmoreira.citytraveltracker.other.Resource.Companion.init
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,28 +27,28 @@ class RouteViewModel @Inject constructor(
     var currentOrigin = Route(City(null, "", ""), mutableListOf())
         private set
 
-    private var _routes = mutableListOf<Route>()
-
-    val routes: List<Route> = _routes
+//    private var _routes =
+//    MutableStateFlow<List<Route>>(mutableListOf())
 
     private var _routeStatus = MutableSharedFlow<Resource<Route>>()
     val routeStatus: SharedFlow<Resource<Route>> = _routeStatus
 
     private var _originStatus = MutableSharedFlow<Resource<Route>>()
 
-    val originStatus: SharedFlow<Resource<Route>> = _originStatus
-
     private var _destinationStatus =
-        MutableStateFlow<Resource<Route>>(init())
+        MutableSharedFlow<Resource<Route>>()
 
-    val destinationStatus: StateFlow<Resource<Route>> = _destinationStatus
+    val destinationStatus: SharedFlow<Resource<Route>> = _destinationStatus
 
     var isLoading: Boolean = false
         private set
 
+
+    var isFirstRoute = MutableStateFlow(true)
+
     init {
-        observeRoutes()
         setupObservers()
+
     }
 
     fun setOrigin(name: String, placeId: String) = viewModelScope.launch(dispatcher.main) {
@@ -69,22 +71,33 @@ class RouteViewModel @Inject constructor(
         _destinationStatus.emit(Resource.success(currentDestination))
     }
 
-    fun addConnection(name: String, placeId: String) = viewModelScope.launch(dispatcher.main) {
-        if (!validateRoute(name, placeId)) {
-            _destinationStatus.emit(Resource.error("The fields must not be empty!", null))
-            return@launch
+    fun addConnection(name: String, placeId: String, position: Int) =
+        viewModelScope.launch(dispatcher.main) {
+            if (!validateRoute(name, placeId)) {
+                _destinationStatus.emit(Resource.error("The fields must not be empty!", null))
+                return@launch
+            }
+
+            if (currentDestination.city.name.isEmpty() || currentDestination.city.placeId.isEmpty()) {
+                _destinationStatus.emit(Resource.error("The city must not be empty!", null))
+                return@launch
+            }
+
+            val connection = Connection(cityId = 0, name = name, placeId = placeId)
+
+            if (currentDestination.connections.isNotEmpty() && position > DEFAULT_CONNECTION_POSITION) {
+                currentDestination.connections[position] = connection
+            } else {
+                currentDestination.connections.add(connection)
+            }
+            _destinationStatus.emit(Resource.success(currentDestination))
         }
 
-        if (currentDestination.city.name.isEmpty() || currentDestination.city.placeId.isEmpty()) {
-            _destinationStatus.emit(Resource.error("The city must not be empty!", null))
-            return@launch
+    fun removeConnection(connection: Connection) = viewModelScope.launch(dispatcher.main) {
+        currentDestination.connections.remove(connection)
+        if (currentDestination.connections.isEmpty()) {
+            _destinationStatus.emit(Resource.success(currentDestination))
         }
-
-        val connection = Connection(cityId = 0, name = name, placeId = placeId)
-
-        currentDestination.connections.add(connection)
-
-        _destinationStatus.emit(Resource.success(currentDestination))
     }
 
 
@@ -94,7 +107,7 @@ class RouteViewModel @Inject constructor(
 
     fun saveRoute() = viewModelScope.launch(dispatcher.main) {
         _routeStatus.emit(Resource.loading(null))
-        if (isFirstRoute() && isOriginEmpty()) {
+        if (isFirstRoute.value && isOriginEmpty()) {
             _routeStatus.emit(Resource.error("The origin must not be empty.", null))
             return@launch
         }
@@ -103,7 +116,7 @@ class RouteViewModel @Inject constructor(
             return@launch
         }
 
-        if (isFirstRoute()) {
+        if (isFirstRoute.value) {
             insertDestinationIntoDB(currentOrigin)
         }
 
@@ -121,11 +134,6 @@ class RouteViewModel @Inject constructor(
         currentDestination = Route(City(name = "", placeId = ""), mutableListOf())
     }
 
-    private fun observeRoutes() = viewModelScope.launch(dispatcher.main) {
-        repository.observeAllRoutes().collectLatest {
-            _routes = it.toMutableList()
-        }
-    }
 
     fun deleteRoute(route: Route) = viewModelScope.launch(dispatcher.main) {
         _routeStatus.emit(Resource.loading(null))
@@ -133,7 +141,6 @@ class RouteViewModel @Inject constructor(
         _routeStatus.emit(Resource.success(route))
     }
 
-    fun isFirstRoute(): Boolean = _routes.isEmpty()
     private fun isOriginEmpty(): Boolean =
         currentOrigin.city.name.isEmpty() || currentOrigin.city.placeId.isEmpty()
 
@@ -141,7 +148,7 @@ class RouteViewModel @Inject constructor(
         currentDestination.city.name.isEmpty() || currentDestination.city.placeId.isEmpty()
 
     fun isButtonEnabled(): Boolean {
-        return if (isFirstRoute()) {
+        return if (isFirstRoute.value) {
             isOriginEmpty().not() && isDestinationEmpty().not()
         } else {
             isDestinationEmpty().not()
