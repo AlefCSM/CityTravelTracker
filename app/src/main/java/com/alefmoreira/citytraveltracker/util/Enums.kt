@@ -12,3 +12,10 @@ enum class AdapterLayoutEnum(i: Int) {
     MIDDLE(2),
     LAST(3)
 }
+
+
+enum class DialogType {
+    LEAVE,
+    CONFIRMATION,
+    CUSTOM
+}
