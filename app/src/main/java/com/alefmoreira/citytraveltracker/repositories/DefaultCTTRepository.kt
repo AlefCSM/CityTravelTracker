@@ -7,7 +7,6 @@ import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 class DefaultCTTRepository @Inject constructor(
@@ -28,19 +27,18 @@ class DefaultCTTRepository @Inject constructor(
         cityDAO.deleteCity(route.city)
     }
 
-    override fun observeAllRoutes(): Flow<List<Route>> {
+    override suspend fun getAllRoutes(): Flow<List<Route>> {
         return channelFlow {
             val routeList = mutableListOf<Route>()
-            cityDAO.observeAllCities().collectLatest { citiesList ->
-                citiesList.forEach { city ->
-                    cityDAO.observeCityConnectionsByCityId(city.id!!)
-                        .collectLatest { connectionsList ->
-                            Route(city, connectionsList.toMutableList())
-                            routeList.add(Route(city, connectionsList.toMutableList()))
-                            send(routeList)
-                        }
-                }
+            val cities = cityDAO.getAllCities()
+
+            cities.forEach { city ->
+                val connections = cityDAO.getCityConnectionsByCityId(city.id!!)
+
+                routeList.add(Route(city, connections.toMutableList()))
             }
+
+            send(routeList)
         }
     }
 
@@ -52,8 +50,9 @@ class DefaultCTTRepository @Inject constructor(
         return try {
 
             val separator = "|"
-            val originsString = origins.joinToString(separator){ "placeId:${it.city.placeId}"}
-            val destinationsString = destinations.joinToString(separator){ "placeId:${it.city.placeId}"}
+            val originsString = origins.joinToString(separator) { "placeId:${it.city.placeId}" }
+            val destinationsString =
+                destinations.joinToString(separator) { "placeId:${it.city.placeId}" }
 
             val response = distanceMatrixAPI.getDistanceMatrix(originsString, destinationsString)
 

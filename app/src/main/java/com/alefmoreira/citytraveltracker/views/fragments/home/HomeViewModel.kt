@@ -58,7 +58,7 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        observeRoutes()
+        getRoutes()
     }
 
     fun setOrigin(name: String, placeId: String) {
@@ -136,8 +136,8 @@ class HomeViewModel @Inject constructor(
         currentDestination = Route(City(name = "", placeId = ""), mutableListOf())
     }
 
-    private fun observeRoutes() = viewModelScope.launch(dispatcher.main) {
-        repository.observeAllRoutes().collectLatest {
+    fun getRoutes() = viewModelScope.launch(dispatcher.io) {
+        repository.getAllRoutes().collectLatest {
             _routes.value = Event(Resource.success(it))
         }
     }

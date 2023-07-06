@@ -21,5 +21,13 @@
     <string name="ok">OK</string>
     <string name="no_network_connection">Sem conexão de rede!</string>
     <string name="verify_network_connection">Verifique sua conexão com a internet para continuar.</string>
+    <string name="distance">Distância percorrida</string>
+    <string name="time">Tempo total</string>
+    <string name="km">%1$d km</string>
+    <string name="hours">%1$d horas</string>
+    <string name="traveled_cities">Cidades visitadas</string>
+    <string name="show_connections">exibir conexões</string>
+    <string name="hide_connections">fechar conexões</string>
+
 
 </resources>

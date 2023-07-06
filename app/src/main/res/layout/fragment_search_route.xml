@@ -8,6 +8,7 @@
     android:paddingStart="@dimen/fragment_horizontal_padding"
     android:paddingTop="48dp"
     android:paddingEnd="@dimen/fragment_horizontal_padding"
+    android:background="@color/light_1"
     tools:context=".views.fragments.searchroute.SearchRouteFragment">
 
     <com.google.android.material.textfield.TextInputLayout

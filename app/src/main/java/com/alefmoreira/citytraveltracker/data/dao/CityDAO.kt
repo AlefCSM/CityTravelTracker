@@ -3,7 +3,6 @@ package com.alefmoreira.citytraveltracker.data.dao
 import androidx.room.*
 import com.alefmoreira.citytraveltracker.data.City
 import com.alefmoreira.citytraveltracker.data.Connection
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CityDAO {
@@ -14,7 +13,7 @@ interface CityDAO {
     suspend fun deleteCity(city: City)
 
     @Query("SELECT * FROM cities")
-    fun observeAllCities(): Flow<List<City>>
+    fun getAllCities(): List<City>
 
     @Insert(onConflict = OnConflictStrategy.NONE)
     suspend fun insertConnectionsList(connections: List<Connection>)
@@ -24,5 +23,5 @@ interface CityDAO {
 
     @Transaction
     @Query("Select * from connections where cityId = :cityId")
-    fun observeCityConnectionsByCityId(cityId: Long): Flow<List<Connection>>
+    fun getCityConnectionsByCityId(cityId: Long): List<Connection>
 }

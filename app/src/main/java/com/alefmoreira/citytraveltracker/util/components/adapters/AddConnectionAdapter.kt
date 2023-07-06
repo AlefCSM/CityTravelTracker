@@ -16,7 +16,7 @@ import com.alefmoreira.citytraveltracker.util.AdapterLayoutEnum
 class AddConnectionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val diffCallback = object : DiffUtil.ItemCallback<Connection>() {
         override fun areItemsTheSame(oldItem: Connection, newItem: Connection): Boolean {
-            return oldItem == newItem
+            return oldItem === newItem
         }
 
         override fun areContentsTheSame(oldItem: Connection, newItem: Connection): Boolean {

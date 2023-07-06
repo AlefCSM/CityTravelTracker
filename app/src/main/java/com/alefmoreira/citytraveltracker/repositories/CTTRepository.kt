@@ -11,7 +11,7 @@ interface CTTRepository {
 
     suspend fun deleteRoute(route: Route)
 
-    fun observeAllRoutes(): Flow<List<Route>>
+    suspend fun getAllRoutes(): Flow<List<Route>>
 
     suspend fun getDistanceMatrix(origins:List<Route>,destinations:List<Route>): Resource<DistanceMatrixResponse>
 }
