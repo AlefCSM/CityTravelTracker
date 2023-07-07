@@ -135,7 +135,7 @@ class RouteViewModel @Inject constructor(
     }
 
 
-    fun deleteRoute(route: Route) = viewModelScope.launch(dispatcher.main) {
+    fun deleteRoute(route: Route) = viewModelScope.launch(dispatcher.io) {
         _routeStatus.emit(Resource.loading(null))
         repository.deleteRoute(route)
         _routeStatus.emit(Resource.success(route))
@@ -157,5 +157,12 @@ class RouteViewModel @Inject constructor(
 
     private fun setupObservers() = viewModelScope.launch(dispatcher.main) {
         routeStatus.collect { isLoading = it.status == Status.LOADING }
+    }
+
+    fun getRoute(id: Long) = viewModelScope.launch(dispatcher.io) {
+        _destinationStatus.emit(Resource.loading(null))
+
+        currentDestination = repository.getRouteById(id)
+        _destinationStatus.emit(Resource.success(currentDestination))
     }
 }

@@ -7,6 +7,7 @@ import com.alefmoreira.citytraveltracker.repositories.FakeCTTRepository
 import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -44,10 +45,11 @@ class RouteViewModelTest {
     @Test
     fun `insert first route without origin, returns error`() = runTest {
         viewModel.setDestination("Curitiba", "123")
+        val emitter = viewModel.routeStatus
 
         viewModel.saveRoute()
 
-
+        advanceUntilIdle()
 
         viewModel.routeStatus.collect { value ->
             assertThat(value.status).isEqualTo(Status.ERROR)

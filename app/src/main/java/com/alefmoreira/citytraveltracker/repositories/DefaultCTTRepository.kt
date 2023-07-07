@@ -27,6 +27,13 @@ class DefaultCTTRepository @Inject constructor(
         cityDAO.deleteCity(route.city)
     }
 
+    override suspend fun getRouteById(id: Long): Route {
+        val city = cityDAO.getCityById(id)
+        val connections = cityDAO.getCityConnectionsByCityId(city.id!!)
+
+        return Route(city, connections.toMutableList())
+    }
+
     override suspend fun getAllRoutes(): Flow<List<Route>> {
         return channelFlow {
             val routeList = mutableListOf<Route>()

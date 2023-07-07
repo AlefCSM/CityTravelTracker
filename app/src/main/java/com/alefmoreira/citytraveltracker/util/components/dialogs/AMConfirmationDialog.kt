@@ -47,7 +47,7 @@ class AMConfirmationDialog(private val context: Context, private val type: Dialo
                 txtMsg.text = msg
                 btnExclude.text = exit
             }
-            DialogType.CONFIRMATION -> {
+            DialogType.DELETE -> {
                 val string = String.format(res.getString(R.string.exclude_city), city)
                 txtMsg.text = htmlString(string)
             }

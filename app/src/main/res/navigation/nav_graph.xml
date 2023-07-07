@@ -20,6 +20,10 @@
         <action
             android:id="@+id/action_routeFragment_to_searchRouteFragment"
             app:destination="@id/searchRouteFragment" />
+        <argument
+            android:name="routeId"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
     <fragment
         android:id="@+id/searchRouteFragment"

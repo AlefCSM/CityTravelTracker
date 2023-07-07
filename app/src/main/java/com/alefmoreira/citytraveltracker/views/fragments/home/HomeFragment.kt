@@ -63,6 +63,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             it.peekContent().data?.let { list ->
                 routeAdapter = RouteAdapter()
                 routeAdapter.routes = list
+                routeAdapter.onItemClick = { route ->
+                    route.city.id?.let { id ->
+                        findNavController().navigate(
+                            (HomeFragmentDirections.actionHomeFragmentToRouteFragment(
+                                id
+                            ))
+                        )
+                    }
+                }
 
                 routeRecyclerView.apply {
                     adapter = routeAdapter
@@ -72,7 +81,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     itemAnimator = animator
                 }
             }
-
         }
     }
 }

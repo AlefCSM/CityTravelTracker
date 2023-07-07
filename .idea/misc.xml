@@ -3,16 +3,59 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/connection_line_divider.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ctt_edit_text_.xml" value="0.18" />
+        <entry key="app/src/main/res/drawable/ctt_edit_text_shape.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/cursor_color.xml" value="0.119" />
+        <entry key="app/src/main/res/drawable/ic_add.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_add_2.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_back.xml" value="0.1665" />
+        <entry key="app/src/main/res/drawable/ic_dot.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_erase.xml" value="0.119" />
+        <entry key="app/src/main/res/drawable/ic_erase_connection.xml" value="0.1485" />
+        <entry key="app/src/main/res/drawable/ic_imgnocity.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_loading.xml" value="0.113" />
+        <entry key="app/src/main/res/drawable/ic_origin.xml" value="0.119" />
+        <entry key="app/src/main/res/drawable/ic_powered_by_google.xml" value="0.1685" />
+        <entry key="app/src/main/res/drawable/logo_ctt.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/powered_by_google.xml" value="0.1805" />
+        <entry key="app/src/main/res/drawable/prediction_line_divider.xml" value="0.18" />
+        <entry key="app/src/main/res/drawable/shape_button.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_button_disabled.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_button_outline.xml" value="0.1535" />
+        <entry key="app/src/main/res/drawable/shape_card.xml" value="0.1535" />
+        <entry key="app/src/main/res/drawable/shape_card_list.xml" value="0.1245" />
+        <entry key="app/src/main/res/drawable/shape_connection_last_item.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_connection_middle_item.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_first_list_item.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_route_middle_item.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/shape_route_single_item.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/splash.xml" value="0.1" />
         <entry key="app/src/main/res/font/roboto.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/font/roboto_condensed_bold.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/font/roboto_semi_bold.xml" value="0.19444444444444445" />
+        <entry key="app/src/main/res/font/test.xml" value="0.17777777777777778" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.159375" />
+        <entry key="app/src/main/res/layout/adapter_add_connection.xml" value="0.21477355957031263" />
+        <entry key="app/src/main/res/layout/adapter_first_connection.xml" value="0.2729660034179688" />
+        <entry key="app/src/main/res/layout/adapter_first_route.xml" value="0.16163141993957703" />
+        <entry key="app/src/main/res/layout/adapter_last_connection.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/adapter_last_route.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/adapter_middle_connection.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/adapter_middle_route.xml" value="0.1" />
         <entry key="app/src/main/res/layout/adapter_place.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/adapter_place_prediction.xml" value="1.0" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_route.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/adapter_place_prediction.xml" value="0.6302622132382151" />
+        <entry key="app/src/main/res/layout/adapter_single_connection.xml" value="0.21829710144927536" />
+        <entry key="app/src/main/res/layout/adapter_single_route.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/card_alert.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/card_confirmation.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/card_yes_no.xml" value="0.6093118286132814" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.3541666666666667" />
+        <entry key="app/src/main/res/layout/fragment_route.xml" value="0.31841432225063937" />
         <entry key="app/src/main/res/layout/fragment_search_address.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_search_route.xml" value="0.3070652173913043" />
-        <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_search_route.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.5" />
       </map>
     </option>
   </component>

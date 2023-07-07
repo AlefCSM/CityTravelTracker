@@ -15,6 +15,6 @@ enum class AdapterLayoutEnum(i: Int) {
 
 enum class DialogType {
     LEAVE,
-    CONFIRMATION,
+    DELETE,
     CUSTOM
 }

@@ -127,11 +127,21 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_save_route"
-            style="@style/OrangeButtonOutline"
+            style="@style/OrangeButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:enabled="true"
             android:text="@string/save_trip" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_delete_route"
+            style="@style/OrangeButtonOutline"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_height="60dp"
+            android:enabled="true"
+            android:text="@string/delete_trip"
+            android:visibility="gone" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.core.widget.NestedScrollView>

@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.BuildConfig.MAPS_API_KEY
@@ -44,11 +45,19 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     private lateinit var txtDestination: TextView
     private lateinit var connectionRecyclerView: RecyclerView
     private lateinit var btnSaveRoute: Button
+    private lateinit var btnDeleteRoute: Button
     private lateinit var iconBack: ImageView
     private lateinit var connectionRecyclerViewAdapter: AddConnectionAdapter
 
+    private val arguments: RouteFragmentArgs by navArgs()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         routeViewModel.isFirstRoute.value = homeViewModel.isFirstRoute()
+
+        if (arguments.routeId > 0) {
+            routeViewModel.getRoute(arguments.routeId)
+        }
+
         super.onCreate(savedInstanceState)
     }
 
@@ -56,7 +65,6 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRouteBinding.bind(view)
 
-        btnSaveRoute = binding.btnSaveRoute
         bindViews(binding)
         setupClickListeners()
 
@@ -96,14 +104,16 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     }
 
     private fun bindViews(binding: FragmentRouteBinding) {
-        originLayout = binding.originLayout
-        destinationLayout = binding.destinationLayout
-        connectionLayout = binding.connectionLayout
         btnAddConnections = binding.btnAddConnections
+        btnDeleteRoute = binding.btnDeleteRoute
+        btnSaveRoute = binding.btnSaveRoute
+        connectionLayout = binding.connectionLayout
+        connectionRecyclerView = binding.connectionList
+        destinationLayout = binding.destinationLayout
+        iconBack = binding.iconBack
+        originLayout = binding.originLayout
         txtOrigin = binding.txtOrigin
         txtDestination = binding.txtDestination
-        connectionRecyclerView = binding.connectionList
-        iconBack = binding.iconBack
     }
 
     private fun setup() {
@@ -132,6 +142,9 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         if (routeViewModel.isButtonEnabled()) {
             btnSaveRoute.isEnabled = true
         }
+        if (arguments.routeId > 0) {
+            btnDeleteRoute.visibility = View.VISIBLE
+        }
     }
 
     private fun setupClickListeners() {
@@ -149,6 +162,11 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         btnSaveRoute.setOnClickListener {
             if (!routeViewModel.isLoading) {
                 routeViewModel.saveRoute()
+            }
+        }
+        btnDeleteRoute.setOnClickListener {
+            if (!routeViewModel.isLoading) {
+                showDeleteMessage()
             }
         }
         iconBack.setOnClickListener {
@@ -209,6 +227,20 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         val dialog = AMConfirmationDialog(requireContext(), DialogType.LEAVE)
         dialog.apply {
             onConfirm = {
+                routeViewModel.clearRoutes()
+                findNavController().popBackStack()
+            }
+            this.show()
+        }
+    }
+
+    private fun showDeleteMessage() {
+        val route = routeViewModel.currentDestination
+        val dialog = AMConfirmationDialog(requireContext(), DialogType.DELETE)
+        dialog.apply {
+            city = route.city.name
+            onConfirm = {
+                routeViewModel.deleteRoute(route)
                 routeViewModel.clearRoutes()
                 findNavController().popBackStack()
             }

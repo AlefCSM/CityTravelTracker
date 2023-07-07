@@ -13,6 +13,7 @@
     <string name="add_connections">add conexões</string>
     <string name="my_connections">Minhas conexões</string>
     <string name="save_trip">Salvar viagem</string>
+    <string name="delete_trip">Excluir viagem</string>
     <string name="exclude_city">Tem certeza que deseja excluir a cidade &lt;b>%1$s&lt;/b>?</string>
     <string name="exit_city">Tem certeza que deseja sair?\nOs dados não serão salvos</string>
     <string name="cancel">Cancelar</string>
