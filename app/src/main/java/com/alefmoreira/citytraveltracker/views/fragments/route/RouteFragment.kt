@@ -29,6 +29,7 @@ import com.alefmoreira.citytraveltracker.util.DialogType
 import com.alefmoreira.citytraveltracker.util.components.AMAnimator
 import com.alefmoreira.citytraveltracker.util.components.adapters.AddConnectionAdapter
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMConfirmationDialog
+import com.alefmoreira.citytraveltracker.util.components.dialogs.AMLoadingDialog
 import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
 import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.launch
@@ -48,6 +49,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     private lateinit var btnDeleteRoute: Button
     private lateinit var iconBack: ImageView
     private lateinit var connectionRecyclerViewAdapter: AddConnectionAdapter
+    private lateinit var dialog: AMLoadingDialog
 
     private val arguments: RouteFragmentArgs by navArgs()
 
@@ -118,6 +120,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
 
     private fun setup() {
         val origin = routeViewModel.currentOrigin
+        dialog = AMLoadingDialog(requireContext())
         if (origin.city.name.isNotEmpty()) {
             txtOrigin.apply {
                 text = origin.city.name
@@ -177,8 +180,14 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     private fun setupSubscriptions() =
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.routeStatus.collect {
+                if (it.status == Status.LOADING) {
+                    dialog.show()
+                } else {
+                    dialog.hide()
+                }
+
                 if (it.status == Status.SUCCESS) {
-                    findNavController().popBackStack()
+                    returnToHome()
                 }
             }
         }
@@ -227,8 +236,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         val dialog = AMConfirmationDialog(requireContext(), DialogType.LEAVE)
         dialog.apply {
             onConfirm = {
-                routeViewModel.clearRoutes()
-                findNavController().popBackStack()
+                returnToHome()
             }
             this.show()
         }
@@ -241,10 +249,14 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
             city = route.city.name
             onConfirm = {
                 routeViewModel.deleteRoute(route)
-                routeViewModel.clearRoutes()
-                findNavController().popBackStack()
+                this.dismiss()
             }
             this.show()
         }
+    }
+
+    private fun returnToHome() {
+        routeViewModel.clearRoutes()
+        findNavController().popBackStack()
     }
 }

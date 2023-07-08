@@ -7,10 +7,10 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.TextView
-import com.alefmoreira.citytraveltracker.databinding.CardAlertBinding
+import com.alefmoreira.citytraveltracker.databinding.DialogAlertBinding
 
 class AMAlertDialog(private val context: Context) {
-    private lateinit var binding: CardAlertBinding
+    private lateinit var binding: DialogAlertBinding
 
     private val dialog = Dialog(context)
     var onConfirm: (() -> Unit)? = null
@@ -23,7 +23,7 @@ class AMAlertDialog(private val context: Context) {
     var message: String = ""
 
     fun show() {
-        binding = CardAlertBinding.inflate(LayoutInflater.from(context))
+        binding = DialogAlertBinding.inflate(LayoutInflater.from(context))
         dialog.setContentView(binding.root)
         bind()
         setupText()

@@ -8,11 +8,11 @@ import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import com.alefmoreira.citytraveltracker.R
-import com.alefmoreira.citytraveltracker.databinding.CardConfirmationBinding
+import com.alefmoreira.citytraveltracker.databinding.DialogConfirmationBinding
 import com.alefmoreira.citytraveltracker.util.DialogType
 
 class AMConfirmationDialog(private val context: Context, private val type: DialogType) {
-    private lateinit var binding: CardConfirmationBinding
+    private lateinit var binding: DialogConfirmationBinding
 
     private val dialog = Dialog(context)
     var onConfirm: (() -> Unit)? = null
@@ -25,11 +25,15 @@ class AMConfirmationDialog(private val context: Context, private val type: Dialo
     var city: String = ""
 
     fun show() {
-        binding = CardConfirmationBinding.inflate(LayoutInflater.from(context))
+        binding = DialogConfirmationBinding.inflate(LayoutInflater.from(context))
         dialog.setContentView(binding.root)
         setup()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
+    }
+
+    fun dismiss() {
+        dialog.dismiss()
     }
 
     private fun setup() {
