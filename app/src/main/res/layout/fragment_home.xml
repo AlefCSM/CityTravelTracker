@@ -126,6 +126,10 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.core.widget.NestedScrollView>
 
+    <include
+        android:id="@+id/include"
+        layout="@layout/layout_no_connection" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_start"
         fabCustomSize="64dp"

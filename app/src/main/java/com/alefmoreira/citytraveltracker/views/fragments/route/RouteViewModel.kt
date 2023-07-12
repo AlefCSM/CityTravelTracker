@@ -6,29 +6,31 @@ import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.data.City
 import com.alefmoreira.citytraveltracker.data.Connection
 import com.alefmoreira.citytraveltracker.model.Route
+import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.other.Constants.DEFAULT_CONNECTION_POSITION
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RouteViewModel @Inject constructor(
     private val repository: CTTRepository,
-    private val dispatcher: DispatcherProvider
+    private val dispatcher: DispatcherProvider,
+    private val networkObserver: NetworkObserver
 ) : ViewModel() {
+
+    private val _networkStatus = MutableStateFlow(NetworkObserver.NetworkStatus.Available)
+
+    val networkStatus: StateFlow<NetworkObserver.NetworkStatus> = _networkStatus
+
     var currentDestination = Route(City(null, "", ""), mutableListOf())
         private set
     var currentOrigin = Route(City(null, "", ""), mutableListOf())
         private set
-
-//    private var _routes =
-//    MutableStateFlow<List<Route>>(mutableListOf())
 
     private var _routeStatus = MutableSharedFlow<Resource<Route>>()
     val routeStatus: SharedFlow<Resource<Route>> = _routeStatus
@@ -43,12 +45,17 @@ class RouteViewModel @Inject constructor(
     var isLoading: Boolean = false
         private set
 
-
     var isFirstRoute = MutableStateFlow(true)
 
     init {
         setupObservers()
+        observeNetwork()
+    }
 
+    private fun observeNetwork() = viewModelScope.launch(dispatcher.io) {
+        networkObserver.observe().collectLatest {
+            _networkStatus.value = it
+        }
     }
 
     fun setOrigin(name: String, placeId: String) = viewModelScope.launch(dispatcher.main) {

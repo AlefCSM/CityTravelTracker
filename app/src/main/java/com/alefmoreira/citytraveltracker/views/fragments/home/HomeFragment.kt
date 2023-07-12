@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.databinding.FragmentHomeBinding
+import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.util.components.AMAnimator
 import com.alefmoreira.citytraveltracker.util.components.adapters.RouteAdapter
 import kotlinx.coroutines.launch
@@ -73,14 +74,36 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }
                 }
 
-                routeRecyclerView.apply {
-                    adapter = routeAdapter
-                    layoutManager =
-                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    val animator = AMAnimator(context)
-                    itemAnimator = animator
+                        routeRecyclerView.apply {
+                            adapter = routeAdapter
+                            layoutManager =
+                                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                            val animator = AMAnimator(context)
+                            itemAnimator = animator
+                        }
+                    }
+                } else {
+                    binding.layoutNoRoutes.visibility = View.VISIBLE
+                    binding.layoutRoutes.visibility = View.GONE
                 }
             }
         }
+    }
+
+    private fun networkSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.networkStatus.collect {
+                if (it == NetworkObserver.NetworkStatus.Available) {
+                    binding.include.layoutNoConnection.visibility = View.GONE
+                } else {
+                    binding.include.layoutNoConnection.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun setupSubscriptions() {
+        routeSubscription()
+        networkSubscription()
     }
 }

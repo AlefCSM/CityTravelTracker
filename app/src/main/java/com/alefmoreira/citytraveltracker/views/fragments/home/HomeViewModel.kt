@@ -3,12 +3,10 @@ package com.alefmoreira.citytraveltracker.views.fragments.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
-import com.alefmoreira.citytraveltracker.data.City
-import com.alefmoreira.citytraveltracker.data.Connection
 import com.alefmoreira.citytraveltracker.model.Route
+import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.other.Event
 import com.alefmoreira.citytraveltracker.other.Resource
-import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,13 +19,16 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: CTTRepository,
-    private val dispatcher: DispatcherProvider
+    private val dispatcher: DispatcherProvider,
+    private val networkObserver: NetworkObserver
 ) : ViewModel() {
 
 
     private var currentDestination = Route(City(null, "", ""), mutableListOf())
     private var currentOrigin = Route(City(null, "", ""), mutableListOf())
 
+    private var _networkStatus = MutableStateFlow(NetworkObserver.NetworkStatus.Available)
+    val networkStatus: StateFlow<NetworkObserver.NetworkStatus> = _networkStatus
 
     private var _routes =
         MutableStateFlow<Event<Resource<List<Route>>>>(Event(Resource.init()))
@@ -59,44 +60,22 @@ class HomeViewModel @Inject constructor(
 
     init {
         getRoutes()
+        checkNetwork()
+        observeNetwork()
     }
 
-    fun setOrigin(name: String, placeId: String) {
-        if (!validateRoute(name, placeId)) {
-            _originStatus.value = Event(Resource.error("The fields must not be empty!", null))
-            return
+    private fun checkNetwork() {
+        if (networkObserver.isConnected()) {
+            _networkStatus.value = NetworkObserver.NetworkStatus.Available
+        } else {
+            _networkStatus.value = NetworkObserver.NetworkStatus.Unavailable
         }
-        currentOrigin.city.name = name
-        currentOrigin.city.placeId = placeId
-        _originStatus.value = Event(Resource.success(currentOrigin))
     }
 
-    fun setDestination(name: String, placeId: String) {
-        if (!validateRoute(name, placeId)) {
-            _destinationStatus.value = Event(Resource.error("The fields must not be empty!", null))
-            return
+    private fun observeNetwork() = viewModelScope.launch(dispatcher.io) {
+        networkObserver.observe().collectLatest {
+            _networkStatus.value = it
         }
-        currentDestination.city.name = name
-        currentDestination.city.placeId = placeId
-        _destinationStatus.value = Event(Resource.success(currentDestination))
-    }
-
-    fun addConnection(name: String, placeId: String) {
-        if (!validateRoute(name, placeId)) {
-            _destinationStatus.value = Event(Resource.error("The fields must not be empty!", null))
-            return
-        }
-
-        if (currentDestination.city.name.isEmpty() || currentDestination.city.placeId.isEmpty()) {
-            _destinationStatus.value = Event(Resource.error("The city must not be empty!", null))
-            return
-        }
-
-        val connection = Connection(cityId = 0, name = name, placeId = placeId)
-
-        currentDestination.connections.add(connection)
-
-        _destinationStatus.value = Event(Resource.success(currentDestination))
     }
 
 

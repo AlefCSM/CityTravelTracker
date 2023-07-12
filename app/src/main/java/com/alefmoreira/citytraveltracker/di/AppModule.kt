@@ -6,6 +6,8 @@ import com.alefmoreira.citytraveltracker.coroutines.DefaultDispatchers
 import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.data.CTTDatabase
 import com.alefmoreira.citytraveltracker.data.dao.CityDAO
+import com.alefmoreira.citytraveltracker.network.NetworkObserver
+import com.alefmoreira.citytraveltracker.network.NetworkObserverImpl
 import com.alefmoreira.citytraveltracker.other.Constants.BASE_URL
 import com.alefmoreira.citytraveltracker.other.Constants.DATABASE_NAME
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
@@ -64,4 +66,11 @@ object AppModule {
     @Provides
     fun providePlacesClient(@ApplicationContext context: Context): PlacesClient =
         Places.createClient(context)
+
+    @Singleton
+    @Provides
+    fun provideNetworkStatus(
+        @ApplicationContext context: Context,
+        dispatcher: DispatcherProvider
+    ): NetworkObserver = NetworkObserverImpl(context, dispatcher)
 }

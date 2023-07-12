@@ -20,6 +20,7 @@ import com.alefmoreira.citytraveltracker.BuildConfig.MAPS_API_KEY
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.data.Connection
 import com.alefmoreira.citytraveltracker.databinding.FragmentRouteBinding
+import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.other.Constants.ADD_CONNECTION_ICON_POSITION
 import com.alefmoreira.citytraveltracker.other.Constants.ADD_CONNECTION_TEXT_POSITION
 import com.alefmoreira.citytraveltracker.other.Constants.DEFAULT_CONNECTION_POSITION
@@ -28,6 +29,7 @@ import com.alefmoreira.citytraveltracker.util.CitySelectionTypeEnum
 import com.alefmoreira.citytraveltracker.util.DialogType
 import com.alefmoreira.citytraveltracker.util.components.AMAnimator
 import com.alefmoreira.citytraveltracker.util.components.adapters.AddConnectionAdapter
+import com.alefmoreira.citytraveltracker.util.components.dialogs.AMAlertDialog
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMConfirmationDialog
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMLoadingDialog
 import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
@@ -80,6 +82,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
                 }
                 setup()
                 setupSubscriptions()
+                networkSubscription()
 
                 if (routeViewModel.currentDestination.connections.isNotEmpty()) {
                     connectionLayout.visibility = View.VISIBLE
@@ -201,8 +204,6 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
             val animator = AMAnimator(context)
             itemAnimator = animator
         }
-//        val test = connectionRecyclerView.itemAnimator
-//        (test as SimpleItemAnimator).supportsChangeAnimations = false
 
         connectionRecyclerViewAdapter.connections = connectionList
         connectionRecyclerViewAdapter.onDeleteClick = {
@@ -223,13 +224,17 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         selectedCity: String,
         connectionEditionPosition: Int = DEFAULT_CONNECTION_POSITION
     ) {
-        findNavController().navigate(
-            RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment(
-                routeType,
-                selectedCity,
-                connectionEditionPosition
+        if (routeViewModel.networkStatus.value == NetworkObserver.NetworkStatus.Available) {
+            findNavController().navigate(
+                RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment(
+                    routeType,
+                    selectedCity,
+                    connectionEditionPosition
+                )
             )
-        )
+        } else {
+            showAlertMessage()
+        }
     }
 
     private fun showLeaveMessage() {
@@ -255,8 +260,25 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         }
     }
 
+    private fun showAlertMessage() {
+        val dialog = AMAlertDialog(requireContext())
+        dialog.show()
+    }
+
     private fun returnToHome() {
         routeViewModel.clearRoutes()
         findNavController().popBackStack()
+    }
+
+    private fun networkSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            routeViewModel.networkStatus.collect {
+                if (it == NetworkObserver.NetworkStatus.Available) {
+                    binding.include.layoutNoConnection.visibility = View.GONE
+                } else {
+                    binding.include.layoutNoConnection.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }

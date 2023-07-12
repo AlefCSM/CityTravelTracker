@@ -20,6 +20,7 @@
     <string name="exclude">Excluir</string>
     <string name="exit">Sair</string>
     <string name="ok">OK</string>
+    <string name="no_network_access">Sem conexão a internet</string>
     <string name="no_network_connection">Sem conexão de rede!</string>
     <string name="verify_network_connection">Verifique sua conexão com a internet para continuar.</string>
     <string name="distance">Distância percorrida</string>
