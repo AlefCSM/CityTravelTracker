@@ -13,7 +13,7 @@
     <dimen name="no_drawable_start_padding">-18dp</dimen>
     <dimen name="no_drawable_end_padding">-14dp</dimen>
     <dimen name="route_fragment_padding_top">24dp</dimen>
-    <dimen name="home_fragment_padding_top">24dp</dimen>
+    <dimen name="home_fragment_padding_top">64dp</dimen>
     <dimen name="card_padding">32dp</dimen>
     <dimen name="fab_margin">32dp</dimen>
     <dimen name="dialog_vertical_padding">50dp</dimen>

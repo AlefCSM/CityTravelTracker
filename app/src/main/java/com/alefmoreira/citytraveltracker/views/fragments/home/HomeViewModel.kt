@@ -23,17 +23,19 @@ class HomeViewModel @Inject constructor(
     private val networkObserver: NetworkObserver
 ) : ViewModel() {
 
+    private var _kilometers = MutableStateFlow(0.0)
+    val kilometers: StateFlow<Double> = _kilometers
 
-    private var currentDestination = Route(City(null, "", ""), mutableListOf())
-    private var currentOrigin = Route(City(null, "", ""), mutableListOf())
+    private var _hours = MutableStateFlow(0.0)
+    val hours: StateFlow<Double> = _hours
 
     private var _networkStatus = MutableStateFlow(NetworkObserver.NetworkStatus.Available)
     val networkStatus: StateFlow<NetworkObserver.NetworkStatus> = _networkStatus
 
     private var _routes =
-        MutableStateFlow<Event<Resource<List<Route>>>>(Event(Resource.init()))
+        MutableStateFlow<List<Route>>(mutableListOf())
 
-    val routes: StateFlow<Event<Resource<List<Route>>>> = _routes
+    val routes: StateFlow<List<Route>> = _routes
 
     private var _routeStatus = MutableStateFlow<Event<Resource<Route>>>(Event(Resource.init()))
     val routeStatus: StateFlow<Event<Resource<Route>>> = _routeStatus
@@ -78,60 +80,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-    private fun validateRoute(name: String, placeId: String): Boolean =
-        name.isNotEmpty() && placeId.isNotEmpty()
-
-
-    fun saveRoute() {
-        if (_routeStatus.value.peekContent().status != Status.LOADING) {
-            _routeStatus.value = Event(Resource.loading(null))
-            if (isFirstRoute() && isOriginEmpty()) {
-                _routeStatus.value = Event(Resource.error("The origin must not be empty.", null))
-                return
-            }
-            if (isDestinationEmpty()) {
-                _routeStatus.value =
-                    Event(Resource.error("The destination must not be empty.", null))
-                return
-            }
-
-            if (isFirstRoute()) {
-                insertDestinationIntoDB(currentOrigin)
-            }
-
-            insertDestinationIntoDB(currentDestination)
-            _routeStatus.value = Event(Resource.success(currentDestination))
-            clearRoutes()
-        }
-    }
-
-    private fun insertDestinationIntoDB(route: Route) = viewModelScope.launch(dispatcher.main) {
-        repository.insertRoute(route)
-    }
-
-    fun clearRoutes() {
-        currentOrigin = Route(City(name = "", placeId = ""), mutableListOf())
-        currentDestination = Route(City(name = "", placeId = ""), mutableListOf())
-    }
-
-    fun getRoutes() = viewModelScope.launch(dispatcher.io) {
+    private fun getRoutes() = viewModelScope.launch(dispatcher.io) {
         repository.getAllRoutes().collectLatest {
-            _routes.value = Event(Resource.success(it))
+            _routes.value = it
         }
-    }
-
-    fun deleteRoute(route: Route) = viewModelScope.launch(dispatcher.main) {
-        if (_routeStatus.value.peekContent().status != Status.LOADING) {
-            _routeStatus.value = Event(Resource.loading(null))
-            repository.deleteRoute(route)
-            _routeStatus.value = Event(Resource.success(route))
-        }
-
     }
 
     fun getDistanceMatrix() {
-        if ((routes.value.peekContent().data?.size ?: 0) <= 1) {
+        if ((routes.value.size) <= 1) {
             _distanceMatrixStatus.value =
                 Event(Resource.error("There must be at least 2 routes.", null))
             return
@@ -153,13 +109,9 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun isFirstRoute(): Boolean = _routes.value.peekContent().data?.isEmpty() ?: false
-    fun isOriginEmpty(): Boolean =
-        currentOrigin.city.name.isEmpty() || currentOrigin.city.placeId.isEmpty()
+    fun isFirstRoute(): Boolean = _routes.value.isEmpty()
 
-    fun isDestinationEmpty(): Boolean =
-        currentDestination.city.name.isEmpty() || currentDestination.city.placeId.isEmpty()
+    fun getOrigins(): List<Route> = routes.value.dropLast(1)
 
-    fun getOrigins(): List<Route> = routes.value.peekContent().data?.dropLast(1) ?: emptyList()
-    fun getDestinations(): List<Route> = routes.value.peekContent().data?.drop(1) ?: emptyList()
+    fun getDestinations(): List<Route> = routes.value.drop(1)
 }

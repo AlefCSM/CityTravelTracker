@@ -36,19 +36,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding = FragmentHomeBinding.bind(view)
         bind()
         val btnStart = binding.btnStart
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getRoutes()
-                setupSubscription()
-            }
-        }
-
-
         btnStart.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToRouteFragment())
         }
+        txtMileage.text =
+            String.format(resources.getString(R.string.km), viewModel.kilometers.value.toString())
+        txtHours.text =
+            String.format(resources.getString(R.string.hours), viewModel.hours.value.toString())
 
+        setupSubscriptions()
     }
 
     private fun bind() {
@@ -59,33 +55,39 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         routeRecyclerView = binding.routeList
     }
 
-    private suspend fun setupSubscription() {
-        viewModel.routes.collect {
-            it.peekContent().data?.let { list ->
-                routeAdapter = RouteAdapter()
-                routeAdapter.routes = list
-                routeAdapter.onItemClick = { route ->
-                    route.city.id?.let { id ->
-                        findNavController().navigate(
-                            (HomeFragmentDirections.actionHomeFragmentToRouteFragment(
-                                id
-                            ))
-                        )
+    private fun routeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.routes.collect { list ->
+
+                if (list.isEmpty()) {
+                    binding.layoutNoRoutes.visibility = View.VISIBLE
+                    binding.layoutRoutes.visibility = View.GONE
+                } else {
+                    binding.layoutNoRoutes.visibility = View.GONE
+                    binding.layoutRoutes.visibility = View.VISIBLE
+
+                    routeAdapter = RouteAdapter()
+                    routeAdapter.routes = list
+                    routeAdapter.onItemClick = { route ->
+
+                        route.city.id?.let { id ->
+                            findNavController().navigate(
+                                (HomeFragmentDirections.actionHomeFragmentToRouteFragment(
+                                    id
+                                ))
+                            )
+                        }
+                    }
+
+                    routeRecyclerView.apply {
+                        adapter = routeAdapter
+                        layoutManager =
+                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        val animator = AMAnimator(context)
+                        itemAnimator = animator
                     }
                 }
 
-                        routeRecyclerView.apply {
-                            adapter = routeAdapter
-                            layoutManager =
-                                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                            val animator = AMAnimator(context)
-                            itemAnimator = animator
-                        }
-                    }
-                } else {
-                    binding.layoutNoRoutes.visibility = View.VISIBLE
-                    binding.layoutRoutes.visibility = View.GONE
-                }
             }
         }
     }
