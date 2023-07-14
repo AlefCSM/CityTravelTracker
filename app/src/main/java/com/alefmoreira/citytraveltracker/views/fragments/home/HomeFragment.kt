@@ -44,6 +44,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         txtHours.text =
             String.format(resources.getString(R.string.hours), viewModel.hours.value.toString())
 
+        viewModel.getRoutes()
         setupSubscriptions()
     }
 

@@ -30,6 +30,7 @@
                 android:layout_height="52dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_search_edit_text"
                 android:orientation="horizontal"
                 android:padding="16dp"
                 android:visibility="gone">

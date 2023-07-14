@@ -2,14 +2,14 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/fragment_horizontal_padding"
     android:background="@drawable/shape_route_first_item"
     android:gravity="center"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="@dimen/fragment_horizontal_padding">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txt_connection_name"
-        style="@style/SmallTextPrimaryColor"
+        style="@style/RegularTextPrimaryColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"

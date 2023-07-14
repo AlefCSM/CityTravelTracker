@@ -178,7 +178,7 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             AdapterLayoutEnum.LAST.ordinal -> {
                 val binding = AdapterLastRouteBinding.inflate(
-                    LayoutInflater.from(parent.context),
+                    LayoutInflater.from(context),
                     parent,
                     false
                 )
@@ -186,7 +186,7 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             else -> {
                 val binding = AdapterMiddleRouteBinding.inflate(
-                    LayoutInflater.from(parent.context),
+                    LayoutInflater.from(context),
                     parent,
                     false
                 )
@@ -199,26 +199,14 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val route = routes[position]
 
         when (getItemViewType(position)) {
-            AdapterLayoutEnum.SINGLE.ordinal -> (holder as SingleItemViewHolder).bind(
-                route
-            )
-            AdapterLayoutEnum.FIRST.ordinal -> (holder as FirstItemViewHolder).bind(
-                route
-            )
-            AdapterLayoutEnum.LAST.ordinal -> (holder as LastItemViewHolder).bind(
-                route
-            )
-            else -> {
-                (holder as MiddleItemViewHolder).bind(route)
-            }
+            AdapterLayoutEnum.SINGLE.ordinal -> (holder as SingleItemViewHolder).bind(route)
+            AdapterLayoutEnum.FIRST.ordinal -> (holder as FirstItemViewHolder).bind(route)
+            AdapterLayoutEnum.LAST.ordinal -> (holder as LastItemViewHolder).bind(route)
+            else -> (holder as MiddleItemViewHolder).bind(route)
         }
 
-        holder.itemView.setOnClickListener {
-            onItemClick?.invoke(route)
-        }
+        holder.itemView.setOnClickListener { onItemClick?.invoke(route) }
     }
 
-    override fun getItemCount(): Int {
-        return routes.size
-    }
+    override fun getItemCount(): Int = routes.size
 }

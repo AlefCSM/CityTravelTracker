@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getRoutes() = viewModelScope.launch(dispatcher.io) {
+    fun getRoutes() = viewModelScope.launch(dispatcher.io) {
         repository.getAllRoutes().collectLatest {
             _routes.value = it
         }
