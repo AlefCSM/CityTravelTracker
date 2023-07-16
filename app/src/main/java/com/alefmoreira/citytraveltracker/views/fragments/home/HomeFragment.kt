@@ -60,7 +60,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                     routeAdapter = RouteAdapter()
                     routeAdapter.apply {
-                        setData(list)
+                        routes = list
                         onItemClick = { route ->
                             route.city.id?.let { id ->
                                 findNavController().navigate(

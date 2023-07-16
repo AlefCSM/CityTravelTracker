@@ -12,7 +12,11 @@ import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -124,10 +128,10 @@ class RouteViewModel @Inject constructor(
         }
 
         if (isFirstRoute.value) {
-            insertDestinationIntoDB(currentOrigin)
+            insertDestinationIntoDB(currentOrigin).join()
         }
 
-        insertDestinationIntoDB(currentDestination)
+        insertDestinationIntoDB(currentDestination).join()
         _routeStatus.emit(Resource.success(currentDestination))
     }
 

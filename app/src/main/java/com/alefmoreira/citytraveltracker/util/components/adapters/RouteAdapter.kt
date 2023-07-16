@@ -67,7 +67,6 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                                 res, R.drawable.ic_arrow_down, binding.root.context.theme
                             )
                         )
-                        binding.connectionsList.visibility = View.GONE
                     }
                 }
             }
@@ -107,7 +106,6 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                                 res, R.drawable.ic_arrow_down, binding.root.context.theme
                             )
                         )
-                        binding.connectionsList.visibility = View.GONE
                     }
                 }
             }
@@ -253,8 +251,4 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int = routes.size
-    fun setData(list: List<Route>) {
-        routes = list
-        notifyDataSetChanged()
-    }
 }
