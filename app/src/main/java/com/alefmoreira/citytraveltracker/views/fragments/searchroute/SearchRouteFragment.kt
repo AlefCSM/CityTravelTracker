@@ -3,9 +3,7 @@ package com.alefmoreira.citytraveltracker.views.fragments.searchroute
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,7 +13,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.databinding.FragmentSearchRouteBinding
 import com.alefmoreira.citytraveltracker.other.Resource
@@ -26,7 +23,6 @@ import com.alefmoreira.citytraveltracker.util.components.adapters.PlacePredictio
 import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -40,28 +36,23 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
     private val token = AutocompleteSessionToken.newInstance()
     private val arguments: SearchRouteFragmentArgs by navArgs()
 
-    private lateinit var txtSearch: TextInputLayout
-    private lateinit var predictionRecyclerView: RecyclerView
     private lateinit var predictionRecyclerViewAdapter: PlacePredictionAdapter
-    private lateinit var predictionNotFound: LinearLayoutCompat
-    private lateinit var loadingDots: LinearLayoutCompat
-    private lateinit var leftDot: ImageView
-    private lateinit var middleDot: ImageView
-    private lateinit var rightDot: ImageView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentSearchRouteBinding.bind(view)
 
-        bindViews(binding)
         setupClickListeners()
 
-        txtSearch.isHintAnimationEnabled = false
-        txtSearch.editText?.addTextChangedListener {
-            searchRouteViewModel.validateText(it.toString(), token)
+        binding.txtSearch.apply {
+            isHintAnimationEnabled = false
+            editText?.addTextChangedListener {
+                searchRouteViewModel.validateText(it.toString(), token)
+            }
+            editText?.setText(arguments.selectedCity)
         }
-        txtSearch.editText?.setText(arguments.selectedCity)
+
 
         predictionRecyclerViewAdapter = PlacePredictionAdapter()
 
@@ -81,21 +72,11 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         requireActivity().onBackPressedDispatcher.addCallback(callback)
     }
 
-    private fun bindViews(binding: FragmentSearchRouteBinding) {
-        txtSearch = binding.txtSearch
-        predictionRecyclerView = binding.predictionRecyclerview
-        predictionNotFound = binding.predictionNotFound
-        loadingDots = binding.loadingDots
-        leftDot = binding.leftDot
-        middleDot = binding.middleDot
-        rightDot = binding.rightDot
-    }
-
     private fun setupClickListeners() {
-        txtSearch.setEndIconOnClickListener {
-            txtSearch.editText?.setText("")
+        binding.txtSearch.setEndIconOnClickListener {
+            binding.txtSearch.editText?.setText("")
         }
-        txtSearch.setStartIconOnClickListener {
+        binding.txtSearch.setStartIconOnClickListener {
             findNavController().popBackStack()
         }
     }
@@ -106,25 +87,25 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
                 resource.data?.let { list ->
                     resource.message?.let { message -> renderList(list, message) }
                 }
-                predictionRecyclerView.visibility = View.VISIBLE
-                predictionNotFound.visibility = View.GONE
-                loadingDots.visibility = View.GONE
+                binding.predictionRecyclerview.visibility = View.VISIBLE
+                binding.predictionNotFound.visibility = View.GONE
+                binding.loadingDots.visibility = View.GONE
             }
             Status.ERROR -> {
-                predictionRecyclerView.visibility = View.GONE
-                predictionNotFound.visibility = View.VISIBLE
-                loadingDots.visibility = View.GONE
+                binding.predictionRecyclerview.visibility = View.GONE
+                binding.predictionNotFound.visibility = View.VISIBLE
+                binding.loadingDots.visibility = View.GONE
             }
             Status.LOADING -> {
                 startLoadingAnimation()
-                predictionRecyclerView.visibility = View.GONE
-                predictionNotFound.visibility = View.GONE
-                loadingDots.visibility = View.VISIBLE
+                binding.predictionRecyclerview.visibility = View.GONE
+                binding.predictionNotFound.visibility = View.GONE
+                binding.loadingDots.visibility = View.VISIBLE
             }
             Status.INIT -> {
-                predictionRecyclerView.visibility = View.GONE
-                predictionNotFound.visibility = View.GONE
-                loadingDots.visibility = View.GONE
+                binding.predictionRecyclerview.visibility = View.GONE
+                binding.predictionNotFound.visibility = View.GONE
+                binding.loadingDots.visibility = View.GONE
             }
         }
     }
@@ -135,14 +116,14 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
             onItemClick = { prediction ->
                 addCity(prediction)
 
-                txtSearch.editText?.setText("")
+                binding.txtSearch.editText?.setText("")
                 findNavController().popBackStack()
             }
             predictions = list
             typedText = text
         }
 
-        predictionRecyclerView.apply {
+        binding.predictionRecyclerview.apply {
             adapter = predictionRecyclerViewAdapter
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -160,9 +141,9 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         val animation2 = AnimationUtils.loadAnimation(context, R.anim.jump2)
         val animation3 = AnimationUtils.loadAnimation(context, R.anim.jump3)
 
-        leftDot.startAnimation(animation)
-        middleDot.startAnimation(animation2)
-        rightDot.startAnimation(animation3)
+        binding.leftDot.startAnimation(animation)
+        binding.middleDot.startAnimation(animation2)
+        binding.rightDot.startAnimation(animation3)
     }
 
     private fun addCity(prediction: AutocompletePrediction) {

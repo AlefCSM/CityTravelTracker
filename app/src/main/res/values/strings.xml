@@ -28,8 +28,7 @@
     <string name="km">%1$s km</string>
     <string name="hours">%1$s horas</string>
     <string name="traveled_cities">Cidades visitadas</string>
-    <string name="show_connections">exibir conexões</string>
-    <string name="hide_connections">fechar conexões</string>
+    <string name="connections">Conexões</string>
     <string name="register_visited_cities">Cadastre as cidades que visitou!</string>
     <string name="add_visited_cities">Adicione as cidades usando o botão \"+\".</string>
 

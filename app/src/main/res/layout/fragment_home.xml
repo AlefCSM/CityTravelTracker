@@ -15,6 +15,7 @@
             android:paddingTop="@dimen/home_fragment_padding_top">
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/metric_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"

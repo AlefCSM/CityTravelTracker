@@ -14,7 +14,7 @@
     </style>
 
     <style name="SmallText" parent="TextFontRoboto">
-        <item name="android:textSize">@dimen/small_text</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
     <style name="SmallTextPrimaryColor" parent="SmallText">
@@ -26,7 +26,7 @@
     </style>
 
     <style name="RegularText" parent="TextFontRoboto">
-        <item name="android:textSize">@dimen/regular_text</item>
+        <item name="android:textSize">@dimen/regular_text_size</item>
     </style>
 
     <style name="RegularTextPrimaryColor" parent="RegularText">
@@ -37,6 +37,29 @@
         <item name="android:textColor">@color/dark_2</item>
     </style>
 
+    <!--    FONT MEDIUM-->
+
+    <style name="TextFontRobotoMedium">
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="RegularTextMedium" parent="TextFontRobotoMedium">
+        <item name="android:textSize">@dimen/regular_text_size</item>
+    </style>
+
+    <style name="RegularTextPrimaryColorMedium" parent="RegularTextMedium">
+        <item name="android:textColor">@color/dark_3</item>
+    </style>
+
+    <style name="SmallTextMedium" parent="TextFontRobotoMedium">
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="SmallTextPrimaryColorMedium" parent="SmallTextMedium">
+        <item name="android:textColor">@color/dark_3</item>
+    </style>
+
     <!--    FONT BOLD-->
 
     <style name="TextFontRobotoBold">
@@ -45,7 +68,7 @@
     </style>
 
     <style name="SmallTextBold" parent="TextFontRobotoBold">
-        <item name="android:textSize">@dimen/small_text</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
     <style name="SmallTextPrimaryColorBold" parent="SmallTextBold">
@@ -57,7 +80,7 @@
     </style>
 
     <style name="RegularTextBold" parent="TextFontRobotoBold">
-        <item name="android:textSize">@dimen/regular_text</item>
+        <item name="android:textSize">@dimen/regular_text_size</item>
     </style>
 
     <style name="RegularTextPrimaryColorBold" parent="RegularTextBold">
@@ -65,7 +88,7 @@
     </style>
 
     <style name="BigText" parent="TextFontRobotoBold">
-        <item name="android:textSize">@dimen/big_text</item>
+        <item name="android:textSize">@dimen/big_text_size</item>
     </style>
 
     <style name="BigTextPrimaryColor" parent="BigText">
@@ -73,7 +96,7 @@
     </style>
 
     <style name="ExtraBigText" parent="TextFontRobotoBold">
-        <item name="android:textSize">@dimen/extra_big_text</item>
+        <item name="android:textSize">@dimen/extra_big_text_size</item>
     </style>
 
     <style name="ExtraBigTextPrimaryColor" parent="ExtraBigText">

@@ -1,12 +1,13 @@
 package com.alefmoreira.citytraveltracker.util.components.adapters
 
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.databinding.AdapterFirstRouteBinding
@@ -23,9 +24,7 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         override fun areContentsTheSame(oldItem: Route, newItem: Route): Boolean {
-            return oldItem.city.id == newItem.city.id &&
-                    oldItem.city.name == newItem.city.name &&
-                    oldItem.city.placeId == newItem.city.placeId
+            return oldItem.city.id == newItem.city.id && oldItem.city.name == newItem.city.name && oldItem.city.placeId == newItem.city.placeId && oldItem.connections == newItem.connections
         }
     }
 
@@ -36,79 +35,38 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var onItemClick: ((Route) -> Unit)? = null
 
-    class SingleItemViewHolder(
-        private val binding: AdapterSingleRouteBinding,
-        private val res: Resources
-    ) :
+    class SingleItemViewHolder(private val binding: AdapterSingleRouteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private var isExpanded = false
         fun bind(route: Route) {
+            val res = binding.root.resources
             binding.txtCityName.text = route.city.name
+
             if (route.connections.isNotEmpty()) {
-                binding.connectionsLayout.visibility = View.VISIBLE
-                binding.showConnections.setOnClickListener {
-                    if (isExpanded) {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.hide_connections))
-                        binding.connectionsList.visibility = View.VISIBLE
-                    } else {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.show_connections))
-                        binding.connectionsList.visibility = View.GONE
-                    }
-                    isExpanded = !isExpanded
+                binding.showConnections.visibility = View.VISIBLE
+                val connAdapter = RouteConnectionAdapter()
+                connAdapter.connections = route.connections
+                binding.connectionsList.apply {
+                    adapter = connAdapter
+                    layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 }
-            }
-        }
-    }
-
-    class FirstItemViewHolder(
-        private val binding: AdapterFirstRouteBinding,
-        private val res: Resources
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        private var isExpanded = false
-        fun bind(route: Route) {
-            binding.txtCityName.text = route.city.name
-            if (route.connections.isNotEmpty()) {
-                binding.connectionsLayout.visibility = View.VISIBLE
-                binding.showConnections.setOnClickListener {
-                    if (isExpanded) {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.hide_connections))
-                        binding.connectionsList.visibility = View.VISIBLE
-                    } else {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.show_connections))
-                        binding.connectionsList.visibility = View.GONE
-                    }
-                    isExpanded = !isExpanded
-                }
-            }
-        }
-    }
-
-    class MiddleItemViewHolder(
-        private val binding: AdapterMiddleRouteBinding,
-        private val res: Resources
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        private var isExpanded = false
-        fun bind(route: Route) {
-            binding.txtCityName.text = route.city.name
-            if (route.connections.isNotEmpty()) {
-                binding.connectionsLayout.visibility = View.VISIBLE
                 binding.showConnections.setOnClickListener {
                     isExpanded = !isExpanded
                     if (isExpanded) {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.hide_connections))
-                        binding.connectionsList.visibility = View.VISIBLE
+                        binding.connectionsLayout.visibility = View.VISIBLE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_up, binding.root.context.theme
+                            )
+                        )
                     } else {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.show_connections))
+                        binding.connectionsLayout.visibility = View.GONE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_down, binding.root.context.theme
+                            )
+                        )
                         binding.connectionsList.visibility = View.GONE
                     }
                 }
@@ -116,27 +74,119 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    class LastItemViewHolder(
-        private val binding: AdapterLastRouteBinding,
-        private val res: Resources
-    ) :
+    class FirstItemViewHolder(private val binding: AdapterFirstRouteBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        private var isExpanded = false
+        fun bind(route: Route) {
+            val res = binding.root.resources
+            binding.txtCityName.text = route.city.name
+
+            if (route.connections.isNotEmpty()) {
+                binding.showConnections.visibility = View.VISIBLE
+                val connAdapter = RouteConnectionAdapter()
+                connAdapter.connections = route.connections
+                binding.connectionsList.apply {
+                    adapter = connAdapter
+                    layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                }
+                binding.showConnections.setOnClickListener {
+                    isExpanded = !isExpanded
+                    if (isExpanded) {
+                        binding.connectionsLayout.visibility = View.VISIBLE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_up, binding.root.context.theme
+                            )
+                        )
+                    } else {
+                        binding.connectionsLayout.visibility = View.GONE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_down, binding.root.context.theme
+                            )
+                        )
+                        binding.connectionsList.visibility = View.GONE
+                    }
+                }
+            }
+        }
+    }
+
+    class MiddleItemViewHolder(private val binding: AdapterMiddleRouteBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        private var isExpanded = false
+        fun bind(route: Route) {
+            val res = binding.root.resources
+            binding.txtCityName.text = route.city.name
+
+            if (route.connections.isNotEmpty()) {
+                binding.showConnections.visibility = View.VISIBLE
+                val connAdapter = RouteConnectionAdapter()
+                connAdapter.connections = route.connections
+                binding.connectionsList.apply {
+                    adapter = connAdapter
+                    layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                }
+                binding.showConnections.setOnClickListener {
+                    isExpanded = !isExpanded
+
+                    if (isExpanded) {
+                        binding.connectionsLayout.visibility = View.VISIBLE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_up, binding.root.context.theme
+                            )
+                        )
+                    } else {
+                        binding.connectionsLayout.visibility = View.GONE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_down, binding.root.context.theme
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    class LastItemViewHolder(private val binding: AdapterLastRouteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private var isExpanded = false
         fun bind(route: Route) {
+            val res = binding.root.resources
             binding.txtCityName.text = route.city.name
+
             if (route.connections.isNotEmpty()) {
-                binding.connectionsLayout.visibility = View.VISIBLE
+                binding.showConnections.visibility = View.VISIBLE
+                val connAdapter = RouteConnectionAdapter()
+                connAdapter.connections = route.connections
+                binding.connectionsList.apply {
+                    adapter = connAdapter
+                    layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                }
                 binding.showConnections.setOnClickListener {
-                    if (isExpanded) {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.hide_connections))
-                        binding.connectionsList.visibility = View.VISIBLE
-                    } else {
-                        binding.showConnections.text =
-                            String.format(res.getString(R.string.show_connections))
-                        binding.connectionsList.visibility = View.GONE
-                    }
                     isExpanded = !isExpanded
+                    if (isExpanded) {
+                        binding.connectionsLayout.visibility = View.VISIBLE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_up, binding.root.context.theme
+                            )
+                        )
+                    } else {
+                        binding.connectionsLayout.visibility = View.GONE
+                        binding.showConnections.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                res, R.drawable.ic_arrow_down, binding.root.context.theme
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -158,39 +208,33 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val context = parent.context
-        val res = parent.resources
         return when (viewType) {
             AdapterLayoutEnum.SINGLE.ordinal -> {
                 val binding = AdapterSingleRouteBinding.inflate(
-                    LayoutInflater.from(context),
-                    parent,
-                    false
+                    LayoutInflater.from(context), parent, false
                 )
-                SingleItemViewHolder(binding, res)
+                SingleItemViewHolder(binding)
             }
+
             AdapterLayoutEnum.FIRST.ordinal -> {
                 val binding = AdapterFirstRouteBinding.inflate(
-                    LayoutInflater.from(context),
-                    parent,
-                    false
+                    LayoutInflater.from(context), parent, false
                 )
-                FirstItemViewHolder(binding, res)
+                FirstItemViewHolder(binding)
             }
+
             AdapterLayoutEnum.LAST.ordinal -> {
                 val binding = AdapterLastRouteBinding.inflate(
-                    LayoutInflater.from(context),
-                    parent,
-                    false
+                    LayoutInflater.from(context), parent, false
                 )
-                LastItemViewHolder(binding, res)
+                LastItemViewHolder(binding)
             }
+
             else -> {
                 val binding = AdapterMiddleRouteBinding.inflate(
-                    LayoutInflater.from(context),
-                    parent,
-                    false
+                    LayoutInflater.from(context), parent, false
                 )
-                MiddleItemViewHolder(binding, res)
+                MiddleItemViewHolder(binding)
             }
         }
     }
@@ -209,4 +253,8 @@ class RouteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int = routes.size
+    fun setData(list: List<Route>) {
+        routes = list
+        notifyDataSetChanged()
+    }
 }

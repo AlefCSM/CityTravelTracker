@@ -2,10 +2,10 @@
 <resources>
 
     <!--    TEXT SIZES-->
-    <dimen name="small_text">12sp</dimen>
-    <dimen name="regular_text">16sp</dimen>
-    <dimen name="big_text">20sp</dimen>
-    <dimen name="extra_big_text">32sp</dimen>
+    <dimen name="small_text_size">12sp</dimen>
+    <dimen name="regular_text_size">16sp</dimen>
+    <dimen name="big_text_size">20sp</dimen>
+    <dimen name="extra_big_text_size">32sp</dimen>
 
     <!--    DISPLAY SIZES-->
     <dimen name="fragment_horizontal_padding">16dp</dimen>

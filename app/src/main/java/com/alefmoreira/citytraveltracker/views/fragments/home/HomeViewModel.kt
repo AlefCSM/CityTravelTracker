@@ -10,7 +10,9 @@ import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -37,6 +39,11 @@ class HomeViewModel @Inject constructor(
 
     val routes: StateFlow<List<Route>> = _routes
 
+    private var _test =
+        MutableSharedFlow<List<Route>>()
+
+    val test: SharedFlow<List<Route>> = _test
+
     private var _routeStatus = MutableStateFlow<Event<Resource<Route>>>(Event(Resource.init()))
     val routeStatus: StateFlow<Event<Resource<Route>>> = _routeStatus
 
@@ -61,7 +68,7 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        getRoutes()
+//        getRoutes()
         checkNetwork()
         observeNetwork()
     }
@@ -83,6 +90,7 @@ class HomeViewModel @Inject constructor(
     fun getRoutes() = viewModelScope.launch(dispatcher.io) {
         repository.getAllRoutes().collectLatest {
             _routes.value = it
+            _test.emit(it)
         }
     }
 

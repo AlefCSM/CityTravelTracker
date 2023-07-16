@@ -4,37 +4,54 @@
     android:layout_height="wrap_content"
     android:background="@drawable/shape_route_first_item"
     android:orientation="vertical"
-    android:padding="@dimen/fragment_horizontal_padding">
+    android:paddingStart="@dimen/fragment_horizontal_padding"
+    android:paddingTop="@dimen/fragment_horizontal_padding">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_city_name"
-        style="@style/RegularTextPrimaryColor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/city_name" />
-
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/connections_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/fragment_horizontal_padding"
         android:orientation="vertical"
         android:visibility="gone">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/show_connections"
-            style="@style/SmallText"
+            style="@style/SmallTextPrimaryColorMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="@string/show_connections"
-            android:textColor="@color/secondary_2" />
+            android:layout_marginBottom="8dp"
+            android:text="@string/connections" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/connections_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-    </LinearLayout>
-</androidx.appcompat.widget.LinearLayoutCompat>
+            android:layout_height="wrap_content" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_city_name"
+            style="@style/RegularTextPrimaryColorMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="@dimen/fragment_horizontal_padding"
+            android:paddingBottom="@dimen/fragment_horizontal_padding"
+            android:text="@string/city_name" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/show_connections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="@dimen/fragment_horizontal_padding"
+            android:paddingBottom="@dimen/fragment_horizontal_padding"
+            android:src="@drawable/ic_arrow_down"
+            android:visibility="gone" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.appcompat.widget.LinearLayoutCompat>
