@@ -1,8 +1,8 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.CityTravelTracker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.CityTravelTracker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimary">@color/primary_3</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->

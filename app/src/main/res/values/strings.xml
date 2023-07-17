@@ -31,6 +31,7 @@
     <string name="connections">Conexões</string>
     <string name="register_visited_cities">Cadastre as cidades que visitou!</string>
     <string name="add_visited_cities">Adicione as cidades usando o botão \"+\".</string>
+    <string name="add_new_route">New Route</string>
 
 
 </resources>

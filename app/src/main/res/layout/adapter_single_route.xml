@@ -25,7 +25,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/connections_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:overScrollMode="never" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -39,9 +40,9 @@
             style="@style/RegularTextPrimaryColorMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:paddingEnd="@dimen/fragment_horizontal_padding"
             android:paddingBottom="@dimen/fragment_horizontal_padding"
-            android:layout_weight="1"
             android:text="@string/city_name" />
 
         <androidx.appcompat.widget.AppCompatImageView

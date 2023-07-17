@@ -126,7 +126,8 @@
                         android:id="@+id/connection_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layoutAnimation="@anim/layout_animation" />
+                        android:layoutAnimation="@anim/layout_animation"
+                        android:overScrollMode="never" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
