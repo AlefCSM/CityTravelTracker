@@ -8,4 +8,12 @@ object Constants {
     const val DEFAULT_CONNECTION_POSITION = -1
     const val ADD_CONNECTION_ICON_POSITION = 0
     const val ADD_CONNECTION_TEXT_POSITION = 1
+    const val SECONDS_IN_HOUR = 3600
+    const val SECONDS_IN_MINUTE = 60
+    const val METERS_IN_KM = 1000
+    const val MATRIX_MILEAGE = "mileage"
+    const val MATRIX_TIME = "time"
+    const val ROUTE_LIST = "route list"
+    const val TWO_ELEMENTS = 1
+    const val INITIAL_LONG = 0L
 }

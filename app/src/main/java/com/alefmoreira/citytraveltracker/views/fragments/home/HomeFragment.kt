@@ -31,11 +31,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnStart.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToRouteFragment())
         }
-        binding.txtMileage.text =
-            String.format(resources.getString(R.string.km), viewModel.kilometers.value.toString())
-        binding.txtHours.text =
-            String.format(resources.getString(R.string.hours), viewModel.hours.value.toString())
-
 
 //        if(!viewModel.hasAnimated) {
 //            viewModel.hasAnimated = true
@@ -98,8 +93,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    private fun mileageSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.mileage.collect {
+                binding.txtMileage.text = viewModel.mileage.value
+            }
+        }
+    }
+
+    private fun timeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.time.collect {
+                binding.txtHours.text = viewModel.time.value
+            }
+        }
+    }
+
     private fun setupSubscriptions() {
         routeSubscription()
         networkSubscription()
+        mileageSubscription()
+        timeSubscription()
     }
 }

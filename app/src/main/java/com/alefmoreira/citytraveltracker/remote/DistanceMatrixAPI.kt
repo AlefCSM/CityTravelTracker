@@ -8,10 +8,11 @@ import retrofit2.http.Query
 
 interface DistanceMatrixAPI {
 
-    @GET("/maps/api/distancematrix/")
+    @GET("/maps/api/distancematrix/json")
     suspend fun getDistanceMatrix(
-        @Query("origins") origins: String,
-        @Query("destinations") destinations: String,
-        @Query("key") apiKey: String = BuildConfig.MAPS_API_KEY
+        @Query("origins", encoded = true) origins: String,
+        @Query("destinations", encoded = true) destinations: String,
+        @Query("key") apiKey: String = BuildConfig.MAPS_API_KEY,
+        @Query("units") units: String = "metric",
     ): Response<DistanceMatrixResponse>
 }

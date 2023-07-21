@@ -1,6 +1,7 @@
 package com.alefmoreira.citytraveltracker.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.alefmoreira.citytraveltracker.coroutines.DefaultDispatchers
 import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
@@ -73,4 +74,10 @@ object AppModule {
         @ApplicationContext context: Context,
         dispatcher: DispatcherProvider
     ): NetworkObserver = NetworkObserverImpl(context, dispatcher)
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences = context.getSharedPreferences("teste", Context.MODE_PRIVATE)
 }

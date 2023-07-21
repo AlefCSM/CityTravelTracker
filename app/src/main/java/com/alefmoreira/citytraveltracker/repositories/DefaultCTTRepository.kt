@@ -51,25 +51,52 @@ class DefaultCTTRepository @Inject constructor(
 
 
     override suspend fun getDistanceMatrix(
-        origins: List<Route>,
-        destinations: List<Route>
+        routes: List<Route>
     ): Resource<DistanceMatrixResponse> {
         return try {
 
-            val separator = "|"
-            val originsString = origins.joinToString(separator) { "placeId:${it.city.placeId}" }
-            val destinationsString =
-                destinations.joinToString(separator) { "placeId:${it.city.placeId}" }
+            val origins: MutableList<String> = mutableListOf()
+            val destinations: MutableList<String> = mutableListOf()
 
-            val response = distanceMatrixAPI.getDistanceMatrix(originsString, destinationsString)
 
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return@let Resource.success(it)
-                } ?: Resource.error("Unknown error", null)
-            } else {
-                Resource.error("Unknown error", null)
+            routes.forEach { route ->
+                route.connections.forEach { connection ->
+                    origins.add(connection.placeId)
+                }
+
+                if (route !== routes.last()) {
+                    origins.add(route.city.placeId)
+                }
             }
+            routes.forEach { route ->
+                route.connections.forEach { connection ->
+                    destinations.add(connection.placeId)
+                }
+
+                if (route !== routes.first()) {
+                    destinations.add(route.city.placeId)
+                }
+            }
+
+
+            val separator = "|"
+            val originsString = origins.joinToString(separator) { "place_id:$it" }
+            val destinationsString =
+                destinations.joinToString(separator) { "place_id:$it" }
+
+            distanceMatrixAPI.getDistanceMatrix(originsString, destinationsString).run {
+
+                val response = this
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        Resource.success(it)
+                    } ?: Resource.error("Unknown error", null)
+                } else {
+                    Resource.error("Unknown error", null)
+                }
+            }
+
+
         } catch (e: Exception) {
             Resource.error("Could not reach server", null)
         }

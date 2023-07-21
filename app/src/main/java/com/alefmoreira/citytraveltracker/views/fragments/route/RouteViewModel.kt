@@ -128,7 +128,7 @@ class RouteViewModel @Inject constructor(
         }
 
         if (isFirstRoute.value) {
-            insertDestinationIntoDB(currentOrigin).join()
+            insertDestinationIntoDB(currentOrigin)
         }
 
         insertDestinationIntoDB(currentDestination).join()
