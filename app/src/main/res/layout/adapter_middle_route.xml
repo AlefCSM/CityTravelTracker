@@ -49,6 +49,7 @@
             android:id="@+id/show_connections"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/expandableIcon"
             android:paddingStart="10dp"
             android:paddingEnd="@dimen/fragment_horizontal_padding"
             android:paddingBottom="@dimen/fragment_horizontal_padding"

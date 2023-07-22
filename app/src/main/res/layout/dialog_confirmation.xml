@@ -23,11 +23,10 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btn_cancel"
-            style="@style/RegularTextBold"
+            style="@style/RegularTextBlueColorBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:textColor="@color/secondary_3" />
+            android:text="@string/cancel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btn_exclude"

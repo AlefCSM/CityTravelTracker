@@ -19,6 +19,9 @@
     <color name="dark_1">#FFC6C6C6</color>
     <color name="dark_2">#FF6C6C6C</color>
     <color name="dark_3">#FF0A2C36</color>
+    <color name="dark_4">#FF0D3946</color>
+    <color name="night_1">#FF8EAEB8</color>
+    <color name="night_2">#FF164760</color>
     <color name="light_1">#FFFBFCFC</color>
     <color name="light_2">#FFF2FDFF</color>
     <color name="light_3">#FFD3E5EB</color>

@@ -27,6 +27,7 @@ import com.alefmoreira.citytraveltracker.other.Constants.DEFAULT_CONNECTION_POSI
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.util.CitySelectionTypeEnum
 import com.alefmoreira.citytraveltracker.util.DialogType
+import com.alefmoreira.citytraveltracker.util.Utils
 import com.alefmoreira.citytraveltracker.util.components.AMAnimator
 import com.alefmoreira.citytraveltracker.util.components.adapters.AddConnectionAdapter
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMAlertDialog
@@ -127,19 +128,19 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         if (origin.city.name.isNotEmpty()) {
             txtOrigin.apply {
                 text = origin.city.name
-                setTextColor(resources.getColor(R.color.dark_3, null))
+                setTextColor(getPrimaryColor())
             }
         }
         val destination = routeViewModel.currentDestination
         if (destination.city.name.isNotEmpty()) {
             txtDestination.apply {
                 text = destination.city.name
-                setTextColor(resources.getColor(R.color.dark_3, null))
+                setTextColor(getPrimaryColor())
             }
             btnAddConnections.apply {
                 val imageView = getChildAt(ADD_CONNECTION_ICON_POSITION) as ImageView
                 val textView = getChildAt(ADD_CONNECTION_TEXT_POSITION) as TextView
-                val secondaryColor = resources.getColor(R.color.secondary_3, null)
+                val secondaryColor = getSecondaryColor()
 
                 imageView.setColorFilter(secondaryColor)
                 textView.setTextColor(secondaryColor)
@@ -150,6 +151,22 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         }
         if (arguments.routeId > 0) {
             btnDeleteRoute.visibility = View.VISIBLE
+        }
+    }
+
+    private fun getPrimaryColor(): Int {
+        return if (Utils.isDarkModeOn(requireContext())) {
+            resources.getColor(R.color.light_1, null)
+        } else {
+            resources.getColor(R.color.dark_3, null)
+        }
+    }
+
+    private fun getSecondaryColor(): Int {
+        return if (Utils.isDarkModeOn(requireContext())) {
+            resources.getColor(R.color.secondary_2, null)
+        } else {
+            resources.getColor(R.color.secondary_3, null)
         }
     }
 

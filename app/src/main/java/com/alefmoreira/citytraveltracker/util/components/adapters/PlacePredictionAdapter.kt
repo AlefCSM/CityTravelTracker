@@ -1,6 +1,6 @@
 package com.alefmoreira.citytraveltracker.util.components.adapters
 
-import android.content.res.Resources
+import android.content.Context
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.databinding.AdapterPlacePredictionBinding
+import com.alefmoreira.citytraveltracker.util.Utils
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import javax.inject.Inject
 
@@ -21,14 +22,13 @@ import javax.inject.Inject
 class PlacePredictionAdapter @Inject constructor(
 ) : RecyclerView.Adapter<PlacePredictionAdapter.PlacePredictionViewHolder>() {
     class PlacePredictionViewHolder(
-        private val binding: AdapterPlacePredictionBinding,
-        private val resources: Resources
+        private val binding: AdapterPlacePredictionBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(prediction: AutocompletePrediction, typedText: String) {
 
             val span = SpannableString(prediction.getPrimaryText(null).toString())
-            val color = ResourcesCompat.getColor(resources, R.color.dark_2, null)
+            val color = getColor(binding.root.context)
 
             if ((typedText.trimmedLength() > span.length).not()) {
                 span.setSpan(
@@ -41,7 +41,16 @@ class PlacePredictionAdapter @Inject constructor(
             binding.txtPlaceName.setText(span, TextView.BufferType.SPANNABLE)
             binding.txtPlaceCountry.text = prediction.getSecondaryText(null).toString()
         }
+
+        private fun getColor(context: Context): Int {
+            return if (Utils.isDarkModeOn(context)) {
+                ResourcesCompat.getColor(context.resources, R.color.secondary_1, null)
+            } else {
+                ResourcesCompat.getColor(context.resources, R.color.dark_2, null)
+            }
+        }
     }
+
 
     private val diffCallback = object : DiffUtil.ItemCallback<AutocompletePrediction>() {
         override fun areItemsTheSame(
@@ -78,7 +87,7 @@ class PlacePredictionAdapter @Inject constructor(
             false
         )
 
-        return PlacePredictionViewHolder(binding, parent.resources)
+        return PlacePredictionViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PlacePredictionViewHolder, position: Int) {

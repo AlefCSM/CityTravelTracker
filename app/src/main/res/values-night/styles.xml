@@ -2,30 +2,38 @@
 <resources>
 
     <style name="AppBackground">
-        <item name="android:background">@color/light_3</item>
+        <item name="android:background">@color/dark_3</item>
     </style>
 
     <style name="SearchRouteFragmentBrackground">
-        <item name="android:background">@color/light_1</item>
+        <item name="android:background">@color/night_2</item>
     </style>
 
     <style name="predictionIcon">
-        <item name="android:tint">@color/dark_2</item>
+        <item name="android:tint">@color/dark_1</item>
     </style>
 
     <style name="googleIcon">
+        <item name="android:tint">@color/white</item>
+    </style>
 
+    <style name="addIcon">
+        <item name="android:tint">@color/secondary_1</item>
+    </style>
+
+    <style name="expandableIcon">
+        <item name="android:tint">@color/dark_1</item>
     </style>
 
     <style name="SearchTextInputLayoutStyle" parent="EditTextThemeOverlay">
         <item name="boxBackgroundColor">@color/light_1</item>
-        <item name="endIconTint">@color/dark_2</item>
+        <item name="endIconTint">@color/dark_1</item>
         <item name="startIconTint">@color/primary_2</item>
     </style>
 
     <style name="EditTextThemeOverlay" parent="ThemeOverlay.AppCompat">
         <item name="colorAccent">@color/secondary_2</item>
-        <item name="colorControlActivated">@color/dark_3</item>
+        <item name="colorControlActivated">@color/light_1</item>
     </style>
 
     <!--    FONT REGULAR-->
@@ -40,11 +48,11 @@
     </style>
 
     <style name="SmallTextPrimaryColor" parent="SmallText">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <style name="SmallTextSecondaryColor" parent="SmallText">
-        <item name="android:textColor">@color/dark_2</item>
+        <item name="android:textColor">@color/secondary_1</item>
     </style>
 
     <style name="RegularText" parent="TextFontRoboto">
@@ -52,11 +60,11 @@
     </style>
 
     <style name="RegularTextPrimaryColor" parent="RegularText">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <style name="RegularTextSecondaryColor" parent="RegularText">
-        <item name="android:textColor">@color/dark_2</item>
+        <item name="android:textColor">@color/secondary_1</item>
     </style>
 
     <!--    FONT MEDIUM-->
@@ -71,7 +79,7 @@
     </style>
 
     <style name="RegularTextPrimaryColorMedium" parent="RegularTextMedium">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <style name="SmallTextMedium" parent="TextFontRobotoMedium">
@@ -79,7 +87,7 @@
     </style>
 
     <style name="SmallTextPrimaryColorMedium" parent="SmallTextMedium">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <!--    FONT BOLD-->
@@ -94,11 +102,11 @@
     </style>
 
     <style name="SmallTextPrimaryColorBold" parent="SmallTextBold">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <style name="SmallTextSecondaryColorBold" parent="SmallTextBold">
-        <item name="android:textColor">@color/dark_2</item>
+        <item name="android:textColor">@color/secondary_1</item>
     </style>
 
     <style name="RegularTextBold" parent="TextFontRobotoBold">
@@ -106,11 +114,11 @@
     </style>
 
     <style name="RegularTextPrimaryColorBold" parent="RegularTextBold">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <style name="RegularTextBlueColorBold" parent="RegularTextBold">
-        <item name="android:textColor">@color/secondary_3</item>
+        <item name="android:textColor">@color/secondary_2</item>
     </style>
 
     <style name="BigText" parent="TextFontRobotoBold">
@@ -118,7 +126,7 @@
     </style>
 
     <style name="BigTextPrimaryColor" parent="BigText">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <style name="ExtraBigText" parent="TextFontRobotoBold">
@@ -126,11 +134,12 @@
     </style>
 
     <style name="ExtraBigTextPrimaryColor" parent="ExtraBigText">
-        <item name="android:textColor">@color/dark_3</item>
+        <item name="android:textColor">@color/light_1</item>
     </style>
 
     <style name="SearchEditTextStyle" parent="RegularTextPrimaryColor">
         <item name="android:hint">@string/witch_city</item>
+        <item name="hintTextColor">@color/night_1</item>
         <item name="android:padding">0dp</item>
         <item name="android:textCursorDrawable">@drawable/cursor_color</item>
     </style>
