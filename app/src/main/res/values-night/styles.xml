@@ -21,6 +21,14 @@
         <item name="android:tint">@color/secondary_1</item>
     </style>
 
+    <style name="noConnectionIcon">
+        <item name="android:src">@drawable/ic_no_connection_night</item>
+    </style>
+
+    <style name="noConnectionStyle" parent="SmallText">
+        <item name="android:textColor">@color/dark_1</item>
+    </style>
+
     <style name="expandableIcon">
         <item name="android:tint">@color/dark_1</item>
     </style>

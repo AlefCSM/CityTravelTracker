@@ -16,4 +16,5 @@ object Constants {
     const val ROUTE_LIST = "route list"
     const val TWO_ELEMENTS = 1
     const val INITIAL_LONG = 0L
+    const val INITIAL_TIME = "0h 0 min"
 }

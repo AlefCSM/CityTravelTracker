@@ -73,7 +73,7 @@
                     style="@style/RegularTextSecondaryColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/what_is_your_destiny" />
+                    android:text="@string/what_is_your_destination" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

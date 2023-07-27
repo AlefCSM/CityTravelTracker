@@ -32,11 +32,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToRouteFragment())
         }
 
-//        if(!viewModel.hasAnimated) {
-//            viewModel.hasAnimated = true
         val animation = AnimationUtils.loadAnimation(context, R.anim.presenting)
         binding.metricLayout.startAnimation(animation)
-//        }
 
         viewModel.getRoutes()
         setupSubscriptions()
@@ -96,7 +93,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun mileageSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.mileage.collect {
-                binding.txtMileage.text = viewModel.mileage.value
+                binding.txtMileage.text =
+                    String.format(resources.getString(R.string.km, viewModel.mileage.value))
             }
         }
     }

@@ -17,6 +17,14 @@
 
     </style>
 
+    <style name="noConnectionIcon">
+        <item name="android:src">@drawable/ic_no_connection</item>
+    </style>
+
+    <style name="noConnectionStyle" parent="SmallText">
+        <item name="android:textColor">@color/dark_2</item>
+    </style>
+
     <style name="SearchTextInputLayoutStyle" parent="EditTextThemeOverlay">
         <item name="boxBackgroundColor">@color/light_1</item>
         <item name="endIconTint">@color/dark_2</item>

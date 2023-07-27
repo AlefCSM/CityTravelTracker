@@ -7,6 +7,7 @@ import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.model.Route
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_LONG
+import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_TIME
 import com.alefmoreira.citytraveltracker.other.Constants.MATRIX_MILEAGE
 import com.alefmoreira.citytraveltracker.other.Constants.MATRIX_TIME
 import com.alefmoreira.citytraveltracker.other.Constants.METERS_IN_KM
@@ -44,7 +45,7 @@ class HomeViewModel @Inject constructor(
     private var _mileage = MutableStateFlow((INITIAL_LONG).toString())
     val mileage: StateFlow<String> = _mileage
 
-    private var _time = MutableStateFlow((INITIAL_LONG).toString())
+    private var _time = MutableStateFlow((INITIAL_TIME))
     val time: StateFlow<String> = _time
 
     private var _networkStatus = MutableStateFlow(NetworkObserver.NetworkStatus.Available)
@@ -158,7 +159,7 @@ class HomeViewModel @Inject constructor(
         val savedListString = sharedPreferences.getString(ROUTE_LIST, "")
         val jsonRoutes = routesToJson()
 
-        if (savedListString != jsonRoutes) {
+        if (savedListString != jsonRoutes && routes.value.size > 1) {
             return getDistanceMatrix()
         }
         getStoredPrefs()
@@ -179,8 +180,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getStoredPrefs() {
-        _mileage.value = sharedPreferences.getString(MATRIX_MILEAGE, "").toString()
-        _time.value = sharedPreferences.getString(MATRIX_TIME, "").toString()
+        _mileage.value = sharedPreferences.getString(MATRIX_MILEAGE, "0").toString()
+        _time.value = sharedPreferences.getString(MATRIX_TIME, "0h 0 min")!!
     }
 
 

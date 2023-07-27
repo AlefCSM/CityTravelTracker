@@ -1,4 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CityTravelTracker</string>
+
+    <string name="witch_city">Qual cidade?</string>
+    <string name="map_icon">map icon</string>
+    <string name="city_name">São José do Rio Preto</string>
+    <string name="city_detail">SP, Brasil</string>
+    <string name="city_not_found_title">Não encontramos essa cidade</string>
+    <string name="city_not_found_description">Verifique o nome da cidade e tente novamente.</string>
+    <string name="where_are_you">Onde você está?</string>
+    <string name="what_is_your_destination">Qual é o seu destino?</string>
+    <string name="add_connections">add conexões</string>
+    <string name="my_connections">Minhas conexões</string>
+    <string name="save_trip">Salvar viagem</string>
+    <string name="delete_trip">Excluir viagem</string>
+    <string name="exclude_city">Tem certeza que deseja excluir a cidade &lt;b>%1$s&lt;/b>?</string>
+    <string name="exit_city">Tem certeza que deseja sair?\nOs dados não serão salvos</string>
+    <string name="cancel">Cancelar</string>
+    <string name="exclude">Excluir</string>
+    <string name="exit">Sair</string>
+    <string name="ok">OK</string>
+    <string name="no_network_access">Sem conexão a internet</string>
+    <string name="no_network_connection">Sem conexão de rede!</string>
+    <string name="verify_network_connection">Verifique sua conexão com a internet para continuar.</string>
+    <string name="distance">Distância percorrida</string>
+    <string name="time">Tempo total</string>
+    <string name="km">%1$s km</string>
+    <string name="hours">%1$s horas</string>
+    <string name="traveled_cities">Cidades visitadas</string>
+    <string name="connections">Conexões</string>
+    <string name="register_visited_cities">Cadastre as cidades que visitou!</string>
+    <string name="add_visited_cities">Adicione as cidades usando o botão \"+\".</string>
+    <string name="add_new_route">New Route</string>
 </resources>
