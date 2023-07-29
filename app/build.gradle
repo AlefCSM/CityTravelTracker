@@ -7,7 +7,19 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+def keystorePropertiesFile = rootProject.file("app/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties['STORE_FILE'])
+            storePassword keystoreProperties['STORE_PASSWORD']
+            keyAlias keystoreProperties['KEY_ALIAS']
+            keyPassword keystoreProperties['KEY_PASSWORD']
+        }
+    }
     compileSdk 34
 
     defaultConfig {
@@ -22,8 +34,11 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -61,9 +76,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'app.cash.turbine:turbine:0.7.0'
+    testImplementation 'app.cash.turbine:turbine:1.0.0'
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    androidTestImplementation 'app.cash.turbine:turbine:0.7.0'
+    androidTestImplementation 'app.cash.turbine:turbine:1.0.0'
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
@@ -90,7 +105,7 @@ dependencies {
     kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     // For instrumentation tests
-    androidTestImplementation  "com.google.dagger:hilt-android-testing:$hilt_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     // For local unit tests
@@ -98,8 +113,8 @@ dependencies {
     kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Moockito
-    testImplementation "org.mockito:mockito-android:3.2.4"
-    androidTestImplementation "org.mockito:mockito-android:3.2.4"
+    testImplementation 'org.mockito:mockito-android:5.4.0'
+    androidTestImplementation 'org.mockito:mockito-android:5.4.0'
 
     testImplementation 'junit:junit:4.13.2'
 //    testImplementation 'org.hamcrest.hamcrest-all:1.3'
