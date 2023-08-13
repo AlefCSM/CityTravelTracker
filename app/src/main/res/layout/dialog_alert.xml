@@ -25,6 +25,7 @@
         android:id="@+id/txt_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         style="@style/SmallTextPrimaryColor"
         android:text="@string/verify_network_connection" />
 

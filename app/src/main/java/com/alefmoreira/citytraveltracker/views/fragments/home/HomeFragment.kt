@@ -13,8 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.databinding.FragmentHomeBinding
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
+import com.alefmoreira.citytraveltracker.other.Constants.CALCULUS_ERROR
+import com.alefmoreira.citytraveltracker.other.Constants.FEW_ELEMENTS_ERROR
+import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.util.components.AMAnimator
 import com.alefmoreira.citytraveltracker.util.components.adapters.RouteAdapter
+import com.alefmoreira.citytraveltracker.util.components.dialogs.AMAlertDialog
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -41,18 +45,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun routeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.test.collect { list ->
-                if (list.isEmpty()) {
+            viewModel.recyclerList.collect { resource ->
+                if (resource.data.isNullOrEmpty()) {
                     binding.layoutNoRoutes.visibility = View.VISIBLE
                     binding.layoutRoutes.visibility = View.GONE
                 } else {
                     binding.layoutNoRoutes.visibility = View.GONE
                     binding.layoutRoutes.visibility = View.VISIBLE
 
-
                     routeAdapter = RouteAdapter()
                     routeAdapter.apply {
-                        routes = list
+                        routes = resource.data
                         onItemClick = { route ->
                             route.city.id?.let { id ->
                                 findNavController().navigate(
@@ -73,7 +76,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         itemAnimator = animator
                     }
                 }
-
             }
         }
     }
@@ -107,10 +109,45 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    private fun matrixSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.distanceMatrixStatus.collect {
+
+                if (it.peekContent().status == Status.ERROR) {
+
+                    when (it.peekContent().message) {
+                        FEW_ELEMENTS_ERROR -> showAlertMessage(
+                            title = resources.getString(R.string.matrix_error_title),
+                            message = resources.getString(R.string.matrix_error_few_elements)
+                        )
+
+                        CALCULUS_ERROR -> showAlertMessage(
+                            title = resources.getString(R.string.matrix_error_title),
+                            message = resources.getString(R.string.matrix_error_calculus)
+                        )
+
+                        else -> showAlertMessage(
+                            title = resources.getString(R.string.matrix_error_title),
+                            message = " "
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showAlertMessage(title: String, message: String) {
+        val dialog = AMAlertDialog(requireContext())
+        dialog.title = title
+        dialog.message = message
+        dialog.show()
+    }
+
     private fun setupSubscriptions() {
         routeSubscription()
         networkSubscription()
         mileageSubscription()
         timeSubscription()
+        matrixSubscription()
     }
 }

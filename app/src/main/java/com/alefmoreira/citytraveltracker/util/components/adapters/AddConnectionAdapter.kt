@@ -141,28 +141,29 @@ class AddConnectionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             AdapterLayoutEnum.SINGLE.ordinal -> (holder as SingleItemViewHolder).bind(
                 connection,
                 onDelete = {
-                    notifyDeletion(position)
                     onDeleteClick?.invoke(connection)
+                    notifyItemRemoved(position)
                 }
             )
             AdapterLayoutEnum.FIRST.ordinal -> (holder as FirstItemViewHolder).bind(
                 connection,
                 onDelete = {
-                    notifyDeletion(position)
                     onDeleteClick?.invoke(connection)
+                    notifyItemRemoved(position)
                 }
             )
             AdapterLayoutEnum.LAST.ordinal -> (holder as LastItemViewHolder).bind(
                 connection,
                 onDelete = {
-                    notifyDeletion(position)
                     onDeleteClick?.invoke(connection)
+                    notifyDeletion(position)
+
                 }
             )
             else -> {
                 (holder as MiddleItemViewHolder).bind(connection, onDelete = {
-                    notifyDeletion(position)
                     onDeleteClick?.invoke(connection)
+                    notifyItemRemoved(position)
                 })
             }
         }

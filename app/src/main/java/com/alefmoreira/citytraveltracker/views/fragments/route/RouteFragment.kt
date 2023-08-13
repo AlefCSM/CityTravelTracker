@@ -1,5 +1,6 @@
 package com.alefmoreira.citytraveltracker.views.fragments.route
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -255,12 +256,14 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     }
 
     private fun showLeaveMessage() {
-        val dialog = AMConfirmationDialog(requireContext(), DialogType.LEAVE)
-        dialog.apply {
-            onConfirm = {
-                returnToHome()
+        checkIfFragmentAttached {
+            val dialog = AMConfirmationDialog(requireContext(), DialogType.LEAVE)
+            dialog.apply {
+                onConfirm = {
+                    returnToHome()
+                }
+                this.show()
             }
-            this.show()
         }
     }
 
@@ -296,6 +299,12 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
                     binding.include.layoutNoConnection.visibility = View.VISIBLE
                 }
             }
+        }
+    }
+
+    private fun checkIfFragmentAttached(operation: Context.() -> Unit) {
+        if (isAdded && context != null) {
+            operation(requireContext())
         }
     }
 }

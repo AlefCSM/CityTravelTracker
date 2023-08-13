@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CityTravelTracker</string>
+    <string name="app_name">City Travel Tracker</string>
 
     <string name="witch_city">Qual cidade?</string>
     <string name="map_icon">map icon</string>
@@ -31,5 +31,8 @@
     <string name="connections">Conexões</string>
     <string name="register_visited_cities">Cadastre as cidades que visitou!</string>
     <string name="add_visited_cities">Adicione as cidades usando o botão \"+\".</string>
-    <string name="add_new_route">New Route</string>
+    <string name="add_new_route">Nova Rota</string>
+    <string name="matrix_error_title">Erro ao calcular rotas!</string>
+    <string name="matrix_error_calculus">Não foi possível calcular a distância entre as cidades cadastradas.</string>
+    <string name="matrix_error_few_elements">É necessário adicionar pelo menos duas rotas.</string>
 </resources>

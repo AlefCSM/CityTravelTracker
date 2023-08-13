@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CityTravelTracker</string>
+    <string name="app_name">City Travel Tracker</string>
 
     <string name="witch_city">Choose a city?</string>
     <string name="map_icon">map icon</string>
@@ -32,4 +32,7 @@
     <string name="register_visited_cities">Register the cities you visited!</string>
     <string name="add_visited_cities">Add cities using button \"+\".</string>
     <string name="add_new_route">New Route</string>
+    <string name="matrix_error_title">Error calculating routes!</string>
+    <string name="matrix_error_calculus">It was not possible to calculate the distance between the added cities.</string>
+    <string name="matrix_error_few_elements">There must be at least 2 routes.</string>
 </resources>

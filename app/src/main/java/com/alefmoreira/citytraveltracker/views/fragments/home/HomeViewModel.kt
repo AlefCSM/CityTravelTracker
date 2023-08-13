@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.model.Route
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
+import com.alefmoreira.citytraveltracker.other.Constants.CALCULUS_ERROR
+import com.alefmoreira.citytraveltracker.other.Constants.FEW_ELEMENTS_ERROR
 import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_LONG
 import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_TIME
 import com.alefmoreira.citytraveltracker.other.Constants.MATRIX_MILEAGE
@@ -55,9 +57,9 @@ class HomeViewModel @Inject constructor(
 
     val routes: StateFlow<List<Route>> = _routes
 
-    private var _test = MutableSharedFlow<List<Route>>()
+    private var _recyclerList = MutableSharedFlow<Resource<List<Route>>>()
 
-    val test: SharedFlow<List<Route>> = _test
+    val recyclerList: SharedFlow<Resource<List<Route>>> = _recyclerList
 
     private var _routeStatus = MutableStateFlow<Event<Resource<Route>>>(Event(Resource.init()))
     val routeStatus: StateFlow<Event<Resource<Route>>> = _routeStatus
@@ -119,22 +121,29 @@ class HomeViewModel @Inject constructor(
         var seconds: Long = INITIAL_LONG
         var meters: Long = INITIAL_LONG
 
-        matrixResponse.rows.forEachIndexed { index, distanceMatrixRow ->
-            seconds += distanceMatrixRow.elements[index].duration.value
-            meters += distanceMatrixRow.elements[index].distance.value
+        try {
+            matrixResponse.rows.forEachIndexed { index, distanceMatrixRow ->
+                seconds += distanceMatrixRow.elements[index].duration.value
+                meters += distanceMatrixRow.elements[index].distance.value
+            }
+        } catch (e: Exception) {
+            _distanceMatrixStatus.value = Event(Resource.error(CALCULUS_ERROR, null))
+            _mileage.value = INITIAL_LONG.toString()
+            _time.value = INITIAL_TIME
+            return
         }
 
         setMileage(meters)
         setHours(seconds)
 
         prefs.putString(ROUTE_LIST, routesToJson())
-        prefs.putString(MATRIX_MILEAGE, mileage.value)
+        prefs.putString(MATRIX_MILEAGE, mileage.value.replace(" km", ""))
         prefs.putString(MATRIX_TIME, time.value)
         prefs.commit()
     }
 
     private fun setMileage(meters: Long) {
-        _mileage.value = "${ceil(meters.toDouble() / METERS_IN_KM).toLong()} km"
+        _mileage.value = "${ceil(meters.toDouble() / METERS_IN_KM).toLong()}"
     }
 
     private fun setHours(seconds: Long) {
@@ -147,9 +156,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getRoutes() = viewModelScope.launch(dispatcher.io) {
+        _distanceMatrixStatus.value = Event(Resource.loading(null))
+        _recyclerList.emit(Resource.loading(null))
         repository.getAllRoutes().collectLatest {
             _routes.value = it
-            _test.emit(it)
+            _recyclerList.emit(Resource.success(it))
 
             checkUpdates()
         }
@@ -162,7 +173,10 @@ class HomeViewModel @Inject constructor(
         if (savedListString != jsonRoutes && routes.value.size > 1) {
             return getDistanceMatrix()
         }
-        getStoredPrefs()
+        if (routes.value.size > 1) {
+            return getStoredPrefs()
+        }
+
     }
 
     private fun routesToJson(): String {
@@ -188,7 +202,7 @@ class HomeViewModel @Inject constructor(
     suspend fun getDistanceMatrix() {
         if ((routes.value.size) <= TWO_ELEMENTS) {
             _distanceMatrixStatus.value =
-                Event(Resource.error("There must be at least 2 routes.", null))
+                Event(Resource.error(FEW_ELEMENTS_ERROR, null))
             return
         }
         _distanceMatrixStatus.value = Event(Resource.loading(null))
