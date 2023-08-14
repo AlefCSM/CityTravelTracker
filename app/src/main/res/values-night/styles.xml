@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppBackground">
+        <item name="android:background">@color/dark_3</item>
+    </style>
+
+    <style name="SearchRouteFragmentBrackground">
+        <item name="android:background">@color/night_2</item>
+    </style>
+
+    <style name="predictionIcon">
+        <item name="android:tint">@color/dark_1</item>
+    </style>
+
+    <style name="googleIcon">
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="addIcon">
+        <item name="android:tint">@color/secondary_1</item>
+    </style>
+
+    <style name="noConnectionIcon">
+        <item name="android:src">@drawable/ic_no_connection_night</item>
+    </style>
+
+    <style name="noConnectionStyle" parent="SmallText">
+        <item name="android:textColor">@color/dark_1</item>
+    </style>
+
+    <style name="expandableIcon">
+        <item name="android:tint">@color/dark_1</item>
+    </style>
+
+    <style name="SearchTextInputLayoutStyle" parent="EditTextThemeOverlay">
+        <item name="boxBackgroundColor">@color/light_1</item>
+        <item name="endIconTint">@color/dark_1</item>
+        <item name="startIconTint">@color/primary_2</item>
+    </style>
+
+    <style name="EditTextThemeOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">@color/secondary_2</item>
+        <item name="colorControlActivated">@color/light_1</item>
+    </style>
+
+    <!--    FONT REGULAR-->
+
+    <style name="TextFontRoboto" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="SmallText" parent="TextFontRoboto">
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="SmallTextPrimaryColor" parent="SmallText">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <style name="SmallTextSecondaryColor" parent="SmallText">
+        <item name="android:textColor">@color/secondary_1</item>
+    </style>
+
+    <style name="RegularText" parent="TextFontRoboto">
+        <item name="android:textSize">@dimen/regular_text_size</item>
+    </style>
+
+    <style name="RegularTextPrimaryColor" parent="RegularText">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <style name="RegularTextSecondaryColor" parent="RegularText">
+        <item name="android:textColor">@color/secondary_1</item>
+    </style>
+
+    <!--    FONT MEDIUM-->
+
+    <style name="TextFontRobotoMedium">
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="RegularTextMedium" parent="TextFontRobotoMedium">
+        <item name="android:textSize">@dimen/regular_text_size</item>
+    </style>
+
+    <style name="RegularTextPrimaryColorMedium" parent="RegularTextMedium">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <style name="SmallTextMedium" parent="TextFontRobotoMedium">
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="SmallTextPrimaryColorMedium" parent="SmallTextMedium">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <!--    FONT BOLD-->
+
+    <style name="TextFontRobotoBold">
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+    </style>
+
+    <style name="SmallTextBold" parent="TextFontRobotoBold">
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="SmallTextPrimaryColorBold" parent="SmallTextBold">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <style name="SmallTextSecondaryColorBold" parent="SmallTextBold">
+        <item name="android:textColor">@color/secondary_1</item>
+    </style>
+
+    <style name="RegularTextBold" parent="TextFontRobotoBold">
+        <item name="android:textSize">@dimen/regular_text_size</item>
+    </style>
+
+    <style name="RegularTextPrimaryColorBold" parent="RegularTextBold">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <style name="RegularTextBlueColorBold" parent="RegularTextBold">
+        <item name="android:textColor">@color/secondary_2</item>
+    </style>
+
+    <style name="BigText" parent="TextFontRobotoBold">
+        <item name="android:textSize">@dimen/big_text_size</item>
+    </style>
+
+    <style name="BigTextPrimaryColor" parent="BigText">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <style name="ExtraBigText" parent="TextFontRobotoBold">
+        <item name="android:textSize">@dimen/extra_big_text_size</item>
+    </style>
+
+    <style name="ExtraBigTextPrimaryColor" parent="ExtraBigText">
+        <item name="android:textColor">@color/light_1</item>
+    </style>
+
+    <style name="SearchEditTextStyle" parent="RegularTextPrimaryColor">
+        <item name="android:hint">@string/witch_city</item>
+        <item name="hintTextColor">@color/night_1</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_color</item>
+    </style>
+
+    <style name="OrangeButton">
+        <item name="android:textColor">@color/light_1</item>
+        <item name="android:background">@drawable/shape_button</item>
+    </style>
+
+    <style name="OrangeButtonOutline">
+        <item name="android:textColor">@color/primary_2</item>
+        <item name="android:background">@drawable/shape_button_outline</item>
+    </style>
+</resources>

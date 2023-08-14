@@ -1,3 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CityTravelTracker</string>
+    <string name="app_name">City Travel Tracker</string>
+
+    <string name="witch_city">Choose a city?</string>
+    <string name="map_icon">map icon</string>
+    <string name="city_name">São José do Rio Preto</string>
+    <string name="city_detail">SP, Brasil</string>
+    <string name="city_not_found_title">City not found</string>
+    <string name="city_not_found_description">Check the city name and try again.</string>
+    <string name="where_are_you">Where are you?</string>
+    <string name="what_is_your_destination">What is your destination?</string>
+    <string name="add_connections">add connections</string>
+    <string name="my_connections">My connections</string>
+    <string name="save_trip">Save trip</string>
+    <string name="delete_trip">Delete trip</string>
+    <string name="exclude_city">Are you sure you want to delete &lt;b>%1$s&lt;/b>?</string>
+    <string name="exit_city">Are you sure you want to leave?\nData will not be saved</string>
+    <string name="cancel">Cancel</string>
+    <string name="exclude">Delete</string>
+    <string name="exit">Leave</string>
+    <string name="ok">OK</string>
+    <string name="no_network_access">No internet access</string>
+    <string name="no_network_connection">No internet connection!</string>
+    <string name="verify_network_connection">Check your internet connection to continue.</string>
+    <string name="distance">Travelled distance</string>
+    <string name="time">Travelled time</string>
+    <string name="km">%1$s km</string>
+    <string name="hours">%1$s hours %2$s min</string>
+    <string name="traveled_cities">Travelled cities</string>
+    <string name="connections">Connections</string>
+    <string name="register_visited_cities">Register the cities you visited!</string>
+    <string name="add_visited_cities">Add cities using button \"+\".</string>
+    <string name="add_new_route">New Route</string>
+    <string name="matrix_error_title">Error calculating routes!</string>
+    <string name="matrix_error_calculus">It was not possible to calculate the distance between the added cities.</string>
+    <string name="matrix_error_few_elements">There must be at least 2 routes.</string>
 </resources>

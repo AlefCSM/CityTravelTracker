@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--    TEXT SIZES-->
+    <dimen name="small_text_size">12sp</dimen>
+    <dimen name="regular_text_size">16sp</dimen>
+    <dimen name="big_text_size">20sp</dimen>
+    <dimen name="extra_big_text_size">32sp</dimen>
+
+    <!--    DISPLAY SIZES-->
+    <dimen name="fragment_horizontal_padding">16dp</dimen>
+    <dimen name="search_fragment_padding_top">16dp</dimen>
+    <dimen name="no_drawable_start_padding">-18dp</dimen>
+    <dimen name="no_drawable_end_padding">-14dp</dimen>
+    <dimen name="route_fragment_padding_top">24dp</dimen>
+    <dimen name="home_fragment_padding_top">64dp</dimen>
+    <dimen name="card_padding">32dp</dimen>
+    <dimen name="fab_margin">32dp</dimen>
+    <dimen name="dialog_vertical_padding">50dp</dimen>
+    <dimen name="dialog_horizontal_padding">105dp</dimen>
+
+</resources>
