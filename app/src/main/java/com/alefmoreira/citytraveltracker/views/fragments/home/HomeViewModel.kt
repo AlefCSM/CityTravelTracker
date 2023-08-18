@@ -148,8 +148,11 @@ class HomeViewModel @Inject constructor(
 
     private fun setHours(seconds: Long) {
         val horas = seconds / SECONDS_IN_HOUR
-        val diff = seconds % (horas * SECONDS_IN_HOUR)
-
+        val diff = if (horas > 0) {
+            seconds % (horas * SECONDS_IN_HOUR)
+        } else {
+            seconds % SECONDS_IN_HOUR
+        }
         val minutes = ceil(diff.toDouble() / SECONDS_IN_MINUTE).toLong()
 
         _time.value = "${horas}h $minutes min"
