@@ -23,7 +23,6 @@ import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,7 +56,7 @@ class HomeViewModel @Inject constructor(
 
     val routes: StateFlow<List<Route>> = _routes
 
-    private var _recyclerList = MutableSharedFlow<Resource<List<Route>>>()
+    private var _recyclerList = MutableStateFlow<Resource<List<Route>>>(Resource.init())
 
     val recyclerList: SharedFlow<Resource<List<Route>>> = _recyclerList
 
@@ -120,6 +119,10 @@ class HomeViewModel @Inject constructor(
     private fun handleMatrix(matrixResponse: DistanceMatrixResponse) {
         var seconds: Long = INITIAL_LONG
         var meters: Long = INITIAL_LONG
+
+        if (matrixResponse.status == "REQUEST_DENIED") {
+            return
+        }
 
         try {
             matrixResponse.rows.forEachIndexed { index, distanceMatrixRow ->
