@@ -7,22 +7,22 @@ import com.alefmoreira.citytraveltracker.data.Connection
 @Dao
 interface CityDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCity(city: City): Long
+    fun insertCity(city: City): Long
 
     @Delete
-    suspend fun deleteCity(city: City)
+    fun deleteCity(city: City)
 
     @Query("SELECT * FROM cities WHERE id = :id")
-    suspend fun getCityById(id: Long): City
+    fun getCityById(id: Long): City
 
     @Query("SELECT * FROM cities")
     fun getAllCities(): List<City>
 
     @Insert(onConflict = OnConflictStrategy.NONE)
-    suspend fun insertConnectionsList(connections: List<Connection>)
+    fun insertConnectionsList(connections: List<Connection>)
 
     @Delete
-    suspend fun deleteConnection(connection: Connection)
+    fun deleteConnection(connection: Connection)
 
     @Transaction
     @Query("Select * from connections where cityId = :cityId")

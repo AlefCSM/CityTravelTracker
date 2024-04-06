@@ -135,7 +135,7 @@ class RouteViewModel @Inject constructor(
         _routeStatus.emit(Resource.success(currentDestination))
     }
 
-    private fun insertDestinationIntoDB(route: Route) = viewModelScope.launch(dispatcher.main) {
+    private fun insertDestinationIntoDB(route: Route) = viewModelScope.launch(dispatcher.io) {
         repository.insertRoute(route)
     }
 

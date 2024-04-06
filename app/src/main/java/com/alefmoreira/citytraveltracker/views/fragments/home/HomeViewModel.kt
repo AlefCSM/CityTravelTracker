@@ -23,7 +23,6 @@ import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,7 +56,7 @@ class HomeViewModel @Inject constructor(
 
     val routes: StateFlow<List<Route>> = _routes
 
-    private var _recyclerList = MutableSharedFlow<Resource<List<Route>>>()
+    private var _recyclerList = MutableStateFlow<Resource<List<Route>>>(Resource.init())
 
     val recyclerList: SharedFlow<Resource<List<Route>>> = _recyclerList
 
@@ -121,6 +120,10 @@ class HomeViewModel @Inject constructor(
         var seconds: Long = INITIAL_LONG
         var meters: Long = INITIAL_LONG
 
+        if (matrixResponse.status == "REQUEST_DENIED") {
+            return
+        }
+
         try {
             matrixResponse.rows.forEachIndexed { index, distanceMatrixRow ->
                 seconds += distanceMatrixRow.elements[index].duration.value
@@ -143,13 +146,20 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun setMileage(meters: Long) {
-        _mileage.value = "${ceil(meters.toDouble() / METERS_IN_KM).toLong()}"
+        _mileage.value = if (meters == 0L) {
+            "0"
+        } else {
+            "${ceil(meters.toDouble() / METERS_IN_KM).toLong()}"
+        }
     }
 
     private fun setHours(seconds: Long) {
         val horas = seconds / SECONDS_IN_HOUR
-        val diff = seconds % (horas * SECONDS_IN_HOUR)
-
+        val diff = if (horas > 0) {
+            seconds % (horas * SECONDS_IN_HOUR)
+        } else {
+            seconds % SECONDS_IN_HOUR
+        }
         val minutes = ceil(diff.toDouble() / SECONDS_IN_MINUTE).toLong()
 
         _time.value = "${horas}h $minutes min"
@@ -175,8 +185,9 @@ class HomeViewModel @Inject constructor(
         }
         if (routes.value.size > 1) {
             return getStoredPrefs()
+        } else {
+            resetDashboard()
         }
-
     }
 
     private fun routesToJson(): String {
@@ -195,7 +206,12 @@ class HomeViewModel @Inject constructor(
 
     private fun getStoredPrefs() {
         _mileage.value = sharedPreferences.getString(MATRIX_MILEAGE, "0").toString()
-        _time.value = sharedPreferences.getString(MATRIX_TIME, "0h 0 min")!!
+        _time.value = sharedPreferences.getString(MATRIX_TIME, INITIAL_TIME)!!
+    }
+
+    private fun resetDashboard() {
+        _mileage.value = INITIAL_LONG.toString()
+        _time.value = INITIAL_TIME
     }
 
 
