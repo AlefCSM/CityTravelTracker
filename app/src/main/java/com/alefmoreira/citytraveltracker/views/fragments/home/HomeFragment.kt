@@ -67,7 +67,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         }
                     }
 
-
                     binding.routeList.apply {
                         adapter = routeAdapter
                         layoutManager =
@@ -112,9 +111,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun matrixSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.distanceMatrixStatus.collect {
-
                 if (it.peekContent().status == Status.ERROR) {
-
                     when (it.peekContent().message) {
                         FEW_ELEMENTS_ERROR -> showAlertMessage(
                             title = resources.getString(R.string.matrix_error_title),
