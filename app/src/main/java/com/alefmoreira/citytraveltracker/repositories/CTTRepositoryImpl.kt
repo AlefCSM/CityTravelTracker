@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import javax.inject.Inject
 
-class DefaultCTTRepository @Inject constructor(
+class CTTRepositoryImpl @Inject constructor(
     private val cityDAO: CityDAO,
     private val distanceMatrixAPI: DistanceMatrixAPI
 ) : CTTRepository {

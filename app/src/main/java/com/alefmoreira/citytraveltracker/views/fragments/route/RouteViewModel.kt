@@ -44,6 +44,7 @@ class RouteViewModel @Inject constructor(
     private var _destinationStatus =
         MutableSharedFlow<Resource<Route>>()
 
+    val originStatus: SharedFlow<Resource<Route>> = _originStatus
     val destinationStatus: SharedFlow<Resource<Route>> = _destinationStatus
 
     var isLoading: Boolean = false
@@ -97,7 +98,12 @@ class RouteViewModel @Inject constructor(
             val connection = Connection(cityId = 0, name = name, placeId = placeId)
 
             if (currentDestination.connections.isNotEmpty() && position > DEFAULT_CONNECTION_POSITION) {
-                currentDestination.connections[position] = connection
+                try {
+                    currentDestination.connections[position] = connection
+                } catch (e: Exception) {
+                    _destinationStatus.emit(Resource.error("Connection out of index!", null))
+                    return@launch
+                }
             } else {
                 currentDestination.connections.add(connection)
             }
@@ -111,10 +117,8 @@ class RouteViewModel @Inject constructor(
         }
     }
 
-
     private fun validateRoute(name: String, placeId: String): Boolean =
         name.isNotEmpty() && placeId.isNotEmpty()
-
 
     fun saveRoute() = viewModelScope.launch(dispatcher.main) {
         _routeStatus.emit(Resource.loading(null))
@@ -126,13 +130,13 @@ class RouteViewModel @Inject constructor(
             _routeStatus.emit(Resource.error("The destination must not be empty.", null))
             return@launch
         }
-
         if (isFirstRoute.value) {
             insertDestinationIntoDB(currentOrigin)
         }
 
         insertDestinationIntoDB(currentDestination).join()
         _routeStatus.emit(Resource.success(currentDestination))
+        isFirstRoute.value = false
     }
 
     private fun insertDestinationIntoDB(route: Route) = viewModelScope.launch(dispatcher.io) {
@@ -143,7 +147,6 @@ class RouteViewModel @Inject constructor(
         currentOrigin = Route(City(name = "", placeId = ""), mutableListOf())
         currentDestination = Route(City(name = "", placeId = ""), mutableListOf())
     }
-
 
     fun deleteRoute(route: Route) = viewModelScope.launch(dispatcher.io) {
         _routeStatus.emit(Resource.loading(null))
@@ -171,7 +174,6 @@ class RouteViewModel @Inject constructor(
 
     fun getRoute(id: Long) = viewModelScope.launch(dispatcher.io) {
         _destinationStatus.emit(Resource.loading(null))
-
         currentDestination = repository.getRouteById(id)
         _destinationStatus.emit(Resource.success(currentDestination))
     }

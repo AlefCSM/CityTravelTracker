@@ -22,7 +22,6 @@ import com.alefmoreira.citytraveltracker.util.components.PredictionDividerItemDe
 import com.alefmoreira.citytraveltracker.util.components.adapters.PlacePredictionAdapter
 import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
 import com.google.android.libraries.places.api.model.AutocompletePrediction
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,7 +32,6 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
     private lateinit var binding: FragmentSearchRouteBinding
     private val routeViewModel: RouteViewModel by activityViewModels()
     private val searchRouteViewModel: SearchRouteViewModel by activityViewModels()
-    private val token = AutocompleteSessionToken.newInstance()
     private val arguments: SearchRouteFragmentArgs by navArgs()
 
     private lateinit var predictionRecyclerViewAdapter: PlacePredictionAdapter
@@ -48,7 +46,7 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         binding.txtSearch.apply {
             isHintAnimationEnabled = false
             editText?.addTextChangedListener {
-                searchRouteViewModel.validateText(it.toString(), token)
+                searchRouteViewModel.validateText(it.toString())
             }
             editText?.setText(arguments.selectedCity)
         }

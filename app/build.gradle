@@ -78,6 +78,7 @@ dependencies {
 
     //Google Places
     implementation 'com.google.android.libraries.places:places:3.4.0'
+    testImplementation 'com.google.android.libraries.places:places:3.4.0'
 
     //Material
     implementation 'com.google.android.material:material:1.11.0'
@@ -125,7 +126,8 @@ dependencies {
     kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Moockito
-    testImplementation 'org.mockito:mockito-android:5.5.0'
+//    testImplementation 'org.mockito:mockito-android:5.5.0'
+    testImplementation 'org.mockito:mockito-core:5.5.0'
     androidTestImplementation 'org.mockito:mockito-android:5.5.0'
 
     testImplementation 'junit:junit:4.13.2'

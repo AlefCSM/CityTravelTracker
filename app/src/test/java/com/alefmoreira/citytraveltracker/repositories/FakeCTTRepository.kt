@@ -12,6 +12,7 @@ class FakeCTTRepository : CTTRepository {
     private val routes = mutableListOf<Route>()
     private val observableDestinations = MutableStateFlow<List<Route>>(routes)
     private var shouldReturnNetworkError = false
+    private var idCounter = 1L
 
     fun setShouldReturnNetworkError(value: Boolean) {
         shouldReturnNetworkError = value
@@ -22,6 +23,7 @@ class FakeCTTRepository : CTTRepository {
     }
 
     override suspend fun insertRoute(route: Route) {
+        route.city.id = idCounter++
         routes.add(route)
         refreshFlows()
     }
@@ -31,15 +33,15 @@ class FakeCTTRepository : CTTRepository {
         refreshFlows()
     }
 
-    override fun observeAllRoutes(): Flow<List<Route>> {
+    override suspend fun getRouteById(id: Long): Route {
+        return routes.first { it.city.id == id }
+    }
+
+    override suspend fun getAllRoutes(): Flow<List<Route>> {
         return observableDestinations
     }
 
-
-    override suspend fun getDistanceMatrix(
-        origins: List<Route>,
-        destinations: List<Route>
-    ): Resource<DistanceMatrixResponse> {
+    override suspend fun getDistanceMatrix(routes: List<Route>): Resource<DistanceMatrixResponse> {
         return if (shouldReturnNetworkError) {
             Resource.error("Error", null)
         } else {

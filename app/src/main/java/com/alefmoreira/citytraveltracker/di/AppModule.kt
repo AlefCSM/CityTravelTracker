@@ -12,9 +12,12 @@ import com.alefmoreira.citytraveltracker.network.NetworkObserverImpl
 import com.alefmoreira.citytraveltracker.other.Constants.BASE_URL
 import com.alefmoreira.citytraveltracker.other.Constants.DATABASE_NAME
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
+import com.alefmoreira.citytraveltracker.repositories.AutoCompleteRepository
+import com.alefmoreira.citytraveltracker.repositories.AutoCompleteRepositoryImpl
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
-import com.alefmoreira.citytraveltracker.repositories.DefaultCTTRepository
+import com.alefmoreira.citytraveltracker.repositories.CTTRepositoryImpl
 import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Module
 import dagger.Provides
@@ -37,31 +40,27 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideDefaultCTTRepository(
+    fun provideCTTRepositoryImpl(
         dao: CityDAO,
         api: DistanceMatrixAPI
-    ) = DefaultCTTRepository(dao, api) as CTTRepository
+    ) = CTTRepositoryImpl(dao, api) as CTTRepository
 
     @Singleton
     @Provides
     fun provideCityDAO(database: CTTDatabase) = database.cityDAO()
 
+    @Singleton
+    @Provides
+    fun provideDistanceMatrixAPI(): DistanceMatrixAPI = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .build()
+        .create(DistanceMatrixAPI::class.java)
+
 
     @Singleton
     @Provides
-    fun provideDistanceMatrixAPI(): DistanceMatrixAPI {
-        return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .build()
-            .create(DistanceMatrixAPI::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun provideDispatcher(): DispatcherProvider {
-        return DefaultDispatchers()
-    }
+    fun provideDispatcher(): DispatcherProvider = DefaultDispatchers()
 
     @Singleton
     @Provides
@@ -80,4 +79,16 @@ object AppModule {
     fun provideSharedPreferences(
         @ApplicationContext context: Context
     ): SharedPreferences = context.getSharedPreferences("teste", Context.MODE_PRIVATE)
+
+    @Singleton
+    @Provides
+    fun provideAutocompleteToken(): AutocompleteSessionToken =
+        AutocompleteSessionToken.newInstance()
+
+    @Singleton
+    @Provides
+    fun provideAutoCompleteRepositoryImpl(
+        placesClient: PlacesClient,
+        token: AutocompleteSessionToken
+    ) = AutoCompleteRepositoryImpl(placesClient, token) as AutoCompleteRepository
 }

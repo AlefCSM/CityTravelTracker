@@ -1,10 +1,14 @@
-package com.alefmoreira.citytraveltracker.views.fragments.home
+package com.alefmoreira.citytraveltracker.views.fragments.route
 
+import android.content.SharedPreferences
+import app.cash.turbine.test
 import com.alefmoreira.citytraveltracker.MainCoroutineRule
 import com.alefmoreira.citytraveltracker.coroutines.TestDispatchers
+import com.alefmoreira.citytraveltracker.network.NetworkObserver
+import com.alefmoreira.citytraveltracker.network.NetworkObserverTest
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.FakeCTTRepository
-import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
+import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -15,237 +19,359 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RouteViewModelTest {
-
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private lateinit var viewModel: RouteViewModel
+    private lateinit var routeViewModel: RouteViewModel
+    private lateinit var homeViewModel: HomeViewModel
     private lateinit var testDispatcher: TestDispatchers
+    private lateinit var networkObserver: NetworkObserver
+    private lateinit var sharedPreferences: SharedPreferences
 
     @Before
     fun setup() {
+        val repository = FakeCTTRepository()
+//        val context = getApplicationContext<CTTApplication>()
         testDispatcher = TestDispatchers()
-        viewModel = RouteViewModel(FakeCTTRepository(), testDispatcher)
+        networkObserver = NetworkObserverTest()
+        routeViewModel = RouteViewModel(repository, testDispatcher, networkObserver)
+//        sharedPreferences = context.getSharedPreferences("teste", Context.MODE_PRIVATE)
+//        homeViewModel = HomeViewModel(repository, testDispatcher, networkObserver,sharedPreferences)
+    }
+
+    @Test
+    fun `when saveRoute, isLoading returns true`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.saveRoute()
+
+        routeViewModel.routeStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
+            assertThat(routeViewModel.isLoading).isEqualTo(true)
+        }
+    }
+    @Test
+    fun `setOrigin without name should return error`() = runTest {
+        routeViewModel.setOrigin("", "123")
+
+        routeViewModel.originStatus.test {
+
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The fields must not be empty!")
+        }
+    }
+
+    @Test
+    fun `setOrigin without placeId should return error`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "")
+
+        routeViewModel.originStatus.test {
+
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The fields must not be empty!")
+        }
+    }
+
+    @Test
+    fun `setOrigin should return success`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+
+        routeViewModel.originStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+            assertThat(routeViewModel.currentOrigin.city.name).isEqualTo("Curitiba")
+            assertThat(routeViewModel.currentOrigin.city.placeId).isEqualTo("123")
+        }
+    }
+
+    @Test
+    fun `setDestination without name should return error`() = runTest {
+        routeViewModel.setDestination("", "123")
+
+        routeViewModel.destinationStatus.test {
+
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The fields must not be empty!")
+        }
+    }
+
+    @Test
+    fun `setDestination without placeId should return error`() = runTest {
+        routeViewModel.setDestination("Curitiba", "")
+
+        routeViewModel.destinationStatus.test {
+
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The fields must not be empty!")
+        }
+    }
+
+    @Test
+    fun `setDestination should return success`() = runTest {
+        routeViewModel.setDestination("Curitiba", "123")
+
+        routeViewModel.destinationStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+            assertThat(routeViewModel.currentDestination.city.name).isEqualTo("Curitiba")
+            assertThat(routeViewModel.currentDestination.city.placeId).isEqualTo("123")
+        }
     }
 
     @Test
     fun `saveRoute emits loading status`() = runTest {
-        viewModel.setDestination("Curitiba", "123")
-        viewModel.saveRoute()
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.saveRoute()
 
-        val statusList = mutableListOf<Status>()
-        viewModel.routeStatus.collect { value ->
-            statusList.add(value.status)
-            assertThat(statusList).contains(Status.LOADING)
+        routeViewModel.routeStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
         }
-
-
     }
 
     @Test
     fun `insert first route without origin, returns error`() = runTest {
-        viewModel.setDestination("Curitiba", "123")
-        val emitter = viewModel.routeStatus
+        routeViewModel.setDestination("Curitiba", "123")
+        routeViewModel.saveRoute()
 
-        viewModel.saveRoute()
-
-        advanceUntilIdle()
-
-        viewModel.routeStatus.collect { value ->
+        routeViewModel.routeStatus.test {
+            var value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
+            value = awaitItem()
             assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The origin must not be empty.")
         }
     }
 
-//    @Test
-//    fun `insert first route without destination, returns error`() {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.saveRoute()
-//        val value = viewModel.routeStatus.value.getContentIfNotHandled()
-//        assertThat(value?.status).isEqualTo(Status.ERROR)
-//    }
-//
-//    @Test
-//    fun `insert first route, returns success`() = runTest {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.setDestination("Joinville", "123")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//        val value = viewModel.routeStatus.value.getContentIfNotHandled()
-//        assertThat(value?.status).isEqualTo(Status.SUCCESS)
-//    }
-//
-//    @Test
-//    fun `insert second route, returns success`() = runTest {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.setDestination("Joinville", "123")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//        viewModel.setDestination("Florianopolis", "472683")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//
-//        val value = viewModel.routeStatus.value.getContentIfNotHandled()
-//        val routes = viewModel.routes.value.getContentIfNotHandled()
-//        assertThat(value?.status).isEqualTo(Status.SUCCESS)
-//        assertThat(routes?.data?.size).isEqualTo(3)
-//
-//    }
-//
-//    @Test
-//    fun ` isFirstRoute returns false after saving first route`() = runTest {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.setDestination("Joinville", "123")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//
-//        val value = viewModel.isFirstRoute()
-//        assertThat(value).isFalse()
-//    }
-//
-//    @Test
-//    fun `delete route, returns success`() = runTest {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.setDestination("Joinville", "123")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//        var routes = viewModel.routes.value.getContentIfNotHandled()
-//
-//        viewModel.deleteRoute(routes?.data?.last()!!)
-//        advanceUntilIdle()
-//
-//        val value = viewModel.routeStatus.value.getContentIfNotHandled()
-//        routes = viewModel.routes.value.peekContent()
-//        assertThat(value?.status).isEqualTo(Status.SUCCESS)
-//        assertThat(routes.data?.size).isEqualTo(1)
-//    }
-//
-//    @Test
-//    fun `one route on DistanceMatrix, returns error`() = runTest {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.setDestination("Joinville", "123")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//        val routes = viewModel.routes.value.getContentIfNotHandled()
-//
-//        viewModel.deleteRoute(routes?.data?.last()!!)
-//        advanceUntilIdle()
-//
-//        viewModel.getDistanceMatrix()
-//
-//        val value = viewModel.distanceMatrixStatus
-//
-//        assertThat(value.value.peekContent().status).isEqualTo(Status.ERROR)
-//    }
-//
-//    @Test
-//    fun `DistanceMatrix, returns success`() = runTest {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.setDestination("Joinville", "123")
-//        viewModel.saveRoute()
-//
-//        advanceUntilIdle()
-//        val routes = viewModel.routes.value.getContentIfNotHandled()
-//        viewModel.getDistanceMatrix()
-//
-//        val value = viewModel.distanceMatrixStatus
-//
-//        assertThat(value.value.peekContent().status).isEqualTo(Status.SUCCESS)
-//        assertThat(routes).isNotNull()
-//    }
-//
-//    @Test
-//    fun `empty destination list, should return true`() {
-//        val test = viewModel.isFirstRoute()
-//        assertThat(test).isTrue()
-//    }
-//
-//
-//    @Test
-//    fun `insert incorrect destination, returns error`() {
-//        viewModel.setDestination("curitiba", "")
-//
-//        assertThat(
-//            viewModel.destinationStatus.value.getContentIfNotHandled()?.status
-//        ).isEqualTo(Status.ERROR)
-//    }
-//
-//    @Test
-//    fun `insert correct destination, returns success`() {
-//        viewModel.setDestination("curitiba", "324")
-//
-//        assertThat(
-//            viewModel.destinationStatus.value.getContentIfNotHandled()?.status
-//        ).isEqualTo(Status.SUCCESS)
-//    }
-//
-//    @Test
-//    fun `insert incorrect origin, returns error`() {
-//        viewModel.setOrigin("curitiba", "")
-//
-//        assertThat(
-//            viewModel.originStatus.value.getContentIfNotHandled()?.status
-//        ).isEqualTo(Status.ERROR)
-//    }
-//
-//    @Test
-//    fun `insert correct origin, returns success`() {
-//        viewModel.setOrigin("curitiba", "324")
-//
-//        assertThat(
-//            viewModel.originStatus.value.getContentIfNotHandled()?.status
-//        ).isEqualTo(Status.SUCCESS)
-//    }
-//
-//    @Test
-//    fun `insert connection without destination, returns error`() {
-//        viewModel.addConnection("curitiba", "123")
-//
-//        assertThat(
-//            viewModel.destinationStatus.value.getContentIfNotHandled()?.status
-//        ).isEqualTo(Status.ERROR)
-//    }
-//
-//    @Test
-//    fun `insert correct connection with destination, returns success`() {
-//        viewModel.setDestination("Florianopolis", "234")
-//        viewModel.addConnection("Curitiba", "123")
-//
-//        assertThat(
-//            viewModel.destinationStatus.value.getContentIfNotHandled()?.status
-//        ).isEqualTo(Status.SUCCESS)
-//    }
-//
-//    @Test
-//    fun `save first Route without origin, returns error`() = runTest {
-//        viewModel.setDestination("Joinville", "234")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//
-//    }
-//
-//    @Test
-//    fun `empty origin, returns false`() {
-//        val test = viewModel.isOriginEmpty()
-//        assertThat(test).isTrue()
-//    }
-//
-//    @Test
-//    fun `added origin, returns true`() {
-//        viewModel.setOrigin("Joinville", "12456")
-//        val test = viewModel.isOriginEmpty()
-//        assertThat(test).isFalse()
-//    }
-//
-//    @Test
-//    fun `empty destination, returns false`() {
-//        val test = viewModel.isDestinationEmpty()
-//        assertThat(test).isTrue()
-//    }
-//
-//    @Test
-//    fun `added destination, returns true`() {
-//        viewModel.setDestination("Joinville", "12456")
-//        val test = viewModel.isDestinationEmpty()
-//        assertThat(test).isFalse()
-//    }
+    @Test
+    fun `insert first route without destination, returns error`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.saveRoute()
+
+        routeViewModel.routeStatus.test {
+            var value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
+            value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The destination must not be empty.")
+        }
+    }
+
+    @Test
+    fun `insert first route, returns success`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.saveRoute()
+
+        routeViewModel.routeStatus.test {
+            var value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
+            value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+        }
+    }
+
+    @Test
+    fun `insert second route, returns success`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.saveRoute()
+        advanceUntilIdle()
+        routeViewModel.setDestination("Florianopolis", "472683")
+        routeViewModel.saveRoute()
+
+        routeViewModel.routeStatus.test {
+            var value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
+            value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+            assertThat(routeViewModel.currentDestination.city.name).isEqualTo("Florianopolis")
+        }
+    }
+
+    @Test
+    fun ` isFirstRoute returns false after saving first route`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.saveRoute()
+
+        routeViewModel.isFirstRoute.test {
+            awaitItem()
+            val value = awaitItem()
+            assertThat(value).isFalse()
+        }
+    }
+
+    @Test
+    fun `insert connection without destination, returns error`() = runTest {
+        routeViewModel.addConnection("curitiba", "123", 0)
+
+        routeViewModel.destinationStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The city must not be empty!")
+        }
+    }
+
+    @Test
+    fun `insert connection without name, returns error`() = runTest {
+        routeViewModel.addConnection("", "123", 0)
+
+        routeViewModel.destinationStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The fields must not be empty!")
+        }
+    }
+
+    @Test
+    fun `insert connection without placeId, returns error`() = runTest {
+        routeViewModel.addConnection("Curitiba", "", 0)
+
+        routeViewModel.destinationStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("The fields must not be empty!")
+        }
+    }
+
+    @Test
+    fun `insert correct connection with destination, returns success`() = runTest {
+        routeViewModel.setDestination("Florianopolis", "234")
+        advanceUntilIdle()
+        routeViewModel.addConnection("Curitiba", "123", 0)
+
+        routeViewModel.destinationStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+        }
+    }
+
+    @Test
+    fun `insert connection with position out of index, returns error`() = runTest {
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.addConnection("Curitiba", "123", 0)
+        advanceUntilIdle()
+        routeViewModel.addConnection("Curitiba", "123", 3)
+
+        routeViewModel.destinationStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.ERROR)
+            assertThat(value.message).isEqualTo("Connection out of index!")
+        }
+    }
+
+    @Test
+    fun `delete route, returns success`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.saveRoute()
+        advanceUntilIdle()
+
+        routeViewModel.deleteRoute(routeViewModel.currentDestination)
+        routeViewModel.routeStatus.test {
+            var value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
+            value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+        }
+    }
+
+    @Test
+    fun `empty destination, returns true`() {
+        val value = routeViewModel.isDestinationEmpty()
+        assertThat(value).isTrue()
+    }
+
+    @Test
+    fun `added destination, returns false`() = runTest {
+        routeViewModel.setDestination("Joinville", "12456")
+        advanceUntilIdle()
+        val value = routeViewModel.isDestinationEmpty()
+        assertThat(value).isFalse()
+    }
+
+    @Test
+    fun `isButtonEnabled without Origin and Destination, returns false`() {
+        assertThat(routeViewModel.isButtonEnabled()).isEqualTo(false)
+    }
+
+    @Test
+    fun `isButtonEnabled without Destination, returns false`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        advanceUntilIdle()
+        assertThat(routeViewModel.isButtonEnabled()).isEqualTo(false)
+    }
+
+    @Test
+    fun `isButtonEnabled without Origin, returns false`() = runTest {
+        routeViewModel.setDestination("Curitiba", "123")
+        advanceUntilIdle()
+        assertThat(routeViewModel.isButtonEnabled()).isEqualTo(false)
+    }
+
+    @Test
+    fun `isButtonEnabled with Origin and Destination, returns true`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "1233")
+        advanceUntilIdle()
+        assertThat(routeViewModel.isButtonEnabled()).isEqualTo(true)
+    }
+
+    @Test
+    fun `isButtonEnabled with saved Route, returns true`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "1233")
+        routeViewModel.saveRoute()
+        advanceUntilIdle()
+        assertThat(routeViewModel.isButtonEnabled()).isEqualTo(true)
+    }
+
+    @Test
+    fun `clearRoutes, returns empty Origin and Destination`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "1233")
+        advanceUntilIdle()
+        routeViewModel.clearRoutes()
+        assertThat(routeViewModel.currentOrigin.city.name).isEqualTo("")
+        assertThat(routeViewModel.currentDestination.city.name).isEqualTo("")
+    }
+
+    @Test
+    fun `getRoute returns Route`() = runTest {
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "1233")
+        routeViewModel.saveRoute()
+        advanceUntilIdle()
+
+        routeViewModel.getRoute(2L)
+        routeViewModel.destinationStatus.test {
+            var value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.LOADING)
+            value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+            assertThat(value.data?.city?.name).isEqualTo("Joinville")
+        }
+    }
+
+    @Test
+    fun `removeConnection returns empty connection`() = runTest {
+        routeViewModel.setDestination("Joinville", "1233")
+        routeViewModel.addConnection("Curitiba", "123", 0)
+        advanceUntilIdle()
+
+        routeViewModel.removeConnection(routeViewModel.currentDestination.connections[0])
+        routeViewModel.destinationStatus.test {
+            val value = awaitItem()
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+            assertThat(value.data?.city?.name).isEqualTo("Joinville")
+            assertThat(value.data?.connections?.isEmpty()).isEqualTo(true)
+        }
+    }
 }
