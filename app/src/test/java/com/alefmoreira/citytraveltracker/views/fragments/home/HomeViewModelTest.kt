@@ -4,10 +4,14 @@ import android.content.SharedPreferences
 import com.alefmoreira.citytraveltracker.MainCoroutineRule
 import com.alefmoreira.citytraveltracker.coroutines.TestDispatchers
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
+import com.alefmoreira.citytraveltracker.network.NetworkObserverTest
 import com.alefmoreira.citytraveltracker.repositories.FakeCTTRepository
+import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
@@ -15,24 +19,26 @@ class HomeViewModelTest {
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var routeViewModel: RouteViewModel
     private lateinit var testDispatcher: TestDispatchers
     private lateinit var networkObserverTest: NetworkObserver
     private lateinit var sharedPreferences: SharedPreferences
 
     @Before
     fun setup() {
+        val repository = FakeCTTRepository()
         testDispatcher = TestDispatchers()
-        viewModel = HomeViewModel(FakeCTTRepository(), testDispatcher,networkObserverTest,sharedPreferences)
+        networkObserverTest = NetworkObserverTest()
+        homeViewModel = HomeViewModel(repository, testDispatcher,networkObserverTest)
+        routeViewModel = RouteViewModel(repository, testDispatcher,networkObserverTest)
     }
-//
-//    @Test
-//    fun `insert first route without origin, returns error`() {
-//        viewModel.setDestination("Curitiba", "123")
-//        viewModel.saveRoute()
-//        val value = viewModel.routeStatus.value.getContentIfNotHandled()
-//        assertThat(value?.status).isEqualTo(Status.ERROR)
-//    }
+
+    @Test
+    fun `when empty routes, isFirstRoute should return true`() {
+
+        assertThat(homeViewModel.isFirstRoute()).isEqualTo(true)
+    }
 //
 //    @Test
 //    fun `insert first route without destination, returns error`() {

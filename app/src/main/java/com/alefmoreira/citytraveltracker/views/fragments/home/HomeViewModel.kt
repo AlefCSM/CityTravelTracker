@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
 
     private var _routes = MutableStateFlow<List<Route>>(mutableListOf())
 
-    val routes: StateFlow<List<Route>> = _routes
+    private val routes: StateFlow<List<Route>> = _routes
 
     private var _recyclerList = MutableStateFlow<Resource<List<Route>>>(Resource.init())
 
@@ -214,8 +214,7 @@ class HomeViewModel @Inject constructor(
         _time.value = INITIAL_TIME
     }
 
-
-    suspend fun getDistanceMatrix() {
+    private suspend fun getDistanceMatrix() {
         if ((routes.value.size) <= TWO_ELEMENTS) {
             _distanceMatrixStatus.value =
                 Event(Resource.error(FEW_ELEMENTS_ERROR, null))
