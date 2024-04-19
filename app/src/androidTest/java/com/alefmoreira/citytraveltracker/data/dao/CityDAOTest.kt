@@ -1,7 +1,6 @@
 package com.alefmoreira.citytraveltracker.data.dao
 
 import androidx.test.filters.SmallTest
-import app.cash.turbine.test
 import com.alefmoreira.citytraveltracker.data.CTTDatabase
 import com.alefmoreira.citytraveltracker.data.City
 import com.alefmoreira.citytraveltracker.data.Connection
@@ -48,10 +47,9 @@ class CityDAOTest {
 
             dao.insertCity(city)
 
-            dao.getAllCities().test {
-                val allCities = awaitItem()
-                assertThat(allCities).contains(city)
-            }
+            val allCities = dao.getAllCities()
+
+            assertThat(allCities).contains(city)
         }
     }
 
@@ -59,13 +57,10 @@ class CityDAOTest {
     fun insertCityWithNullId() {
         runBlocking {
             val city = City(name = "joinville", placeId = "123")
-
             dao.insertCity(city)
 
-            dao.getAllCities().test {
-                val allCities = awaitItem()
-                assertThat(allCities.size).isEqualTo(1)
-            }
+            val allCities = dao.getAllCities()
+            assertThat(allCities.size).isEqualTo(1)
         }
     }
 
@@ -94,11 +89,9 @@ class CityDAOTest {
             dao.insertCity(city)
             dao.deleteCity(city)
 
-            dao.getAllCities().test {
-                val allCities = awaitItem()
+            val allCities = dao.getAllCities()
+            assertThat(allCities).doesNotContain(city)
 
-                assertThat(allCities).doesNotContain(city)
-            }
         }
     }
 
@@ -111,10 +104,8 @@ class CityDAOTest {
             dao.insertCity(city)
             dao.insertConnectionsList(listOf(connection))
 
-            dao.getCityConnectionsByCityId(1).test {
-                val connectionList = awaitItem()
-                assertThat(connectionList[0]).isEqualTo(connection)
-            }
+            val connectionList = dao.getCityConnectionsByCityId(1)
+            assertThat(connectionList[0]).isEqualTo(connection)
         }
     }
 
@@ -128,10 +119,9 @@ class CityDAOTest {
             dao.insertCity(city)
             dao.insertConnectionsList(listOf(connection, connection2))
 
-            dao.getCityConnectionsByCityId(1).test {
-                val connectionList = awaitItem()
-                assertThat(connectionList.size).isEqualTo(2)
-            }
+            val connectionList = dao.getCityConnectionsByCityId(1)
+            assertThat(connectionList.size).isEqualTo(2)
+
         }
     }
 
@@ -146,10 +136,8 @@ class CityDAOTest {
             dao.insertConnectionsList(listOf(connection, connection2))
             dao.deleteCity(city)
 
-            dao.getCityConnectionsByCityId(1).test {
-                val connectionList = awaitItem()
-                assertThat(connectionList.size).isEqualTo(0)
-            }
+            val connectionList = dao.getCityConnectionsByCityId(1)
+            assertThat(connectionList.size).isEqualTo(0)
         }
     }
 }

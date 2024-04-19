@@ -54,7 +54,7 @@ class SearchRouteViewModel @Inject constructor(
             if (text != query) {
                 return@launch
             }
-            _predictionStatus.value = Resource.loading(null)
+            _predictionStatus.value = Resource.loading()
             findPredictions(query)
         }
 

@@ -58,7 +58,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     private val arguments: RouteFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        routeViewModel.isFirstRoute.value = homeViewModel.isFirstRoute()
+        routeViewModel.isFirstRoute.value = homeViewModel.isFirstRoute
 
         if (arguments.routeId > 0) {
             routeViewModel.getRoute(arguments.routeId)

@@ -3,8 +3,6 @@ package com.alefmoreira.citytraveltracker.repositories
 import com.alefmoreira.citytraveltracker.model.Dashboard
 import com.alefmoreira.citytraveltracker.model.Route
 import com.alefmoreira.citytraveltracker.other.Resource
-import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
-import kotlinx.coroutines.flow.Flow
 
 interface CTTRepository {
 
@@ -14,11 +12,7 @@ interface CTTRepository {
 
     suspend fun getRouteById(id: Long): Route
 
-    suspend fun getAllRoutes(): Flow<List<Route>>
-
-    suspend fun getDistanceMatrix(
-        routes: List<Route>
-    ): Resource<DistanceMatrixResponse>
+    suspend fun getAllRoutes(): List<Route>
 
     suspend fun getDashboard(routes: List<Route>): Resource<Dashboard>
 }

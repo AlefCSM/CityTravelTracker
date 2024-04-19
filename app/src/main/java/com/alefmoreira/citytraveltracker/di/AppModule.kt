@@ -10,6 +10,7 @@ import com.alefmoreira.citytraveltracker.data.dao.CityDAO
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.network.NetworkObserverImpl
 import com.alefmoreira.citytraveltracker.other.Constants.BASE_URL
+import com.alefmoreira.citytraveltracker.other.Constants.CTT_PREFS
 import com.alefmoreira.citytraveltracker.other.Constants.DATABASE_NAME
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
 import com.alefmoreira.citytraveltracker.repositories.AutoCompleteRepository
@@ -42,8 +43,9 @@ object AppModule {
     @Provides
     fun provideCTTRepositoryImpl(
         dao: CityDAO,
-        api: DistanceMatrixAPI
-    ) = CTTRepositoryImpl(dao, api) as CTTRepository
+        api: DistanceMatrixAPI,
+        sharedPreferences: SharedPreferences
+    ) = CTTRepositoryImpl(dao, api,sharedPreferences) as CTTRepository
 
     @Singleton
     @Provides
@@ -78,7 +80,7 @@ object AppModule {
     @Provides
     fun provideSharedPreferences(
         @ApplicationContext context: Context
-    ): SharedPreferences = context.getSharedPreferences("teste", Context.MODE_PRIVATE)
+    ): SharedPreferences = context.getSharedPreferences(CTT_PREFS, Context.MODE_PRIVATE)
 
     @Singleton
     @Provides

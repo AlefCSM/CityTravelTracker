@@ -1,6 +1,5 @@
 package com.alefmoreira.citytraveltracker.views.fragments.route
 
-import android.content.SharedPreferences
 import app.cash.turbine.test
 import com.alefmoreira.citytraveltracker.MainCoroutineRule
 import com.alefmoreira.citytraveltracker.coroutines.TestDispatchers
@@ -8,7 +7,6 @@ import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.network.NetworkObserverTest
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.FakeCTTRepository
-import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -23,20 +21,15 @@ class RouteViewModelTest {
     var mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var routeViewModel: RouteViewModel
-    private lateinit var homeViewModel: HomeViewModel
     private lateinit var testDispatcher: TestDispatchers
     private lateinit var networkObserver: NetworkObserver
-    private lateinit var sharedPreferences: SharedPreferences
 
     @Before
     fun setup() {
         val repository = FakeCTTRepository()
-//        val context = getApplicationContext<CTTApplication>()
         testDispatcher = TestDispatchers()
         networkObserver = NetworkObserverTest()
         routeViewModel = RouteViewModel(repository, testDispatcher, networkObserver)
-//        sharedPreferences = context.getSharedPreferences("teste", Context.MODE_PRIVATE)
-//        homeViewModel = HomeViewModel(repository, testDispatcher, networkObserver,sharedPreferences)
     }
 
     @Test

@@ -1,14 +1,17 @@
 package com.alefmoreira.citytraveltracker.views.fragments.home
 
-import android.content.SharedPreferences
+import app.cash.turbine.test
 import com.alefmoreira.citytraveltracker.MainCoroutineRule
 import com.alefmoreira.citytraveltracker.coroutines.TestDispatchers
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.network.NetworkObserverTest
+import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.FakeCTTRepository
 import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,7 +26,6 @@ class HomeViewModelTest {
     private lateinit var routeViewModel: RouteViewModel
     private lateinit var testDispatcher: TestDispatchers
     private lateinit var networkObserverTest: NetworkObserver
-    private lateinit var sharedPreferences: SharedPreferences
 
     @Before
     fun setup() {
@@ -34,30 +36,53 @@ class HomeViewModelTest {
         routeViewModel = RouteViewModel(repository, testDispatcher,networkObserverTest)
     }
 
+    fun saveRoute(){
+        routeViewModel.setOrigin("Curitiba", "123")
+        routeViewModel.setDestination("Joinville", "123")
+        routeViewModel.saveRoute()
+    }
+
+    @Test
+    fun `getRoutes, should return routes`()= runTest {
+        saveRoute()
+        advanceUntilIdle()
+        homeViewModel.getRoutes()
+        homeViewModel.recyclerList.test {
+            awaitItem()
+            awaitItem()
+            val value =awaitItem()
+
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
+            assertThat(value.data?.size).isEqualTo(2)
+        }
+    }
+
     @Test
     fun `when empty routes, isFirstRoute should return true`() {
-
-        assertThat(homeViewModel.isFirstRoute()).isEqualTo(true)
+        assertThat(homeViewModel.isFirstRoute).isEqualTo(true)
     }
-//
-//    @Test
-//    fun `insert first route without destination, returns error`() {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.saveRoute()
-//        val value = viewModel.routeStatus.value.getContentIfNotHandled()
-//        assertThat(value?.status).isEqualTo(Status.ERROR)
-//    }
-//
-//    @Test
-//    fun `insert first route, returns success`() = runTest {
-//        viewModel.setOrigin("Curitiba", "123")
-//        viewModel.setDestination("Joinville", "123")
-//        viewModel.saveRoute()
-//        advanceUntilIdle()
-//        val value = viewModel.routeStatus.value.getContentIfNotHandled()
-//        assertThat(value?.status).isEqualTo(Status.SUCCESS)
-//    }
-//
+    @Test
+    fun `when no empty routes, isFirstRoute should return false`()= runTest {
+        saveRoute()
+        advanceUntilIdle()
+        homeViewModel.getRoutes()
+        advanceUntilIdle()
+        assertThat(homeViewModel.isFirstRoute).isEqualTo(false)
+    }
+
+    @Test
+    fun `insert first route, returns success`() = runTest {
+        saveRoute()
+        advanceUntilIdle()
+        homeViewModel.dashboardStatus.test {
+            awaitItem()
+            awaitItem()
+            val value = awaitItem()
+            assertThat(value.peekContent().status).isEqualTo(Status.SUCCESS)
+        }
+
+    }
+
 //    @Test
 //    fun `insert second route, returns success`() = runTest {
 //        viewModel.setOrigin("Curitiba", "123")

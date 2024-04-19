@@ -5,17 +5,14 @@ import com.alefmoreira.citytraveltracker.data.dao.CityDAO
 import com.alefmoreira.citytraveltracker.model.Dashboard
 import com.alefmoreira.citytraveltracker.model.Route
 import com.alefmoreira.citytraveltracker.other.Constants
+import com.alefmoreira.citytraveltracker.other.Constants.ROUTE_LIST
+import com.alefmoreira.citytraveltracker.other.Constants.STRING_SEPARATOR
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.channelFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
-import kotlin.math.ceil
 
 class CTTRepositoryImpl @Inject constructor(
     private val cityDAO: CityDAO,
@@ -23,13 +20,6 @@ class CTTRepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : CTTRepository {
 
-    private val prefs = sharedPreferences.edit()
-
-    private var _mileage = MutableStateFlow((Constants.INITIAL_LONG).toString())
-    val mileage: StateFlow<String> = _mileage
-
-    private var _time = MutableStateFlow((Constants.INITIAL_TIME))
-    val time: StateFlow<String> = _time
     override suspend fun insertRoute(route: Route) {
         val cityId = cityDAO.insertCity(route.city)
         val connectionsList = route.connections
@@ -46,47 +36,40 @@ class CTTRepositoryImpl @Inject constructor(
 
     override suspend fun getRouteById(id: Long): Route {
         val city = cityDAO.getCityById(id)
-        val connections = cityDAO.getCityConnectionsByCityId(city.id!!)
+        val connections = city.id?.let { cityDAO.getCityConnectionsByCityId(it) }?: emptyList()
 
         return Route(city, connections.toMutableList())
     }
 
-    override suspend fun getAllRoutes(): Flow<List<Route>> {
-        return channelFlow {
-            val routeList = mutableListOf<Route>()
-            val cities = cityDAO.getAllCities()
+    override suspend fun getAllRoutes(): List<Route> {
+        val routeList = mutableListOf<Route>()
 
-            cities.forEach { city ->
-                val connections = cityDAO.getCityConnectionsByCityId(city.id!!)
-
+        cityDAO.getAllCities().forEach { city ->
+            city.id?.let {
+                val connections = cityDAO.getCityConnectionsByCityId(it)
                 routeList.add(Route(city, connections.toMutableList()))
             }
-
-            send(routeList)
         }
+        return routeList
     }
 
-    override suspend fun getDistanceMatrix(routes: List<Route>): Resource<DistanceMatrixResponse> {
-        return try {
-            val originsString = routeFormatToStringArgument(routes.toMutableList(), true)
-            val destinationsString = routeFormatToStringArgument(routes.toMutableList(), false)
 
-            distanceMatrixAPI.getDistanceMatrix(originsString, destinationsString).run {
-                val response = this
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        Resource.success(it)
-                    } ?: Resource.error("Unknown error", null)
-                } else {
-                    Resource.error("Unknown error", null)
-                }
-            }
-        } catch (e: Exception) {
-            Resource.error("Could not reach server", null)
-        }
-    }
 
     override suspend fun getDashboard(routes: List<Route>): Resource<Dashboard> {
+        return if (shouldUpdate(routes)) {
+            getDashboardFromAPI(routes)
+        } else {
+            getDashboardFromCache()
+        }
+    }
+
+    private fun shouldUpdate(routes: List<Route>): Boolean {
+        val savedListString = sharedPreferences.getString(ROUTE_LIST, "")
+        val jsonRoutes = routesToJson(routes)
+        return savedListString != jsonRoutes
+    }
+
+    private suspend fun getDashboardFromAPI(routes: List<Route>): Resource<Dashboard> {
         return try {
             val originsString = routeFormatToStringArgument(routes.toMutableList(), true)
             val destinationsString = routeFormatToStringArgument(routes.toMutableList(), false)
@@ -95,28 +78,16 @@ class CTTRepositoryImpl @Inject constructor(
                 val response = this
                 if (response.isSuccessful) {
                     response.body()?.let {
-
-                        try {
-                            Resource.success(distanceMatrixToDashboard(it))
-                        }catch (e:Exception){
-                            Resource.error("",null)
-                        }
-
-                    } ?: Resource.error("Unknown error", null)
+                        saveRoutesToPrefs(routes)
+                        Resource.success(distanceMatrixToDashboard(it))
+                    } ?: throw Exception("Empty response error")
                 } else {
-                    Resource.error("Unknown error", null)
+                    throw Exception("Response error")
                 }
             }
         } catch (e: Exception) {
-            Resource.error("Could not reach server", null)
+            Resource.error("${e.message}", null)
         }
-    }
-
-    private fun distanceMatrixToDashboard(distanceMatrix:DistanceMatrixResponse):Dashboard{
-        val dashboard = Dashboard("",0L)
-
-
-        return dashboard
     }
 
     private fun routeFormatToStringArgument(routes: MutableList<Route>, isOrigin: Boolean): String {
@@ -126,6 +97,12 @@ class CTTRepositoryImpl @Inject constructor(
             routes.removeFirst()
         }
 
+        val placeIdList = routesToStringList(routes)
+
+        return placeIdList.joinToString(STRING_SEPARATOR) { "place_id:$it" }
+    }
+
+    private fun routesToStringList(routes: MutableList<Route>): MutableList<String> {
         val placeIdList: MutableList<String> = mutableListOf()
 
         routes.forEach { route ->
@@ -134,64 +111,47 @@ class CTTRepositoryImpl @Inject constructor(
             }
             placeIdList.add(route.city.placeId)
         }
-
-        val separator = "|"
-        return placeIdList.joinToString(separator) { "place_id:$it" }
+        return placeIdList
     }
 
-    private fun handleMatrix(matrixResponse: DistanceMatrixResponse) {
-        var seconds: Long = Constants.INITIAL_LONG
-        var meters: Long = Constants.INITIAL_LONG
+    private fun saveRoutesToPrefs(routeList: List<Route>) {
+        val prefs = sharedPreferences.edit()
+        prefs.putString(ROUTE_LIST, routesToJson(routeList))
+        prefs.apply()
+    }
 
-        if (matrixResponse.status == "REQUEST_DENIED") {
-            return
+    private fun distanceMatrixToDashboard(distanceMatrix: DistanceMatrixResponse): Dashboard {
+
+        if (distanceMatrix.status == "REQUEST_DENIED") {
+            throw Exception("Request denied!")
         }
+        val dashboard = Dashboard(sharedPreferences)
 
         try {
-            matrixResponse.rows.forEachIndexed { index, distanceMatrixRow ->
-                seconds += distanceMatrixRow.elements[index].duration.value
-                meters += distanceMatrixRow.elements[index].distance.value
-            }
+            dashboard.calculateDistanceMatrix(distanceMatrix.rows)
+            dashboard.saveToPrefs()
         } catch (e: Exception) {
-//            _distanceMatrixStatus.value = Event(Resource.error(Constants.CALCULUS_ERROR, null))
-            _mileage.value = Constants.INITIAL_LONG.toString()
-            _time.value = Constants.INITIAL_TIME
-            return
+            throw Exception(Constants.CALCULUS_ERROR + ": ${e.message}")
         }
 
-        setMileage(meters)
-        setHours(seconds)
-
-        prefs.putString(Constants.ROUTE_LIST, routesToJson())
-        prefs.putString(Constants.MATRIX_MILEAGE, mileage.value.replace(" km", ""))
-        prefs.putString(Constants.MATRIX_TIME, time.value)
-        prefs.commit()
+        return dashboard
     }
 
-    private fun setMileage(meters: Long) {
-        _mileage.value = if (meters == 0L) {
-            "0"
-        } else {
-            "${ceil(meters.toDouble() / Constants.METERS_IN_KM).toLong()}"
+    private fun getDashboardFromCache(): Resource<Dashboard> {
+        lateinit var dashboard:Dashboard
+        return try {
+            dashboard = Dashboard(sharedPreferences).getDashboardFromPrefs()
+             Resource.success(dashboard)
+        }catch (e:Exception){
+            Resource.error("Error fetching cache: ${e.message}")
         }
+
     }
 
-    private fun setHours(seconds: Long) {
-        val horas = seconds / Constants.SECONDS_IN_HOUR
-        val diff = if (horas > 0) {
-            seconds % (horas * Constants.SECONDS_IN_HOUR)
-        } else {
-            seconds % Constants.SECONDS_IN_HOUR
-        }
-        val minutes = ceil(diff.toDouble() / Constants.SECONDS_IN_MINUTE).toLong()
-
-        _time.value = "${horas}h $minutes min"
-    }
-
-    private fun routesToJson(): String {
+    private fun routesToJson(routes: List<Route>): String {
         val jsonArray = JSONArray()
 
-        routes.value.forEach {
+        routes.forEach {
             val jsonObject = JSONObject()
 
             jsonObject.put("city", it.city)
@@ -200,15 +160,5 @@ class CTTRepositoryImpl @Inject constructor(
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()
-    }
-
-    private fun getStoredPrefs() {
-        _mileage.value = sharedPreferences.getString(Constants.MATRIX_MILEAGE, "0").toString()
-        _time.value = sharedPreferences.getString(Constants.MATRIX_TIME, Constants.INITIAL_TIME)!!
-    }
-
-    private fun resetDashboard() {
-        _mileage.value = Constants.INITIAL_LONG.toString()
-        _time.value = Constants.INITIAL_TIME
     }
 }
