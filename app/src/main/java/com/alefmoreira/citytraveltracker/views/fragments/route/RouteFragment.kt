@@ -17,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alefmoreira.citytraveltracker.BuildConfig.MAPS_API_KEY
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.data.Connection
 import com.alefmoreira.citytraveltracker.databinding.FragmentRouteBinding
@@ -35,7 +34,6 @@ import com.alefmoreira.citytraveltracker.util.components.dialogs.AMAlertDialog
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMConfirmationDialog
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMLoadingDialog
 import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
-import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.launch
 
 class RouteFragment : Fragment(R.layout.fragment_route) {
@@ -73,9 +71,6 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
 
         bindViews(binding)
         setupClickListeners()
-
-        val apiKey = MAPS_API_KEY
-        context?.let { Places.initialize(it, apiKey) }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

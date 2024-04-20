@@ -1,10 +1,11 @@
 package com.alefmoreira.citytraveltracker.views
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.alefmoreira.citytraveltracker.BuildConfig.MAPS_API_KEY
 import com.alefmoreira.citytraveltracker.R
+import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,10 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContentView(R.layout.activity_main)
-    }
-
-    private fun isDarkModeOn(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+        val apiKey = MAPS_API_KEY
+        applicationContext?.let { Places.initialize(it, apiKey) }
     }
 }

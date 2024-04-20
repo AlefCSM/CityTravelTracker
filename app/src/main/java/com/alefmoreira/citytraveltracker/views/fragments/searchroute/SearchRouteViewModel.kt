@@ -21,7 +21,7 @@ class SearchRouteViewModel @Inject constructor(
     private val repository: AutoCompleteRepository
 ) : ViewModel() {
 
-    var query = ""
+    private var query = ""
 
     private var _predictionStatus =
         MutableStateFlow<Resource<List<AutocompletePrediction>>>(Resource.init())
