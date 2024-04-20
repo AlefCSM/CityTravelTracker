@@ -50,7 +50,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun routeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.recyclerList.collect { resource ->
+            viewModel.routes.collect { resource ->
                 if (resource.data.isNullOrEmpty()) {
                     binding.layoutNoRoutes.visibility = View.VISIBLE
                     binding.layoutRoutes.visibility = View.GONE

@@ -30,8 +30,8 @@ class HomeViewModel @Inject constructor(
 
     var isFirstRoute = true
 
-    private var _recyclerList = MutableStateFlow<Resource<List<Route>>>(Resource.init())
-    val recyclerList: SharedFlow<Resource<List<Route>>> = _recyclerList
+    private var _routes = MutableStateFlow<Resource<List<Route>>>(Resource.init())
+    val routes: SharedFlow<Resource<List<Route>>> = _routes
 
     private var _dasboardStatus = MutableStateFlow(Resource(Status.INIT, Dashboard(), null))
     val dashboardStatus: MutableStateFlow<Resource<Dashboard>> = _dasboardStatus
@@ -57,7 +57,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun observeRoutesToUpdateDasboard() = viewModelScope.launch(dispatcher.io) {
-        recyclerList.collect {
+        routes.collect {
             it.data?.let { list ->
                 if (list.size >= TWO_ELEMENTS) {
                     _dasboardStatus.value = Resource.loading()
@@ -75,9 +75,9 @@ class HomeViewModel @Inject constructor(
 
     fun getRoutes() = viewModelScope.launch(dispatcher.io) {
         _dasboardStatus.value = Resource.loading()
-        _recyclerList.emit(Resource.loading())
+        _routes.emit(Resource.loading())
         val list = repository.getAllRoutes()
         isFirstRoute = list.isEmpty()
-        _recyclerList.emit(Resource.success(list))
+        _routes.emit(Resource.success(list))
     }
 }
