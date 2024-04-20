@@ -6,11 +6,9 @@ import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.model.Dashboard
 import com.alefmoreira.citytraveltracker.model.Route
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
-import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_LONG
-import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_TIME
 import com.alefmoreira.citytraveltracker.other.Constants.TWO_ELEMENTS
-import com.alefmoreira.citytraveltracker.other.Event
 import com.alefmoreira.citytraveltracker.other.Resource
+import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,34 +25,16 @@ class HomeViewModel @Inject constructor(
     private val networkObserver: NetworkObserver
 ) : ViewModel() {
 
-
-    private var _mileage = MutableStateFlow((INITIAL_LONG).toString())
-    val mileage: StateFlow<String> = _mileage
-
-    private var _time = MutableStateFlow((INITIAL_TIME))
-    val time: StateFlow<String> = _time
-
     private var _networkStatus = MutableStateFlow(NetworkObserver.NetworkStatus.Available)
     val networkStatus: StateFlow<NetworkObserver.NetworkStatus> = _networkStatus
-
-    private var _routes = MutableStateFlow<List<Route>>(mutableListOf())
-
-    private val routes: StateFlow<List<Route>> = _routes
 
     var isFirstRoute = true
 
     private var _recyclerList = MutableStateFlow<Resource<List<Route>>>(Resource.init())
-
     val recyclerList: SharedFlow<Resource<List<Route>>> = _recyclerList
 
-    private var _dasboardStatus = MutableStateFlow<Event<Resource<Dashboard>>>(
-        Event(
-            Resource.init()
-        )
-    )
-
-    var dashboardStatus: MutableStateFlow<Event<Resource<Dashboard>>> =
-        _dasboardStatus
+    private var _dasboardStatus = MutableStateFlow(Resource(Status.INIT, Dashboard(), null))
+    val dashboardStatus: MutableStateFlow<Resource<Dashboard>> = _dasboardStatus
 
     init {
         checkNetwork()
@@ -76,29 +56,28 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun observeRoutesToUpdateDasboard() = viewModelScope.launch(dispatcher.io) {
+        recyclerList.collect {
+            it.data?.let { list ->
+                if (list.size >= TWO_ELEMENTS) {
+                    _dasboardStatus.value = Resource.loading()
+                    _dasboardStatus.value = repository.getDashboard(list)
+                } else {
+                    resetDashboard()
+                }
+            }
+        }
+    }
+
+    private fun resetDashboard() {
+        _dasboardStatus.value.data?.reset()
+    }
+
     fun getRoutes() = viewModelScope.launch(dispatcher.io) {
-        _dasboardStatus.value = Event(Resource.loading())
+        _dasboardStatus.value = Resource.loading()
         _recyclerList.emit(Resource.loading())
         val list = repository.getAllRoutes()
         isFirstRoute = list.isEmpty()
-        _routes.value = list
         _recyclerList.emit(Resource.success(list))
-    }
-
-
-    private fun resetDashboard() {
-        _mileage.value = INITIAL_LONG.toString()
-        _time.value = INITIAL_TIME
-    }
-
-    private fun observeRoutesToUpdateDasboard() = viewModelScope.launch(dispatcher.io) {
-        routes.collect {
-            if (it.size >= TWO_ELEMENTS) {
-                _dasboardStatus.value = Event(Resource.loading())
-                _dasboardStatus.value = Event( repository.getDashboard(it))
-            } else {
-                resetDashboard()
-            }
-        }
     }
 }

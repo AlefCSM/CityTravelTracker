@@ -36,7 +36,7 @@ class HomeViewModelTest {
         routeViewModel = RouteViewModel(repository, testDispatcher,networkObserverTest)
     }
 
-    fun saveRoute(){
+    private fun saveRoute(){
         routeViewModel.setOrigin("Curitiba", "123")
         routeViewModel.setDestination("Joinville", "123")
         routeViewModel.saveRoute()
@@ -73,14 +73,13 @@ class HomeViewModelTest {
     @Test
     fun `insert first route, returns success`() = runTest {
         saveRoute()
-        advanceUntilIdle()
+//        advanceUntilIdle()
         homeViewModel.dashboardStatus.test {
             awaitItem()
             awaitItem()
             val value = awaitItem()
-            assertThat(value.peekContent().status).isEqualTo(Status.SUCCESS)
+            assertThat(value.status).isEqualTo(Status.SUCCESS)
         }
-
     }
 
 //    @Test

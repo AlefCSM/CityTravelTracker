@@ -42,6 +42,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewModel.getRoutes()
         setupSubscriptions()
     }
+    private fun setupSubscriptions() {
+        routeSubscription()
+        networkSubscription()
+        dashboardSubscription()
+    }
 
     private fun routeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -91,49 +96,24 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun mileageSubscription() = viewLifecycleOwner.lifecycleScope.launch {
-        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.mileage.collect {
-                binding.txtMileage.text =
-                    String.format(resources.getString(R.string.km, viewModel.mileage.value))
-            }
-        }
-    }
-
-    private fun timeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
-        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.time.collect {
-                binding.txtHours.text = viewModel.time.value
-            }
-        }
-    }
-
-    private fun matrixSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+    private fun dashboardSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.dashboardStatus.collect {
-
-                val eventContent = it.peekContent()
-
-                if (eventContent.status == Status.SUCCESS) {
-
-                    eventContent.data?.let { dashboard ->
+                    it.data?.let { dashboard ->
                         binding.txtMileage.text =
-                            String.format(resources.getString(R.string.km, dashboard.getMileage()))
+                            String.format(resources.getString(R.string.km, dashboard.mileage))
                         binding.txtHours.text = dashboard.time
                     }
-                }
-                if (eventContent.status == Status.ERROR) {
-                    when (eventContent.message) {
+                if (it.status == Status.ERROR) {
+                    when (it.message) {
                         FEW_ELEMENTS_ERROR -> showAlertMessage(
                             title = resources.getString(R.string.matrix_error_title),
                             message = resources.getString(R.string.matrix_error_few_elements)
                         )
-
                         CALCULUS_ERROR -> showAlertMessage(
                             title = resources.getString(R.string.matrix_error_title),
                             message = resources.getString(R.string.matrix_error_calculus)
                         )
-
                         else -> showAlertMessage(
                             title = resources.getString(R.string.matrix_error_title),
                             message = " "
@@ -149,13 +129,5 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         dialog.title = title
         dialog.message = message
         dialog.show()
-    }
-
-    private fun setupSubscriptions() {
-        routeSubscription()
-        networkSubscription()
-        mileageSubscription()
-        timeSubscription()
-        matrixSubscription()
     }
 }

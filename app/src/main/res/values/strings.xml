@@ -25,7 +25,7 @@
     <string name="verify_network_connection">Check your internet connection to continue.</string>
     <string name="distance">Travelled distance</string>
     <string name="time">Travelled time</string>
-    <string name="km">%1$s km</string>
+    <string name="km">%1$d km</string>
     <string name="hours">%1$s hours %2$s min</string>
     <string name="traveled_cities">Travelled cities</string>
     <string name="connections">Connections</string>
