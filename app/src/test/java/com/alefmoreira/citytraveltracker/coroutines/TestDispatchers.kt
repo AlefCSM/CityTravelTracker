@@ -1,10 +1,8 @@
 package com.alefmoreira.citytraveltracker.coroutines
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class TestDispatchers : DispatcherProvider{
     private val testDispatcher = StandardTestDispatcher()
 
