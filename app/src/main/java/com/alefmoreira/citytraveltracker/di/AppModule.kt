@@ -20,6 +20,9 @@ import com.alefmoreira.citytraveltracker.repositories.CTTRepositoryImpl
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,8 +47,9 @@ object AppModule {
     fun provideCTTRepositoryImpl(
         dao: CityDAO,
         api: DistanceMatrixAPI,
-        sharedPreferences: SharedPreferences
-    ) = CTTRepositoryImpl(dao, api,sharedPreferences) as CTTRepository
+        sharedPreferences: SharedPreferences,
+        firebaseAnalytics: FirebaseAnalytics
+    ) = CTTRepositoryImpl(dao, api,sharedPreferences,firebaseAnalytics) as CTTRepository
 
     @Singleton
     @Provides
@@ -91,6 +95,12 @@ object AppModule {
     @Provides
     fun provideAutoCompleteRepositoryImpl(
         placesClient: PlacesClient,
-        token: AutocompleteSessionToken
-    ) = AutoCompleteRepositoryImpl(placesClient, token) as AutoCompleteRepository
+        token: AutocompleteSessionToken,
+        firebaseAnalytics: FirebaseAnalytics
+    ) = AutoCompleteRepositoryImpl(placesClient, token,firebaseAnalytics) as AutoCompleteRepository
+
+    @Provides
+    fun provideFirebaseAnanlytics():FirebaseAnalytics{
+        return Firebase.analytics
+    }
 }

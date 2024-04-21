@@ -1,6 +1,6 @@
 package com.alefmoreira.citytraveltracker.views.fragments.route
 
-import androidx.lifecycle.ViewModel
+import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.data.City
@@ -11,6 +11,7 @@ import com.alefmoreira.citytraveltracker.other.Constants.DEFAULT_CONNECTION_POSI
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
+import com.alefmoreira.citytraveltracker.views.fragments.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,7 @@ class RouteViewModel @Inject constructor(
     private val repository: CTTRepository,
     private val dispatcher: DispatcherProvider,
     private val networkObserver: NetworkObserver
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _networkStatus = MutableStateFlow(NetworkObserver.NetworkStatus.Available)
 
@@ -101,6 +102,10 @@ class RouteViewModel @Inject constructor(
                 try {
                     currentDestination.connections[position] = connection
                 } catch (e: Exception) {
+                    val bundle = Bundle().apply {
+                        this.putString("exception_message",e.message)
+                    }
+                    firebaseAnalytics.logEvent("addConnection",bundle)
                     _destinationStatus.emit(Resource.error("Connection out of index!"))
                     return@launch
                 }

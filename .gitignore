@@ -17,3 +17,4 @@
 local.properties
 /app/*.properties
 /app/city_travel_tracker
+/app/google-services.json
