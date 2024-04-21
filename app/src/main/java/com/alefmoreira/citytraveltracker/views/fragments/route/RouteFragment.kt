@@ -17,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alefmoreira.citytraveltracker.BuildConfig.MAPS_API_KEY
 import com.alefmoreira.citytraveltracker.R
 import com.alefmoreira.citytraveltracker.data.Connection
 import com.alefmoreira.citytraveltracker.databinding.FragmentRouteBinding
@@ -35,7 +34,6 @@ import com.alefmoreira.citytraveltracker.util.components.dialogs.AMAlertDialog
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMConfirmationDialog
 import com.alefmoreira.citytraveltracker.util.components.dialogs.AMLoadingDialog
 import com.alefmoreira.citytraveltracker.views.fragments.home.HomeViewModel
-import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.launch
 
 class RouteFragment : Fragment(R.layout.fragment_route) {
@@ -58,7 +56,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
     private val arguments: RouteFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        routeViewModel.isFirstRoute.value = homeViewModel.isFirstRoute()
+        routeViewModel.isFirstRoute.value = homeViewModel.isFirstRoute
 
         if (arguments.routeId > 0) {
             routeViewModel.getRoute(arguments.routeId)
@@ -73,9 +71,6 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
 
         bindViews(binding)
         setupClickListeners()
-
-        val apiKey = MAPS_API_KEY
-        context?.let { Places.initialize(it, apiKey) }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -243,6 +238,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         connectionEditionPosition: Int = DEFAULT_CONNECTION_POSITION
     ) {
         if (routeViewModel.networkStatus.value == NetworkObserver.NetworkStatus.Available) {
+            routeViewModel.logEvent("search_route")
             findNavController().navigate(
                 RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment(
                     routeType,
@@ -287,6 +283,7 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
 
     private fun returnToHome() {
         routeViewModel.clearRoutes()
+        routeViewModel.logEvent("return_to_home")
         findNavController().popBackStack()
     }
 

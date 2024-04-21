@@ -15,10 +15,11 @@ object Constants {
     const val MATRIX_MILEAGE = "mileage"
     const val MATRIX_TIME = "time"
     const val ROUTE_LIST = "route list"
-    const val TWO_ELEMENTS = 1
+    const val TWO_ELEMENTS = 2
     const val INITIAL_LONG = 0L
     const val INITIAL_TIME = "0h 0 min"
     const val FEW_ELEMENTS_ERROR = "There must be at least 2 routes."
     const val CALCULUS_ERROR = "Error calculating routes"
     const val CTT_PREFS = "_CTT_Prefs"
+    const val STRING_SEPARATOR = "|"
 }

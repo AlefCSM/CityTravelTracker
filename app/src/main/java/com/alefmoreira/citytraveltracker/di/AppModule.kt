@@ -10,12 +10,19 @@ import com.alefmoreira.citytraveltracker.data.dao.CityDAO
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.network.NetworkObserverImpl
 import com.alefmoreira.citytraveltracker.other.Constants.BASE_URL
+import com.alefmoreira.citytraveltracker.other.Constants.CTT_PREFS
 import com.alefmoreira.citytraveltracker.other.Constants.DATABASE_NAME
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
+import com.alefmoreira.citytraveltracker.repositories.AutoCompleteRepository
+import com.alefmoreira.citytraveltracker.repositories.AutoCompleteRepositoryImpl
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
-import com.alefmoreira.citytraveltracker.repositories.DefaultCTTRepository
+import com.alefmoreira.citytraveltracker.repositories.CTTRepositoryImpl
 import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,31 +44,29 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideDefaultCTTRepository(
+    fun provideCTTRepositoryImpl(
         dao: CityDAO,
-        api: DistanceMatrixAPI
-    ) = DefaultCTTRepository(dao, api) as CTTRepository
+        api: DistanceMatrixAPI,
+        sharedPreferences: SharedPreferences,
+        firebaseAnalytics: FirebaseAnalytics
+    ) = CTTRepositoryImpl(dao, api, sharedPreferences, firebaseAnalytics) as CTTRepository
 
     @Singleton
     @Provides
     fun provideCityDAO(database: CTTDatabase) = database.cityDAO()
 
+    @Singleton
+    @Provides
+    fun provideDistanceMatrixAPI(): DistanceMatrixAPI = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .build()
+        .create(DistanceMatrixAPI::class.java)
+
 
     @Singleton
     @Provides
-    fun provideDistanceMatrixAPI(): DistanceMatrixAPI {
-        return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .build()
-            .create(DistanceMatrixAPI::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun provideDispatcher(): DispatcherProvider {
-        return DefaultDispatchers()
-    }
+    fun provideDispatcher(): DispatcherProvider = DefaultDispatchers()
 
     @Singleton
     @Provides
@@ -79,5 +84,22 @@ object AppModule {
     @Provides
     fun provideSharedPreferences(
         @ApplicationContext context: Context
-    ): SharedPreferences = context.getSharedPreferences("teste", Context.MODE_PRIVATE)
+    ): SharedPreferences = context.getSharedPreferences(CTT_PREFS, Context.MODE_PRIVATE)
+
+    @Singleton
+    @Provides
+    fun provideAutocompleteToken(): AutocompleteSessionToken =
+        AutocompleteSessionToken.newInstance()
+
+    @Singleton
+    @Provides
+    fun provideAutoCompleteRepositoryImpl(
+        placesClient: PlacesClient,
+        token: AutocompleteSessionToken,
+        firebaseAnalytics: FirebaseAnalytics
+    ) = AutoCompleteRepositoryImpl(placesClient, token, firebaseAnalytics) as AutoCompleteRepository
+
+    @Provides
+    fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
+
 }

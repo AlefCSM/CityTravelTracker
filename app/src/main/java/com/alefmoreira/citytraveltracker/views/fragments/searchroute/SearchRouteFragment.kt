@@ -22,7 +22,6 @@ import com.alefmoreira.citytraveltracker.util.components.PredictionDividerItemDe
 import com.alefmoreira.citytraveltracker.util.components.adapters.PlacePredictionAdapter
 import com.alefmoreira.citytraveltracker.views.fragments.route.RouteViewModel
 import com.google.android.libraries.places.api.model.AutocompletePrediction
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,7 +32,6 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
     private lateinit var binding: FragmentSearchRouteBinding
     private val routeViewModel: RouteViewModel by activityViewModels()
     private val searchRouteViewModel: SearchRouteViewModel by activityViewModels()
-    private val token = AutocompleteSessionToken.newInstance()
     private val arguments: SearchRouteFragmentArgs by navArgs()
 
     private lateinit var predictionRecyclerViewAdapter: PlacePredictionAdapter
@@ -48,7 +46,7 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         binding.txtSearch.apply {
             isHintAnimationEnabled = false
             editText?.addTextChangedListener {
-                searchRouteViewModel.validateText(it.toString(), token)
+                searchRouteViewModel.validateText(it.toString())
             }
             editText?.setText(arguments.selectedCity)
         }
@@ -56,13 +54,7 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
 
         predictionRecyclerViewAdapter = PlacePredictionAdapter()
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                searchRouteViewModel.predictionStatus.collect { resource ->
-                    handleState(resource)
-                }
-            }
-        }
+        predictionSubscription()
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -81,7 +73,15 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
         }
     }
 
-    private fun handleState(resource: Resource<List<AutocompletePrediction>>) {
+    private fun predictionSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            searchRouteViewModel.predictionStatus.collect { resource ->
+                handlePredictionStatus(resource)
+            }
+        }
+    }
+
+    private fun handlePredictionStatus(resource: Resource<List<AutocompletePrediction>>) {
         when (resource.status) {
             Status.SUCCESS -> {
                 resource.data?.let { list ->
@@ -91,17 +91,20 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
                 binding.predictionNotFound.visibility = View.GONE
                 binding.loadingDots.visibility = View.GONE
             }
+
             Status.ERROR -> {
                 binding.predictionRecyclerview.visibility = View.GONE
                 binding.predictionNotFound.visibility = View.VISIBLE
                 binding.loadingDots.visibility = View.GONE
             }
+
             Status.LOADING -> {
                 startLoadingAnimation()
                 binding.predictionRecyclerview.visibility = View.GONE
                 binding.predictionNotFound.visibility = View.GONE
                 binding.loadingDots.visibility = View.VISIBLE
             }
+
             Status.INIT -> {
                 binding.predictionRecyclerview.visibility = View.GONE
                 binding.predictionNotFound.visibility = View.GONE
@@ -154,12 +157,14 @@ class SearchRouteFragment : Fragment(R.layout.fragment_search_route) {
                     placeId = prediction.placeId
                 )
             }
+
             CitySelectionTypeEnum.DESTINATION -> {
                 routeViewModel.setDestination(
                     name = prediction.getPrimaryText(null).toString(),
                     placeId = prediction.placeId
                 )
             }
+
             CitySelectionTypeEnum.CONNECTION -> {
                 routeViewModel.addConnection(
                     name = prediction.getPrimaryText(null).toString(),

@@ -3,8 +3,7 @@ package com.alefmoreira.citytraveltracker.views.fragments.searchroute
 import com.alefmoreira.citytraveltracker.MainCoroutineRule
 import com.alefmoreira.citytraveltracker.coroutines.TestDispatchers
 import com.alefmoreira.citytraveltracker.other.Status
-import com.alefmoreira.citytraveltracker.repositories.FakePlacesClient
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.alefmoreira.citytraveltracker.repositories.FakeAutoCompleteRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -24,14 +23,14 @@ class SearchRouteViewModelTest {
 
     @Before
     fun setup() {
+        val repository = FakeAutoCompleteRepository()
         testDispatcher = TestDispatchers()
-        viewModel = SearchRouteViewModel(FakePlacesClient(), testDispatcher)
+        viewModel = SearchRouteViewModel(testDispatcher,repository)
     }
 
     @Test
     fun `insert empty text, returns status INIT`() = runTest {
-
-        viewModel.validateText("", AutocompleteSessionToken.newInstance())
+        viewModel.validateText("")
         advanceUntilIdle()
         assertThat(viewModel.predictionStatus.value.status).isEqualTo(Status.INIT)
     }
@@ -39,18 +38,26 @@ class SearchRouteViewModelTest {
     @Test
     fun `insert text with length smaller than 3, returns status INIT`() = runTest {
 
-        viewModel.validateText("ab", AutocompleteSessionToken.newInstance())
+        viewModel.validateText("ab")
         advanceUntilIdle()
         assertThat(viewModel.predictionStatus.value.status).isEqualTo(Status.INIT)
     }
 
     @Test
-    fun `insert text with length bigger than 2, returns status different than INIT`() = runTest {
+    fun `insert text with length bigger than 2, returns SUCCESS`() = runTest {
 
-        viewModel.validateText("abb", AutocompleteSessionToken.newInstance())
+        viewModel.validateText("Joi")
         advanceUntilIdle()
         assertThat(viewModel.predictionStatus.value.status).isNotEqualTo(Status.INIT)
+        assertThat(viewModel.predictionStatus.value.status).isEqualTo(Status.SUCCESS)
     }
 
+    @Test
+    fun `insert random text, returns ERROR`() = runTest {
 
+        viewModel.validateText("J,mnb,mbs")
+        advanceUntilIdle()
+        assertThat(viewModel.predictionStatus.value.status).isEqualTo(Status.ERROR)
+        assertThat(viewModel.predictionStatus.value.message).isEqualTo("Place not found!")
+    }
 }

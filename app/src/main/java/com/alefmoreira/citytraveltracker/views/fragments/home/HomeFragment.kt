@@ -15,6 +15,8 @@ import com.alefmoreira.citytraveltracker.databinding.FragmentHomeBinding
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.other.Constants.CALCULUS_ERROR
 import com.alefmoreira.citytraveltracker.other.Constants.FEW_ELEMENTS_ERROR
+import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_LONG
+import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_TIME
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.util.components.AMAnimator
 import com.alefmoreira.citytraveltracker.util.components.adapters.RouteAdapter
@@ -32,7 +34,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
         val btnStart = binding.btnStart
+
         btnStart.setOnClickListener {
+            viewModel.logEvent("new_route")
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToRouteFragment())
         }
 
@@ -43,9 +47,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupSubscriptions()
     }
 
+    private fun setupSubscriptions() {
+        routeSubscription()
+        networkSubscription()
+        dashboardSubscription()
+    }
+
     private fun routeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.recyclerList.collect { resource ->
+            viewModel.routes.collect { resource ->
                 if (resource.data.isNullOrEmpty()) {
                     binding.layoutNoRoutes.visibility = View.VISIBLE
                     binding.layoutRoutes.visibility = View.GONE
@@ -58,6 +68,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         routes = resource.data
                         onItemClick = { route ->
                             route.city.id?.let { id ->
+                                viewModel.logEvent("route_details")
                                 findNavController().navigate(
                                     (HomeFragmentDirections.actionHomeFragmentToRouteFragment(
                                         id
@@ -91,42 +102,43 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun mileageSubscription() = viewLifecycleOwner.lifecycleScope.launch {
+    private fun dashboardSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.mileage.collect {
-                binding.txtMileage.text =
-                    String.format(resources.getString(R.string.km, viewModel.mileage.value))
-            }
-        }
-    }
+            viewModel.dashboardStatus.collect {
+                it.data?.let { dashboard ->
+                    binding.txtMileage.text =
+                        String.format(resources.getString(R.string.km, dashboard.mileage))
+                    binding.txtHours.text = dashboard.time
+                } ?: let {
+                    binding.txtMileage.text =
+                        String.format(resources.getString(R.string.km, INITIAL_LONG))
+                    binding.txtHours.text = INITIAL_TIME
+                }
+                if (it.status == Status.ERROR) {
+                    when (it.message) {
+                        FEW_ELEMENTS_ERROR -> {
+                            viewModel.logEvent("error", it.message)
+                            showAlertMessage(
+                                title = resources.getString(R.string.matrix_error_title),
+                                message = resources.getString(R.string.matrix_error_few_elements)
+                            )
+                        }
 
-    private fun timeSubscription() = viewLifecycleOwner.lifecycleScope.launch {
-        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.time.collect {
-                binding.txtHours.text = viewModel.time.value
-            }
-        }
-    }
+                        CALCULUS_ERROR -> {
+                            viewModel.logEvent("error", it.message)
+                            showAlertMessage(
+                                title = resources.getString(R.string.matrix_error_title),
+                                message = resources.getString(R.string.matrix_error_calculus)
+                            )
+                        }
 
-    private fun matrixSubscription() = viewLifecycleOwner.lifecycleScope.launch {
-        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.distanceMatrixStatus.collect {
-                if (it.peekContent().status == Status.ERROR) {
-                    when (it.peekContent().message) {
-                        FEW_ELEMENTS_ERROR -> showAlertMessage(
-                            title = resources.getString(R.string.matrix_error_title),
-                            message = resources.getString(R.string.matrix_error_few_elements)
-                        )
-
-                        CALCULUS_ERROR -> showAlertMessage(
-                            title = resources.getString(R.string.matrix_error_title),
-                            message = resources.getString(R.string.matrix_error_calculus)
-                        )
-
-                        else -> showAlertMessage(
-                            title = resources.getString(R.string.matrix_error_title),
-                            message = " "
-                        )
+                        else -> {
+                            viewModel.logEvent("error", it.message)
+                            showAlertMessage(
+                                title = resources.getString(R.string.matrix_error_title),
+                                message = " "
+                            )
+                        }
                     }
                 }
             }
@@ -138,13 +150,5 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         dialog.title = title
         dialog.message = message
         dialog.show()
-    }
-
-    private fun setupSubscriptions() {
-        routeSubscription()
-        networkSubscription()
-        mileageSubscription()
-        timeSubscription()
-        matrixSubscription()
     }
 }
