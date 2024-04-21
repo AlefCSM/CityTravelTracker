@@ -1,6 +1,7 @@
 package com.alefmoreira.citytraveltracker.repositories
 
 import android.content.SharedPreferences
+import android.os.Bundle
 import com.alefmoreira.citytraveltracker.data.dao.CityDAO
 import com.alefmoreira.citytraveltracker.model.Dashboard
 import com.alefmoreira.citytraveltracker.model.Route
@@ -10,6 +11,7 @@ import com.alefmoreira.citytraveltracker.other.Constants.STRING_SEPARATOR
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
+import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
@@ -17,7 +19,8 @@ import javax.inject.Inject
 class CTTRepositoryImpl @Inject constructor(
     private val cityDAO: CityDAO,
     private val distanceMatrixAPI: DistanceMatrixAPI,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val firebaseAnalytics: FirebaseAnalytics
 ) : CTTRepository {
 
     override suspend fun insertRoute(route: Route) {
@@ -36,7 +39,7 @@ class CTTRepositoryImpl @Inject constructor(
 
     override suspend fun getRouteById(id: Long): Route {
         val city = cityDAO.getCityById(id)
-        val connections = city.id?.let { cityDAO.getCityConnectionsByCityId(it) }?: emptyList()
+        val connections = city.id?.let { cityDAO.getCityConnectionsByCityId(it) } ?: emptyList()
 
         return Route(city, connections.toMutableList())
     }
@@ -52,8 +55,6 @@ class CTTRepositoryImpl @Inject constructor(
         }
         return routeList
     }
-
-
 
     override suspend fun getDashboard(routes: List<Route>): Resource<Dashboard> {
         return if (shouldUpdate(routes)) {
@@ -86,6 +87,10 @@ class CTTRepositoryImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
+            val bundle = Bundle().apply {
+                this.putString("exception_message", e.message)
+            }
+            firebaseAnalytics.logEvent("getDashboardFromAPI", bundle)
             Resource.error("${e.message}", null)
         }
     }
@@ -121,7 +126,6 @@ class CTTRepositoryImpl @Inject constructor(
     }
 
     private fun distanceMatrixToDashboard(distanceMatrix: DistanceMatrixResponse): Dashboard {
-
         if (distanceMatrix.status == "REQUEST_DENIED") {
             throw Exception("Request denied!")
         }
@@ -131,6 +135,10 @@ class CTTRepositoryImpl @Inject constructor(
             dashboard.calculateDistanceMatrix(distanceMatrix.rows)
             dashboard.saveToPrefs()
         } catch (e: Exception) {
+            val bundle = Bundle().apply {
+                this.putString("exception_message", e.message)
+            }
+            firebaseAnalytics.logEvent("distanceMatrixToDashboard", bundle)
             throw Exception(Constants.CALCULUS_ERROR + ": ${e.message}")
         }
 
@@ -138,14 +146,17 @@ class CTTRepositoryImpl @Inject constructor(
     }
 
     private fun getDashboardFromCache(): Resource<Dashboard> {
-        lateinit var dashboard:Dashboard
+        lateinit var dashboard: Dashboard
         return try {
             dashboard = Dashboard(sharedPreferences).getDashboardFromPrefs()
-             Resource.success(dashboard)
-        }catch (e:Exception){
+            Resource.success(dashboard)
+        } catch (e: Exception) {
+            val bundle = Bundle().apply {
+                this.putString("exception_message", e.message)
+            }
+            firebaseAnalytics.logEvent("getDashboardFromCache", bundle)
             Resource.error("Error fetching cache: ${e.message}")
         }
-
     }
 
     private fun routesToJson(routes: List<Route>): String {
@@ -156,7 +167,6 @@ class CTTRepositoryImpl @Inject constructor(
 
             jsonObject.put("city", it.city)
             jsonObject.put("connections", it.connections)
-
             jsonArray.put(jsonObject)
         }
         return jsonArray.toString()

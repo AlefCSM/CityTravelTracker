@@ -15,6 +15,8 @@ import com.alefmoreira.citytraveltracker.databinding.FragmentHomeBinding
 import com.alefmoreira.citytraveltracker.network.NetworkObserver
 import com.alefmoreira.citytraveltracker.other.Constants.CALCULUS_ERROR
 import com.alefmoreira.citytraveltracker.other.Constants.FEW_ELEMENTS_ERROR
+import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_LONG
+import com.alefmoreira.citytraveltracker.other.Constants.INITIAL_TIME
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.util.components.AMAnimator
 import com.alefmoreira.citytraveltracker.util.components.adapters.RouteAdapter
@@ -32,7 +34,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
         val btnStart = binding.btnStart
+
         btnStart.setOnClickListener {
+            viewModel.logEvent("new_route")
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToRouteFragment())
         }
 
@@ -42,6 +46,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewModel.getRoutes()
         setupSubscriptions()
     }
+
     private fun setupSubscriptions() {
         routeSubscription()
         networkSubscription()
@@ -63,6 +68,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         routes = resource.data
                         onItemClick = { route ->
                             route.city.id?.let { id ->
+                                viewModel.logEvent("route_details")
                                 findNavController().navigate(
                                     (HomeFragmentDirections.actionHomeFragmentToRouteFragment(
                                         id
@@ -99,25 +105,40 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun dashboardSubscription() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.dashboardStatus.collect {
-                    it.data?.let { dashboard ->
-                        binding.txtMileage.text =
-                            String.format(resources.getString(R.string.km, dashboard.mileage))
-                        binding.txtHours.text = dashboard.time
-                    }
+                it.data?.let { dashboard ->
+                    binding.txtMileage.text =
+                        String.format(resources.getString(R.string.km, dashboard.mileage))
+                    binding.txtHours.text = dashboard.time
+                } ?: let {
+                    binding.txtMileage.text =
+                        String.format(resources.getString(R.string.km, INITIAL_LONG))
+                    binding.txtHours.text = INITIAL_TIME
+                }
                 if (it.status == Status.ERROR) {
                     when (it.message) {
-                        FEW_ELEMENTS_ERROR -> showAlertMessage(
-                            title = resources.getString(R.string.matrix_error_title),
-                            message = resources.getString(R.string.matrix_error_few_elements)
-                        )
-                        CALCULUS_ERROR -> showAlertMessage(
-                            title = resources.getString(R.string.matrix_error_title),
-                            message = resources.getString(R.string.matrix_error_calculus)
-                        )
-                        else -> showAlertMessage(
-                            title = resources.getString(R.string.matrix_error_title),
-                            message = " "
-                        )
+                        FEW_ELEMENTS_ERROR -> {
+                            viewModel.logEvent("error", it.message)
+                            showAlertMessage(
+                                title = resources.getString(R.string.matrix_error_title),
+                                message = resources.getString(R.string.matrix_error_few_elements)
+                            )
+                        }
+
+                        CALCULUS_ERROR -> {
+                            viewModel.logEvent("error", it.message)
+                            showAlertMessage(
+                                title = resources.getString(R.string.matrix_error_title),
+                                message = resources.getString(R.string.matrix_error_calculus)
+                            )
+                        }
+
+                        else -> {
+                            viewModel.logEvent("error", it.message)
+                            showAlertMessage(
+                                title = resources.getString(R.string.matrix_error_title),
+                                message = " "
+                            )
+                        }
                     }
                 }
             }
