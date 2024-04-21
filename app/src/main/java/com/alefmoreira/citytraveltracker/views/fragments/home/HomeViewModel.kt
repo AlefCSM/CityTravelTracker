@@ -33,13 +33,13 @@ class HomeViewModel @Inject constructor(
     private var _routes = MutableStateFlow<Resource<List<Route>>>(Resource.init())
     val routes: SharedFlow<Resource<List<Route>>> = _routes
 
-    private var _dasboardStatus = MutableStateFlow(Resource(Status.INIT, Dashboard(), null))
-    val dashboardStatus: MutableStateFlow<Resource<Dashboard>> = _dasboardStatus
+    private var _dashboardStatus = MutableStateFlow(Resource(Status.INIT, Dashboard(), null))
+    val dashboardStatus: MutableStateFlow<Resource<Dashboard>> = _dashboardStatus
 
     init {
         checkNetwork()
         observeNetwork()
-        observeRoutesToUpdateDasboard()
+        observeRoutesToUpdateDashboard()
     }
 
     private fun checkNetwork() {
@@ -56,12 +56,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun observeRoutesToUpdateDasboard() = viewModelScope.launch(dispatcher.io) {
+    private fun observeRoutesToUpdateDashboard() = viewModelScope.launch(dispatcher.io) {
         routes.collect {
             it.data?.let { list ->
                 if (list.size >= TWO_ELEMENTS) {
-                    _dasboardStatus.value = Resource.loading()
-                    _dasboardStatus.value = repository.getDashboard(list)
+                    _dashboardStatus.value = Resource.loading()
+                    _dashboardStatus.value = repository.getDashboard(list)
                 } else {
                     resetDashboard()
                 }
@@ -70,11 +70,11 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun resetDashboard() {
-        _dasboardStatus.value.data?.reset()
+        _dashboardStatus.value.data?.reset()
     }
 
     fun getRoutes() = viewModelScope.launch(dispatcher.io) {
-        _dasboardStatus.value = Resource.loading()
+        _dashboardStatus.value = Resource.loading()
         _routes.emit(Resource.loading())
         val list = repository.getAllRoutes()
         isFirstRoute = list.isEmpty()

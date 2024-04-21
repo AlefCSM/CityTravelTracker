@@ -49,7 +49,7 @@ object AppModule {
         api: DistanceMatrixAPI,
         sharedPreferences: SharedPreferences,
         firebaseAnalytics: FirebaseAnalytics
-    ) = CTTRepositoryImpl(dao, api,sharedPreferences,firebaseAnalytics) as CTTRepository
+    ) = CTTRepositoryImpl(dao, api, sharedPreferences, firebaseAnalytics) as CTTRepository
 
     @Singleton
     @Provides
@@ -97,10 +97,9 @@ object AppModule {
         placesClient: PlacesClient,
         token: AutocompleteSessionToken,
         firebaseAnalytics: FirebaseAnalytics
-    ) = AutoCompleteRepositoryImpl(placesClient, token,firebaseAnalytics) as AutoCompleteRepository
+    ) = AutoCompleteRepositoryImpl(placesClient, token, firebaseAnalytics) as AutoCompleteRepository
 
     @Provides
-    fun provideFirebaseAnanlytics():FirebaseAnalytics{
-        return Firebase.analytics
-    }
+    fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
+
 }
