@@ -1,11 +1,15 @@
 package com.alefmoreira.citytraveltracker.util
 
+import androidx.annotation.Keep
+
+@Keep
 enum class CitySelectionTypeEnum {
     ORIGIN,
     DESTINATION,
     CONNECTION
 }
 
+@Keep
 enum class AdapterLayoutEnum(i: Int) {
     SINGLE(0),
     FIRST(1),
@@ -13,6 +17,7 @@ enum class AdapterLayoutEnum(i: Int) {
     LAST(3)
 }
 
+@Keep
 enum class DialogType {
     LEAVE,
     DELETE,
