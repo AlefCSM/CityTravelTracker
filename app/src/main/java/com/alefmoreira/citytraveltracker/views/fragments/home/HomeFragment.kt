@@ -117,7 +117,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 if (it.status == Status.ERROR) {
                     when (it.message) {
                         FEW_ELEMENTS_ERROR -> {
-                            viewModel.logEvent("error", it.message)
+
+                            val bundle = HashMap<String, Any>().apply {
+                                this.put("exception_message:", it.message)
+                            }
+
+                            viewModel.logEvent("error", bundle)
                             showAlertMessage(
                                 title = resources.getString(R.string.matrix_error_title),
                                 message = resources.getString(R.string.matrix_error_few_elements)
@@ -125,7 +130,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         }
 
                         CALCULUS_ERROR -> {
-                            viewModel.logEvent("error", it.message)
+                            val bundle = HashMap<String, Any>().apply {
+                                this.put("exception_message:", it.message)
+                            }
+                            viewModel.logEvent("error", bundle)
                             showAlertMessage(
                                 title = resources.getString(R.string.matrix_error_title),
                                 message = resources.getString(R.string.matrix_error_calculus)
@@ -133,7 +141,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         }
 
                         else -> {
-                            viewModel.logEvent("error", it.message)
+                            viewModel.logEvent("error")
                             showAlertMessage(
                                 title = resources.getString(R.string.matrix_error_title),
                                 message = " "
