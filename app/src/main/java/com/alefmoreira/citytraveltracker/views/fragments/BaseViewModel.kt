@@ -10,7 +10,7 @@ abstract class BaseViewModel : ViewModel() {
     @Inject
     protected lateinit var firebaseAnalytics: FirebaseAnalytics
 
-    fun logEvent(eventName: String, category: String?=null, params: Map<String, Any>? = null) {
+    fun logEvent(eventName: String, params: Map<String, Any>? = null) {
         val bundle = Bundle()
 
         params?.let {
@@ -24,7 +24,7 @@ abstract class BaseViewModel : ViewModel() {
                 }
             }
         }
-        bundle.putString("event_category", category)
+        bundle.putString("event_category", "view_model")
         firebaseAnalytics.logEvent(eventName, bundle)
     }
 }

@@ -12,6 +12,7 @@ import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.remote.DistanceMatrixAPI
 import com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.DistanceMatrixResponse
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
@@ -20,7 +21,8 @@ class CTTRepositoryImpl @Inject constructor(
     private val cityDAO: CityDAO,
     private val distanceMatrixAPI: DistanceMatrixAPI,
     private val sharedPreferences: SharedPreferences,
-    private val firebaseAnalytics: FirebaseAnalytics
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val firebaseCrashlytics: FirebaseCrashlytics
 ) : CTTRepository {
 
     override suspend fun insertRoute(route: Route) {
@@ -87,6 +89,8 @@ class CTTRepositoryImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
+            firebaseCrashlytics.log("getDashboardFromAPI: ${e.message}")
+
             val bundle = Bundle().apply {
                 this.putString("exception_message", e.message)
             }
@@ -138,6 +142,7 @@ class CTTRepositoryImpl @Inject constructor(
             val bundle = Bundle().apply {
                 this.putString("exception_message", e.message)
             }
+            firebaseCrashlytics.log("distanceMatrixToDashboard ${e.message}")
             firebaseAnalytics.logEvent("distanceMatrixToDashboard", bundle)
             throw Exception(Constants.CALCULUS_ERROR + ": ${e.message}")
         }
@@ -154,6 +159,8 @@ class CTTRepositoryImpl @Inject constructor(
             val bundle = Bundle().apply {
                 this.putString("exception_message", e.message)
             }
+
+            firebaseCrashlytics.log("getDashboardFromCache: ${e.message}")
             firebaseAnalytics.logEvent("getDashboardFromCache", bundle)
             Resource.error("Error fetching cache: ${e.message}")
         }
