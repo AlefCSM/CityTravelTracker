@@ -24,3 +24,21 @@
 #-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
 #-keepattributes *Annotation*
 
+# Crashlytics
+-keep class com.google.firebase.crashlytics.** { *; }
+-keep class com.crashlytics.android.** { *; }
+
+# Crashlytics NDK
+-keep class com.google.firebase.crashlytics.ndk.** { *; }
+-keep class com.crashlytics.sdk.ndk.** { *; }
+
+# Firebase Performance Monitoring
+-keep class com.google.firebase.perf.** { *; }
+-keep class com.google.firebase.perf.metrics.** { *; }
+
+# Google Analytics
+-keep class com.google.analytics.** { *; }
+-keep class com.google.android.gms.analytics.** { *; }
+
+# Google Analytics para Firebase
+-keep class com.google.firebase.analytics.** { *; }

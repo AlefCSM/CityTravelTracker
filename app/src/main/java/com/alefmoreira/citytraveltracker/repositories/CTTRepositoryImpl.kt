@@ -93,6 +93,7 @@ class CTTRepositoryImpl @Inject constructor(
                 firebaseCrashlytics.log(it)
             }
             println("*******")
+            println("*******")
             print(e.message)
             val bundle = Bundle().apply {
                 this.putString("exception_message", e.message)
