@@ -42,3 +42,7 @@
 
 # Google Analytics para Firebase
 -keep class com.google.firebase.analytics.** { *; }
+
+-keep class retrofit2.** { *; }
+-keep interface retrofit2.** { *; }
+#-keep class com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.** { *; }

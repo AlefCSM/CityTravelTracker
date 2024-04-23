@@ -1,9 +1,7 @@
 package com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI
 
-import com.google.errorprone.annotations.Keep
 import com.google.gson.annotations.SerializedName
 
-@Keep
 data class DistanceMatrixResponse(
     @SerializedName("destination_addresses")
     val destinationAddresses: List<String>,

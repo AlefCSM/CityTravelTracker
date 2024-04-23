@@ -89,12 +89,8 @@ class CTTRepositoryImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            e.message?.let {
-                firebaseCrashlytics.log(it)
-            }
-            println("*******")
-            println("*******")
-            print(e.message)
+            firebaseCrashlytics.log("getDashboardFromAPI: ${e.message}")
+
             val bundle = Bundle().apply {
                 this.putString("exception_message", e.message)
             }
@@ -146,6 +142,7 @@ class CTTRepositoryImpl @Inject constructor(
             val bundle = Bundle().apply {
                 this.putString("exception_message", e.message)
             }
+            firebaseCrashlytics.log("distanceMatrixToDashboard ${e.message}")
             firebaseAnalytics.logEvent("distanceMatrixToDashboard", bundle)
             throw Exception(Constants.CALCULUS_ERROR + ": ${e.message}")
         }
@@ -162,10 +159,8 @@ class CTTRepositoryImpl @Inject constructor(
             val bundle = Bundle().apply {
                 this.putString("exception_message", e.message)
             }
-            e.message?.let {
-                firebaseCrashlytics.log(it)
-            }
 
+            firebaseCrashlytics.log("getDashboardFromCache: ${e.message}")
             firebaseAnalytics.logEvent("getDashboardFromCache", bundle)
             Resource.error("Error fetching cache: ${e.message}")
         }
