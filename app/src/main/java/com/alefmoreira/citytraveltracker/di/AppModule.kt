@@ -23,6 +23,8 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.crashlytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,8 +50,15 @@ object AppModule {
         dao: CityDAO,
         api: DistanceMatrixAPI,
         sharedPreferences: SharedPreferences,
-        firebaseAnalytics: FirebaseAnalytics
-    ) = CTTRepositoryImpl(dao, api, sharedPreferences, firebaseAnalytics) as CTTRepository
+        firebaseAnalytics: FirebaseAnalytics,
+        firebaseCrashlytics: FirebaseCrashlytics
+    ) = CTTRepositoryImpl(
+        dao,
+        api,
+        sharedPreferences,
+        firebaseAnalytics,
+        firebaseCrashlytics
+    ) as CTTRepository
 
     @Singleton
     @Provides
@@ -101,5 +110,8 @@ object AppModule {
 
     @Provides
     fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
+
+    @Provides
+    fun provideFirebaseCrashlytics(): FirebaseCrashlytics = Firebase.crashlytics
 
 }
