@@ -238,7 +238,6 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
         connectionEditionPosition: Int = DEFAULT_CONNECTION_POSITION
     ) {
         if (routeViewModel.networkStatus.value == NetworkObserver.NetworkStatus.Available) {
-            routeViewModel.logEvent("search_route")
             findNavController().navigate(
                 RouteFragmentDirections.actionRouteFragmentToSearchRouteFragment(
                     routeType,
@@ -283,7 +282,6 @@ class RouteFragment : Fragment(R.layout.fragment_route) {
 
     private fun returnToHome() {
         routeViewModel.clearRoutes()
-        routeViewModel.logEvent("return_to_home")
         findNavController().popBackStack()
     }
 
