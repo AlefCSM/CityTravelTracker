@@ -22,4 +22,6 @@ object Constants {
     const val CALCULUS_ERROR = "Error calculating routes"
     const val CTT_PREFS = "_CTT_Prefs"
     const val STRING_SEPARATOR = "|"
+    const val PREDICTION_REQUEST_FAILURE = "Request Failure!"
+    const val PREDICTION_PLACE_NOT_FOUND = "Place not found!"
 }

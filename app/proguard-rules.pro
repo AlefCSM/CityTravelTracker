@@ -45,4 +45,5 @@
 
 -keep class retrofit2.** { *; }
 -keep interface retrofit2.** { *; }
-#-keep class com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.** { *; }
+
+-keep class com.alefmoreira.citytraveltracker.remote.responses.MatrixAPI.** { *; }

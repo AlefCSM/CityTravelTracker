@@ -1,5 +1,6 @@
 package com.alefmoreira.citytraveltracker.views.fragments.home
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alefmoreira.citytraveltracker.coroutines.DispatcherProvider
 import com.alefmoreira.citytraveltracker.model.Dashboard
@@ -9,7 +10,6 @@ import com.alefmoreira.citytraveltracker.other.Constants.TWO_ELEMENTS
 import com.alefmoreira.citytraveltracker.other.Resource
 import com.alefmoreira.citytraveltracker.other.Status
 import com.alefmoreira.citytraveltracker.repositories.CTTRepository
-import com.alefmoreira.citytraveltracker.views.fragments.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -23,8 +23,7 @@ class HomeViewModel @Inject constructor(
     private val repository: CTTRepository,
     private val dispatcher: DispatcherProvider,
     private val networkObserver: NetworkObserver
-) : BaseViewModel() {
-
+) : ViewModel() {
     private var _networkStatus = MutableStateFlow(NetworkObserver.NetworkStatus.Available)
     val networkStatus: StateFlow<NetworkObserver.NetworkStatus> = _networkStatus
 
