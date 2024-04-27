@@ -36,7 +36,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val btnStart = binding.btnStart
 
         btnStart.setOnClickListener {
-            viewModel.logEvent("new_route")
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToRouteFragment())
         }
 
@@ -68,7 +67,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         routes = resource.data
                         onItemClick = { route ->
                             route.city.id?.let { id ->
-                                viewModel.logEvent("route_details")
                                 findNavController().navigate(
                                     (HomeFragmentDirections.actionHomeFragmentToRouteFragment(
                                         id
@@ -117,12 +115,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 if (it.status == Status.ERROR) {
                     when (it.message) {
                         FEW_ELEMENTS_ERROR -> {
-
-                            val bundle = HashMap<String, Any>().apply {
-                                this.put("exception_message:", it.message)
-                            }
-
-                            viewModel.logEvent("error", bundle)
                             showAlertMessage(
                                 title = resources.getString(R.string.matrix_error_title),
                                 message = resources.getString(R.string.matrix_error_few_elements)
@@ -130,10 +122,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         }
 
                         CALCULUS_ERROR -> {
-                            val bundle = HashMap<String, Any>().apply {
-                                this.put("exception_message:", it.message)
-                            }
-                            viewModel.logEvent("error", bundle)
                             showAlertMessage(
                                 title = resources.getString(R.string.matrix_error_title),
                                 message = resources.getString(R.string.matrix_error_calculus)
@@ -141,7 +129,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         }
 
                         else -> {
-                            viewModel.logEvent("error")
                             showAlertMessage(
                                 title = resources.getString(R.string.matrix_error_title),
                                 message = " "

@@ -21,8 +21,6 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.crashlytics
 import dagger.Module
@@ -50,13 +48,11 @@ object AppModule {
         dao: CityDAO,
         api: DistanceMatrixAPI,
         sharedPreferences: SharedPreferences,
-        firebaseAnalytics: FirebaseAnalytics,
         firebaseCrashlytics: FirebaseCrashlytics
     ) = CTTRepositoryImpl(
         dao,
         api,
         sharedPreferences,
-        firebaseAnalytics,
         firebaseCrashlytics
     ) as CTTRepository
 
@@ -105,12 +101,14 @@ object AppModule {
     fun provideAutoCompleteRepositoryImpl(
         placesClient: PlacesClient,
         token: AutocompleteSessionToken,
-        firebaseAnalytics: FirebaseAnalytics
-    ) = AutoCompleteRepositoryImpl(placesClient, token, firebaseAnalytics) as AutoCompleteRepository
+        firebaseCrashlytics: FirebaseCrashlytics
+    ) = AutoCompleteRepositoryImpl(
+        placesClient,
+        token,
+        firebaseCrashlytics
+    ) as AutoCompleteRepository
 
-    @Provides
-    fun provideFirebaseAnalytics(): FirebaseAnalytics = Firebase.analytics
-
+    @Singleton
     @Provides
     fun provideFirebaseCrashlytics(): FirebaseCrashlytics = Firebase.crashlytics
 
