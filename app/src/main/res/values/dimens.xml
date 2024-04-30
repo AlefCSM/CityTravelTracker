@@ -8,6 +8,11 @@
     <dimen name="extra_big_text_size">32sp</dimen>
 
     <!--    DISPLAY SIZES-->
+    <dimen name="icon_padding_12">12dp</dimen>
+    <dimen name="icon_padding_14">14dp</dimen>
+    <dimen name="icon_padding_16">16dp</dimen>
+    <dimen name="icon_padding_18">18dp</dimen>
+    <dimen name="icon_padding_24">24dp</dimen>
     <dimen name="fragment_horizontal_padding">16dp</dimen>
     <dimen name="search_fragment_padding_top">16dp</dimen>
     <dimen name="no_drawable_start_padding">-18dp</dimen>

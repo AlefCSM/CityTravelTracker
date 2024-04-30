@@ -142,6 +142,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-perf'
 
+    //LeakCanary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
+    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-instrumentation:2.14'
+
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
     testImplementation 'com.google.truth:truth:1.1.5'

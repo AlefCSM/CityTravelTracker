@@ -22,6 +22,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:paddingBottom="@dimen/icon_padding_12"
+                android:paddingTop="@dimen/icon_padding_12"
                 android:src="@drawable/ic_back" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -82,6 +84,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="9dp"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
                 android:layout_marginBottom="32dp"
                 android:gravity="top"
                 android:orientation="horizontal">

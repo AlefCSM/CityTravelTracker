@@ -5,8 +5,7 @@
     android:background="@drawable/shape_route_last_item"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingVertical="6dp"
-    android:paddingStart="@dimen/fragment_horizontal_padding">
+    android:paddingVertical="6dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txt_connection_name"
@@ -15,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="10dp"
         android:layout_weight="1"
+        android:layout_marginStart="@dimen/fragment_horizontal_padding"
         android:text="@string/city_name" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -22,8 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:padding="10dp"
-        android:paddingEnd="16dp"
+        android:padding="@dimen/icon_padding_18"
         android:src="@drawable/ic_erase_connection" />
 </androidx.appcompat.widget.LinearLayoutCompat>
 

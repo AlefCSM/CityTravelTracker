@@ -26,6 +26,8 @@
             style="@style/RegularTextBlueColorBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/icon_padding_14"
+            android:paddingBottom="@dimen/icon_padding_14"
             android:text="@string/cancel" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -34,6 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
+            android:paddingBottom="@dimen/icon_padding_14"
+            android:paddingTop="@dimen/icon_padding_14"
             android:text="@string/exclude"
             android:textColor="@color/danger_3" />
     </androidx.appcompat.widget.LinearLayoutCompat>
